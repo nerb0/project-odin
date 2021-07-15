@@ -119,21 +119,37 @@ body,html{
     right: 45px;
 }
 .scale-btn-container{
+    opacity: 0;
     border-radius: 5px;
+    height:140px;
     width:100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
     position: absolute;
     text-align: center;
     top: 60px;
     background-color: #5a5a5a60;
+    pointer-events: none;
+    transition: opacity 0.5s,
+        pointer-events 0.5s;
 }
 .scale-btn-container > button{
     padding:5px 0px;
-    margin: 5px 0px;
-    width: 80px;
+    margin:5px 0px ;
+    width: 100%;
+}
+.scale-btn{
+    font-weight: bolder;
+    background-color: #ffffff8c;
+}
+.scale-btn:hover{
+    border-bottom-width: 5px;
 }
 
-
 .player-select-container{
+    position: relative;
     display: grid;
     grid-template-rows: repeat(2, 1fr);
     gap: 5px;
@@ -156,10 +172,12 @@ body,html{
     border-bottom-width: 0px;
 }
 .mark-select-container{
+    position: relative;
     display: flex;
     align-items: flex-end;
 }
 .mark-select-container > button{
+    position: relative;
     font-family: 'Oswald';
     border-radius: 5px;
     margin: 0;
@@ -200,7 +218,16 @@ body,html{
 .disabled{
     background-color: #0000007e;
 }
-
+.active:not(.versus):after{
+    content: "";
+    position: absolute;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #000000af;
+    top:-5px;
+    right: 10px;
+    left:10px;
+}
 
 .over-lay{
     font-family: Arial, Helvetica, sans-serif;

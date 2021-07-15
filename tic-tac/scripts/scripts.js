@@ -151,8 +151,8 @@ const gameController = (() => {
     let _board = gameBoard([['','',''],['','',''],['','','']]);
     let _current = 0;
     let _status = 'play'
-    let _enemy = 'AI';
-    let difficulty = 'undebatable';
+    let _enemy = 'player';
+    let difficulty = 'easy';
     let scores;
     let players = [
         player('One', 'X'),
@@ -178,7 +178,7 @@ const gameController = (() => {
             }
         }else return false;
     }
-    const autoChess = (isMaximize) => {
+    const autoChess = () => {
         togglePlayer();
         let ai = players[1].mark;
         let human = players[0].mark;
@@ -293,8 +293,9 @@ const gameController = (() => {
         return _enemy
     }
     const toggleEnemy = () => {
-        if(enemy == 'player') enemy = 'AI';
-        else enemy = 'player';
+        if(_enemy == 'player') _enemy = 'AI';
+        else _enemy = 'player';
+        reset()
     }
     const setMarker = (id, newMark) => {
         if(players[+!id].mark == newMark) return false;
@@ -307,6 +308,9 @@ const gameController = (() => {
     const setDifficulty = (scale) => {
         difficulty = scale
     }
+    const getDifficulty = () => {
+        return difficulty;
+    }
     return {
         mark,
         getStatus,
@@ -315,21 +319,54 @@ const gameController = (() => {
         reset,
         toggleEnemy,
         setDifficulty,
-        setMarker
+        setMarker,
+        getDifficulty
     }
 })();
+
+
 const displayController = (() => {
     const game = document.getElementById("game");
     const msg = document.getElementById(`message`);
     const overlay = document.getElementById(`overlay`);
     const reset = document.getElementById(`reset`);
+    const scaleUI = document.getElementById(`difficulty`);
     const markers = Array.from(document.getElementsByClassName(`mark-select-container`));
+    const humanBtn = document.getElementById('human');
+    const aiBtn  = document.getElementById('ai');
+    const scales = Array.from(document.getElementsByClassName('scale-btn'));
+    let onBot = false;
+
     
+    const setLane = (state, line) => {
+        line.forEach((x) => {
+            const cell = document.getElementById(`cell${x}`);
+            cell.classList.add(state)
+        })
+    }
+    const endGame = () => {
+        overlay.classList.toggle('visible')
+    }
+    const removeClass = (container, c) => {
+        container.forEach((button) => {
+            button.classList.remove(c);
+        });
+    }
+    const setDisabled = (button) =>{
+        button.classList.add('disabled');
+    }
+    const hide = (node) =>{
+        node.classList.remove('visible');
+    }
     const createGrid = () =>{
         document.getElementById('board').remove()
         const board = document.createElement('div')
         board.id = "board";
         board.className = "board";
+        board.onclick = () => {
+            hide(scaleUI);
+            onBot = false;
+        }
         for(let i = 0; i < 3; i++){
             for(let j = 0; j < 3; j++){
                 const cell = document.createElement('div')
@@ -376,43 +413,78 @@ const displayController = (() => {
         }
         game.append(board);
     }
-    const setLane = (state, line) => {
-        line.forEach((x) => {
-            const cell = document.getElementById(`cell${x}`);
-            cell.classList.add(state)
-        })
+    const changeEnemy = () => {
+        gameController.toggleEnemy();
+        createGrid()
     }
-    const endGame = () => {
-        overlay.classList.toggle('visible')
+    const setActive = (button, disable) =>{
+        disable.classList.remove('active');
+        disable.classList.remove('X');
+        button.classList.add('active');
+        button.classList.add('X');
+    }
+    const resetGame = () => {
+        gameController.reset();
+        createGrid();
+    }
+
+    aiBtn.onclick = function() {
+        scaleUI.classList.add('visible');
+        if(onBot){
+            onBot = false;
+            hide(scaleUI);
+        }
+        if(humanBtn.classList.contains('active'))   {
+            onBot = true;
+            changeEnemy();
+            this.textContent = gameController.getDifficulty().toUpperCase();
+            setActive(this, humanBtn)
+        }
+    }
+    humanBtn.onclick = function(){
+        if(!this.classList.contains('active')){
+            changeEnemy();
+            hide(scaleUI);
+            setActive(this, aiBtn)
+            aiBtn.textContent = "V.S AI";
+        }
     }
     reset.onclick = () =>{
         reset.className = "btn menu-btn"
         overlay.classList.toggle('visible')
-        gameController.reset();
-        createGrid();
+        resetGame()
     }
+
     markers.forEach((container, idx) => {
         let children = Array.from(container.children);
         children.forEach((button, i)=>{
                 button.onclick = function() {
                     if(gameController.setMarker(idx, button.textContent)){
-                        removeActive(children);
+                        removeClass(Array.from(markers[+!idx].children),'disabled');
+                        removeClass(children,'active');
                         console.log(button)
                         button.classList.add('active');
                         setDisabled(Array.from(markers[+!idx].children)[i]);
+                        resetGame();
                     }
                 }
             
         })
     });
-    const removeActive = (container) => {
-        container.forEach((button) => {
-            button.classList.remove('active');
-        });
-    }
-    const setDisabled = (button) =>{
-        button.classList.add('disabled');
-    }
+    scales.forEach((button) => {
+        button.onclick = () =>{
+            onBot = false;
+            gameController.setDifficulty(button.id);
+            removeClass(scales, 'X');
+            aiBtn.textContent = button.id.toUpperCase();
+            button.classList.add('X');
+            scaleUI.classList.remove('visible');
+            resetGame();
+        }
+    })
+    // game.onclick = () => {hide(scaleUI)}
+    
+    
     return {
         createGrid
     }
