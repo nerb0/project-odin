@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Lato|Montserrat|Alfa+Slab+One">
+    <link rel="shortcut icon" type="image/jpg" href="images/favicon.ico"/>
+</head>
+<body>
+    <div id="overlay"></div>
+    <div>
+        
+    </div>
+    <table >
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Author</th>
+                <th>Current Page</th>
+                <th>Status</th>
+                <th class="remove">
+                    
+                </th>
+            </tr>
+        </thead>
+        <tbody id="books">
+
+        </tbody>
+        <tfoot>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th style="position:relative;z-index: 4;">
+                <button id="addBtn" class="add-book-btn" onclick="toggleForm()">
+                    +
+                </button>
+                <form action="javascript:void(0);" autocomplete="off" 
+        class="add-book-form" id="addBookForm"  onsubmit="addBook()">
+                    <div>
+                        <label for="name">Name: </label>
+                        <input name="name" id="name" type="text" required>
+                    </div>
+                    <div>
+                        <label for="author">Author: </label>
+                        <input name="author" id="author" type="text" required>
+                    </div>
+                    <div>
+                        <label for="current">Current Page: </label>
+                        <div class="page-form">
+                            <button class="minus page-btn" type="button" 
+                                data-index="curr" onclick="pageDown(this)">
+                                -
+                            </button>
+                            <input id="current" data-index="curr" type="number" max="1600" min="0" value="0" required>
+                            <button class="add page-btn" type="button"
+                                data-index="curr" onclick="pageUp(this)">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                    <div style="position:relative">
+                        <label for="total">Total Page: </label>
+                        <div class="page-form">
+                            <button class="minus page-btn" type="button"
+                                data-index="total" onclick="pageDown(this)">
+                                -
+                            </button>
+                            <input id="total" data-index="total" type="number" max="1600" min="1" value="1600" required>
+                            <button class="add page-btn" type="button"
+                                data-index="total" onclick="pageUp(this)">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                    <div class="formBtn">
+                        <button class="btn cancel" type="button" onclick="toggleForm()">Cancel</button>
+                        <button class="btn submit" type="submit">Submit</button>
+                    </div>
+                </form>
+            </th>
+        </tfoot>
+    </table>
+    
+</body>
+<script type="text/javascript" src="scripts/script.js"></script>
+</html>
