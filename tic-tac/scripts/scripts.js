@@ -1,12 +1,10 @@
-const game = document.getElementById("game");
-const msg = document.getElementById(`message`);
-const overlay = document.getElementById(`overlay`);
-const reset = document.getElementById(`reset`);
+
 
 const player = (name,mark) => {
+    
     return{
         name,
-        mark
+        mark,
     }
 }
 const gameBoard = (_GRID) => {
@@ -154,34 +152,38 @@ const gameController = (() => {
     let _current = 0;
     let _status = 'play'
     let _enemy = 'AI';
-    let difficulty = 'no';
-    let scores = {
-        X: -1,
-        O: 2,
-        draw: 0
-    }
+    let difficulty = 'undebatable';
+    let scores;
     let players = [
         player('One', 'X'),
-        player('AI', 'O')
+        player('Two', 'O')
     ]
 
     const mark = (x,y) => {
         if(_board.markBoard(x,y, players[_current].mark)){
             let result = _board.checkBoard();
+            let player = players[_current];
             if(result){
                 _status = result;
-                return players[_current].name;
-            }else{
+                player.prev = players[0].mark;
+                return player;
+            }else if(_enemy == 'AI'){
                 let move = autoChess();
-                _board.checkBoard()
+                move.prev = players[0].mark;
                 return move;
+            }
+            else{
+                togglePlayer();
+                return player;
             }
         }else return false;
     }
-    const autoChess = () => {
+    const autoChess = (isMaximize) => {
         togglePlayer();
+        let ai = players[1].mark;
+        let human = players[0].mark;
         let move = {};
-        if(difficulty == 'easy'){
+        if(difficulty == 'normal'){
             let x = Math.floor(Math.random() * 3);
             let y = Math.floor(Math.random() * 3);
             while(!_board.markBoard(x,y, players[_current].mark)){
@@ -191,7 +193,32 @@ const gameController = (() => {
             move = {x,y, mark: players[_current].mark};
             _board.checkBoard();
         }
-        else if(difficulty == 'no'){
+        else if(difficulty == 'undebatable'){
+            scores = {
+                draw: 0
+            }
+            scores[ai] = 2;
+            scores[human] = -1;
+            let max = -Infinity;
+            for(let x = 0; x < 3; x ++){
+                for(let y = 0; y < 3; y++){
+                    if(_board.markBoard(x, y, players[_current].mark)){
+                        let score = minimax(_board, false);
+                        _board.clear(x,y);
+                        if(score > max){
+                            max = score;
+                            move = {x,y};
+                        }
+                    }
+                }
+            }
+            _board.markBoard(move.x,move.y, players[_current].mark)
+        }else{
+            scores = {
+                draw: 0
+            }
+            scores[human] = 2;
+            scores[ai] = -2;
             let max = -Infinity;
             for(let x = 0; x < 3; x ++){
                 for(let y = 0; y < 3; y++){
@@ -219,7 +246,6 @@ const gameController = (() => {
     }
     const reset = () => {
         _board = gameBoard([['','',''],['','',''],['','','']]);
-        console.log(_board.getGrid());
         _current = 0;
         _status = 'play'
     }
@@ -266,77 +292,132 @@ const gameController = (() => {
     const getEnemy = () => {
         return _enemy
     }
+    const toggleEnemy = () => {
+        if(enemy == 'player') enemy = 'AI';
+        else enemy = 'player';
+    }
+    const setMarker = (id, newMark) => {
+        if(players[+!id].mark == newMark) return false;
+        else {
+            players[id].mark = newMark;
+            return true;
+        }
+        
+    }
+    const setDifficulty = (scale) => {
+        difficulty = scale
+    }
     return {
         mark,
         getStatus,
         getLine,
         getEnemy,
-        reset
+        reset,
+        toggleEnemy,
+        setDifficulty,
+        setMarker
     }
 })();
-const createGrid = () =>{
-    document.getElementById('board').remove()
-    const board = document.createElement('div')
-    board.id = "board";
-    board.className = "board";
-    for(let i = 0; i < 3; i++){
-        for(let j = 0; j < 3; j++){
-            const cell = document.createElement('div')
-            cell.id = `cell${i*3 + j}`;
-            cell.className = "btn cell";
-            cell.onclick = function(){
-                if(!cell.firstChild){
-                    const mark = gameController.mark(i,j, 'X');
-                    const current = document.createElement('div');
-                    current.className = "pop";
-                    current.textContent = "X";
-                    this.appendChild(current)
-                    const target = document.getElementById(`cell${mark.x * 3 + mark.y}`);
-                    if(target != null){
-                        const move = document.createElement('div');
-                        move.className = "pop";
-                        move.textContent = mark.mark;
-                        target.appendChild(move)
-                    }
-                    const state = gameController.getStatus();
-                    let winner = "draw";
-                    let lane = [0,1,2,3,4,5,6,7,8];
-                    if(state != 'play'){
-                        if(state != 'draw'){
-                            msg.textContent = `${mark.name} wins`;
-                            reset.classList.add(mark.mark);
-                            winner = mark.mark;
-                            lane = gameController.getLine()
-                        }else {
-                            reset.classList.add('draw');
-                            msg.textContent = `It's a draw`;
+const displayController = (() => {
+    const game = document.getElementById("game");
+    const msg = document.getElementById(`message`);
+    const overlay = document.getElementById(`overlay`);
+    const reset = document.getElementById(`reset`);
+    const markers = Array.from(document.getElementsByClassName(`mark-select-container`));
+    
+    const createGrid = () =>{
+        document.getElementById('board').remove()
+        const board = document.createElement('div')
+        board.id = "board";
+        board.className = "board";
+        for(let i = 0; i < 3; i++){
+            for(let j = 0; j < 3; j++){
+                const cell = document.createElement('div')
+                cell.id = `cell${i*3 + j}`;
+                cell.className = "btn cell";
+                cell.onclick = function(){
+                    if(!cell.firstChild){
+                        const play = gameController.mark(i,j, 'X');
+                        const current = document.createElement('div');
+                        current.className = "pop";
+                        if(gameController.getEnemy() == 'AI'){
+                            current.textContent = play.prev;
+                            const target = document.getElementById(`cell${play.x * 3 + play.y}`);
+                            if(target != null){
+                                const move = document.createElement('div');
+                                move.className = "pop";
+                                move.textContent = play.mark;
+                                target.appendChild(move)
+                            }
+                        }else{
+                            current.textContent = play.mark;
                         }
-                        setLane( winner, lane)
-                        endGame()
-                    }
-                }    
-            } 
-            board.appendChild(cell);
+                        this.appendChild(current)
+                        const state = gameController.getStatus();
+                        let winner = "draw";
+                        let lane = [0,1,2,3,4,5,6,7,8];
+                        if(state != 'play'){
+                            if(state != 'draw'){
+                                msg.textContent = `${play.name} wins`;
+                                reset.classList.add(play.mark);
+                                winner = play.mark;
+                                lane = gameController.getLine()
+                            }else {
+                                reset.classList.add('draw');
+                                msg.textContent = `It's a draw`;
+                            }
+                            setLane(winner, lane)
+                            endGame()
+                        }
+                    }    
+                } 
+                board.appendChild(cell);
+            }
         }
+        game.append(board);
     }
-    game.append(board);
-}
+    const setLane = (state, line) => {
+        line.forEach((x) => {
+            const cell = document.getElementById(`cell${x}`);
+            cell.classList.add(state)
+        })
+    }
+    const endGame = () => {
+        overlay.classList.toggle('visible')
+    }
+    reset.onclick = () =>{
+        reset.className = "btn menu-btn"
+        overlay.classList.toggle('visible')
+        gameController.reset();
+        createGrid();
+    }
+    markers.forEach((container, idx) => {
+        let children = Array.from(container.children);
+        children.forEach((button, i)=>{
+                button.onclick = function() {
+                    if(gameController.setMarker(idx, button.textContent)){
+                        removeActive(children);
+                        console.log(button)
+                        button.classList.add('active');
+                        setDisabled(Array.from(markers[+!idx].children)[i]);
+                    }
+                }
+            
+        })
+    });
+    const removeActive = (container) => {
+        container.forEach((button) => {
+            button.classList.remove('active');
+        });
+    }
+    const setDisabled = (button) =>{
+        button.classList.add('disabled');
+    }
+    return {
+        createGrid
+    }
+})();
 
-const setLane = (state, line) => {
-    line.forEach((x) => {
-        const cell = document.getElementById(`cell${x}`);
-        cell.classList.add(state)
-    })
-}
-const endGame = () => {
-    overlay.classList.toggle('visible')
-}
-reset.onclick = () =>{
-    reset.className = "btn menu-btn"
-    overlay.classList.toggle('visible')
-    gameController.reset();
-    createGrid();
-}
 window.onload = () =>{
-    createGrid()
+    displayController.createGrid()
 }

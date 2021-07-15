@@ -1,7 +1,26 @@
-body{
+body,html{
     margin: 0;
+    padding: 0;
+    background-color: #e7e7e77e;
 }
-
+.game-title{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 50px;
+    width: 100vw;
+    height:50px;
+    max-height: 50px;
+    padding-top: 50px;
+    margin-top: 0;
+    margin-bottom: -100px;  
+    text-align: center;
+}
+.game-border{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height:100vh;
+    width:100vw;
+}
 .btn{
     border: none;
     border-bottom-color: #00000057;
@@ -9,6 +28,7 @@ body{
     cursor: pointer;
     font-weight: 500;
     user-select: bold;
+    transition: border-bottom 0.2s;
 }
 .btn:hover{
     border-bottom-color: #0000007e;
@@ -19,18 +39,23 @@ body{
     width: 100vw;
     justify-content: center;
     align-items: center;
-}
+}   
 .board-container{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    width:600px;
+    height:600px;
+    border: 1px solid #e0e0e0e0;
+    border-radius: 5px;
 }
 .board{
-    padding: 25px;
+    padding: 10px;
     font-family:sans-serif;
     font-size: 50px;
     display: grid;
+    background-color:rgba(255, 255, 255, 0.589);
     grid-template: repeat(3,1fr)/repeat(3,1fr);
     border-radius: 10px;
     gap: 10px;
@@ -38,6 +63,7 @@ body{
     height: 300px;
     max-height: 400px;
     max-width: 400px;
+    margin-top: 10px;
 }
 .cell{
     display: flex;
@@ -46,8 +72,9 @@ body{
     justify-content: center;
     align-items: center;
     border-bottom-width: 10px;
-    transition: border-bottom-width 0.2s;
-    font-weight: 500;
+    transition: border-bottom-width 0.2s,
+        background-color 0.5s;
+    font-weight: bold;
 }
 .cell:hover{
     border-bottom-width: 15px;
@@ -55,6 +82,9 @@ body{
 .cell:active{
     border-bottom-width: 0px;
 }
+
+
+
 .versus{
     width: 100px
 }
@@ -70,31 +100,79 @@ body{
     background-color: rgba(255, 255, 255, 0.616);
     grid-template-rows: repeat(2,1fr);
     padding: 0px 10px 70px ;
-    margin-top: 60px;
+    margin-top: 200px;
     border-radius: 10px;
-    height:260px;
+    height:265px;
     width: 320px;
     text-align: center;
     align-items: flex-end;
     justify-content: center;
 }
-#message{
-    font-family: Oswald;
+.scale-btn-container::before{
+    content: "";
+    position: absolute;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #5a5a5a60;
+    top:-5px;
+    left: 45px;
+    right: 45px;
+}
+.scale-btn-container{
+    border-radius: 5px;
+    width:100px;
+    position: absolute;
+    text-align: center;
+    top: 60px;
+    background-color: #5a5a5a60;
+}
+.scale-btn-container > button{
+    padding:5px 0px;
+    margin: 5px 0px;
+    width: 80px;
+}
+
+
+.player-select-container{
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    justify-content: center;
+    align-items: flex-end;
+    height:120px
 }
 .menu-btn{
+    font-family: 'Oswald';
     height:50px;
     font-weight: bolder;
     border-radius: 5px;
-    transition: border-bottom 0.2s;
 }
-.menu-btn:hover{
+.menu-btn:hover:not(.active){
     height:55px;
     border-bottom-width: 10px;
 }
-.menu-btn:active{
+.menu-btn:active:not(.active){
     height:50px;
     border-bottom-width: 0px;
 }
+.mark-select-container{
+    display: flex;
+    align-items: flex-end;
+}
+.mark-select-container > button{
+    font-family: 'Oswald';
+    border-radius: 5px;
+    margin: 0;
+    width:30px;
+    height:35px;
+}
+.mark-select-container > button:hover:not(.active,.disabled){
+    margin: 0;
+    width:30px;
+    height:40px;
+}
+
+
 .X{
     color: white;
     background-color: #3cc75a;
@@ -115,6 +193,14 @@ body{
     color: white;
     background-color: #5a5a5a;
 }
+.active{
+    box-shadow: inset 0 2px 2px 0px #0000007e;
+    border: none;
+}
+.disabled{
+    background-color: #0000007e;
+}
+
 
 .over-lay{
     font-family: Arial, Helvetica, sans-serif;
@@ -124,10 +210,17 @@ body{
     z-index: 100;
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.4s;
 }
 .visible{
     opacity: 1;
     pointer-events: all;
+}
+#message{
+    font-family: Oswald;
+}
+#reset{
+    font-size: 20px;
 }
 .pop{
     animation: pop-mark 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95);

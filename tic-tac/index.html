@@ -7,25 +7,52 @@
     <title>Tic-Tac</title>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald">
+    <link rel="shortcut icon" type="image/jpg" href="images/favicon.ico">
     
 </head>
 <body>
+    
     <div id="overlay" class="over-lay">
         <div class="end-container">
             <div id="message">THis the message</div>
             <button id="reset" class="btn menu-btn">Try Again</div>
         </div>
     </div>
-    
-    <div class="board-container" id="game">
-        <div class="menu-btn-container">
-            <button class="menu-btn btn versus">V.S Player</button>
-            <button class="menu-btn btn versus" >V.S AI</button>
-        </div>
-        <div class="board" id="board">
-        
+    <div><h1 class="game-title">Tic-Tac-Toe</h1></div>
+    <div class="game-border">
+        <div class="board-container" id="game">
+            <div class="player-select-container"> 
+                <button class="menu-btn btn versus active">V.S Player</button>
+                <div style="position: relative;">
+                    <div class="scale-btn-container">
+                        <button class="btn">Easy</button>
+                        <button class="btn">Normal</button>
+                        <button class="btn">UFOtable</button>
+                    </div>
+                    <button class="menu-btn btn versus" >V.S AI</button>
+                </div>
+            </div>
+                
+            <div class="menu-btn-container">
+                <div class="mark-select-container">
+                    <button class="btn X active" data-player="0">X</button>
+                    <button class="btn O disabled" data-player="0">O</button>
+                    <button class="btn U" data-player="0">U</button>
+                    <button class="btn W" data-player="0">W</button>
+                </div>
+                <div class="mark-select-container">
+                    <button class="btn X disabled" data-player="1">X</button>
+                    <button class="btn O active" data-player="1">O</button>
+                    <button class="btn U" data-player="1">U</button>
+                    <button class="btn W" data-player="1">W</button>
+                </div>
+            </div>
+            <div class="board" id="board">
+            
+            </div>
         </div>
     </div>
+    
     
     <script src="scripts/scripts.js" type="text/javascript"></script>
 </body>
