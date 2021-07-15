@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>build this wepbage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+      rel="stylesheet">
+    <link href="styles/reset.css" rel="stylesheet">
+    <link href="styles/style.css" rel="stylesheet">
+    <link href="styles/search.css" rel="stylesheet">
+    <script type="text/javascript">
+        
+        function search_focus(){
+            document.getElementById("search").style.marginLeft = 0;
+            document.getElementById("search").style.borderRadius = "20px 20px 0 0";
+            document.getElementById("result").style.display = "flex";
+            document.getElementById("search-icon").style.display = "block";
+            document.getElementById("search").style.maxWidth = "735px"; 
+            document.getElementById("search").style.boxShadow = "0 2px 8px 1px rgba(64,60,67,.24)";
+            document.getElementById("search-text").style.marginLeft =" -5px";
+        }
+        function search_blur(){
+            document.getElementById("search").style.marginLeft = "35px";
+            document.getElementById("result").style.display = "none";
+            document.getElementById("search-icon").style.display = "none";
+            document.getElementById("search").style.maxWidth = "700px";
+            document.getElementById("search").style.borderRadius = "25px";
+            document.getElementById("search-text").style.marginLeft = "15px";
+        }
+        function search_toggle(){
+            var x = document.getElementById("site-box");
+            if(x.style.display === "none") x.style.display = "grid";
+            else x.style.display = "none";
+        }
+        window.addEventListener("scroll", function() {
+            var elementTarget = document.getElementById("res");
+            if (window.scrollY > (elementTarget.offsetTop + elementTarget.offsetHeight)) {
+                document.getElementById("nav").style.display = "flex";
+            }else{
+                document.getElementById("nav").style.display = "none";
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="nav">
+        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" 
+        alt="Google logo" class="google-image"/>
+        <div  class="search-box smaller" >
+            <input value="build this webpage" type="search" class="search-text">   
+            <span class="material-icons-outlined close-icon" style="padding-right: 15px;">close</span>
+            <span class="material-icons-outlined search-icon" style="padding-left: 15px;padding-right:5px;">search</span>
+        </div>
+        <a class="profile">
+            <span class="material-icons-outlined settings">settings</span>
+            <span class="material-icons-outlined apps">apps</span>
+            <span class="material-icons-outlined avatar">account_circle</span>
+        </a>
+    </div>
+    <nav id="header">
+        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" 
+        alt="Google logo" class="google-image"/>
+        <div  class="search-box smaller" id="search">
+            <span class="material-icons-outlined" id="search-icon">search</span>
+            <input value="build this webpage"type="search" id="search-text" class="search-text" onfocus="search_focus()" onblur="search_blur()">   
+            <span class="material-icons-outlined close-icon">close</span>
+            <span class="material-icons-outlined search-icon">search</span>
+            <div class="drop-down" id="result">
+                <div class="separator"></div>
+                <a>search result 1</a>
+                <a>search result 2</a>
+                <a>search result 3</a>
+                <a>search result 4</a>
+                <a>search result 5</a>
+                
+            </div>
+        </div>
+        <a class="profile">
+            <span class="material-icons-outlined settings">settings</span>
+            <span class="material-icons-outlined apps">apps</span>
+            <span class="material-icons-outlined avatar">account_circle</span>
+        </a>
+    </nav>
+    <div class="sub-nav-container">
+        <div class="sub-nav">
+            <div>
+                <a class="active"><span class="bmaJhd iJddsb" style="height:16px;width:16px"><svg focusable="false" viewBox="0 0 24 24"><path fill="#34a853" d="M10 2v2a6 6 0 0 1 6 6h2a8 8 0 0 0-8-8"></path><path fill="#ea4335" d="M10 4V2a8 8 0 0 0-8 8h2c0-3.3 2.7-6 6-6"></path><path fill="#fbbc04" d="M4 10H2a8 8 0 0 0 8 8v-2c-3.3 0-6-2.69-6-6"></path><path fill="#4285f4" d="M22 20.59l-5.69-5.69A7.96 7.96 0 0 0 18 10h-2a6 6 0 0 1-6 6v2c1.85 0 3.52-.64 4.88-1.68l5.69 5.69L22 20.59"></path></svg></span>
+                    All</a>
+                <a><span class="bmaJhd iJddsb" style="height:16px;width:16px"><svg focusable="false" viewBox="0 0 24 24"><path d="M12 11h6v2h-6v-2zm-6 6h12v-2H6v2zm0-4h4V7H6v6zm16-7.22v12.44c0 1.54-1.34 2.78-3 2.78H5c-1.64 0-3-1.25-3-2.78V5.78C2 4.26 3.36 3 5 3h14c1.64 0 3 1.25 3 2.78zM19.99 12V5.78c0-.42-.46-.78-1-.78H5c-.54 0-1 .36-1 .78v12.44c0 .42.46.78 1 .78h14c.54 0 1-.36 1-.78V12zM12 9h6V7h-6v2"></path></svg></span>
+                    News</a>
+                <a><span class="bmaJhd iJddsb" style="height:16px;width:16px"><svg focusable="false" viewBox="0 0 24 24"><path d="M10 16.5l6-4.5-6-4.5v9zM5 20h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1zm14.5 2H5a3 3 0 0 1-3-3V4.4A2.4 2.4 0 0 1 4.4 2h15.2A2.4 2.4 0 0 1 22 4.4v15.1a2.5 2.5 0 0 1-2.5 2.5"></path></svg></span>
+                    Videos</a>
+                <a><span class="bmaJhd iJddsb" style="height:16px;width:16px"><svg focusable="false" viewBox="0 0 16 16"><path d="M7.503 0c3.09 0 5.502 2.487 5.502 5.427 0 2.337-1.13 3.694-2.26 5.05-.454.528-.906 1.13-1.358 1.734-.452.603-.754 1.508-.98 1.96-.226.452-.377.829-.904.829-.528 0-.678-.377-.905-.83-.226-.451-.527-1.356-.98-1.959-.452-.603-.904-1.206-1.356-1.734C3.132 9.121 2 7.764 2 5.427 2 2.487 4.412 0 7.503 0zm0 1.364c-2.283 0-4.14 1.822-4.14 4.063 0 1.843.86 2.873 1.946 4.177.468.547.942 1.178 1.4 1.79.34.452.596.99.794 1.444.198-.455.453-.992.793-1.445.459-.61.931-1.242 1.413-1.803 1.074-1.29 1.933-2.32 1.933-4.163 0-2.24-1.858-4.063-4.139-4.063zm0 2.734a1.33 1.33 0 11-.001 2.658 1.33 1.33 0 010-2.658"></path></svg></span>
+                    Maps</a>
+                <a><span class="bmaJhd iJddsb" style="height:16px;width:16px"><svg focusable="false" viewBox="0 0 24 24"><path d="M14 13l4 5H6l4-4 1.79 1.78L14 13zm-6.01-2.99A2 2 0 0 0 8 6a2 2 0 0 0-.01 4.01zM22 5v14a3 3 0 0 1-3 2.99H5c-1.64 0-3-1.36-3-3V5c0-1.64 1.36-3 3-3h14c1.65 0 3 1.36 3 3zm-2.01 0a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h7v-.01h7a1 1 0 0 0 1-1V5"></path></svg></span>
+                    Images</a>
+                <a> <span class="MbEPDb z1asCe SaPW2b" style="height:16px;line-height:16px;width:16px"><svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></span>
+                    More</a>
+            </div>
+            <div class="tools">
+                <a>Tools</a> 
+            </div>
+        </div>
+    </div>
+    <div id="res"></div>
+    <div class="result-container"> 
+        <p class="res-text">About 420,690,000 results (0.24 seconds) </p>
+        <article class="main">
+            <a class="result-link"><b style="font-weight: bold;">Ad</b><span style="padding:0 5px">·</span>https://www.wix.com/<span class="arrow-down"></span>
+            <h1 class="title">Create a Stunning Website - Access Advanced Design Tools</h1></a>
+            <div class="content">Wix Offers Industry-Leading Tools that Enable You to Create a Professional Website Online. Join Over 155 Million Users Who Trust Wix as the Top Website Building Platform.</div>
+            <div class="sub-article">
+                <div>
+                    <h1 class="title">Free Website Builder</h1></a>
+                    <div class="content">Build Your Own Free Website
+                        Easy to Use, Design a Site Online!</div>
+                </div>
+                <div>
+                    <h1 class="title">Free Hosting</h1></a>
+                    <div class="content">
+                        100% Free Website Hosting & Design
+                        Fast & Easy Online Website Builder</div>
+                </div>
+                <div>
+                    <h1 class="title">Professional Website</h1></a>
+                    <div class="content">Build Your Own Website
+                        It's Fast & Easy!</div>
+                </div>
+                <div>
+                    <h1 class="title">Online Store Builder</h1></a>
+                    <div class="content">Build Your Own Site in Minutes.
+                        Open Your Store & Start Selling!</div>
+                </div>
+            </div>
+        </article>
+        <article class="sub-article related-text" style="margin-left: -13px;">
+            <p style="grid-column:1/3;color: rgba(0,0,0,.57)"><b>People also search for</b></p>
+            <p>how to build a website from scratch</p>
+            <p>best website builder</p>
+            <p>creating a website for your business</p>
+            <p>how to create a web page</p>
+            <p>how to make a website on google</p>
+            <p>how to build a good website</p>
+            <p>how to create a website free of cost</p>
+            <p>ways to build a website</p>
+        </article>
+        <article>
+            <a class="result-link" href="https://victor-lf.github.io/google-search-results/">https://victor-lf.github.io<span class="result-directory"> › google-search-results</span><span class="arrow-down"></span>
+            <h1 class="title">build this webpage - GitHub Pages</h1></a>
+            <div class="content">build this webpage. https://benjdelt.github.io/google-results/. With zero coding experience, artist building 180 webpages in 180 days ...</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://christine-27.github.io/google-homepage">https://christine-27.github.io<span class="result-directory"> › google-homepage</span><span class="arrow-down"></span>
+            <h1 class="title">build this webpage - GitHub Pages</h1></a>
+            <div class="content">With zero coding experience, artist building 180 webpages . ... days ago, having never done any programming in her life, Jennifer Dewalt built her first webpage.</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://www.websitebuilderexpert.com/building-websites/">https://www.websitebuilderexpert.com<span class="result-directory">  › building-websi...</span><span class="arrow-down"></span>
+            <h1 class="title">How to Build a Website 2021 | A Step by Step Beginner's Guide</h1></a>
+            <div class="content">1 Jun 2021 — How to build a website This post will cover the process of making a website with both a website builder and WordPress, with no steps left out.</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://neilpatel.com/blog/from-0-to-launch-6-steps-to-building-your-first-website/">https://neilpatel.com<span class="result-directory"> › Blog › Content Marketing</span><span class="arrow-down"></span>
+            <h1 class="title">Build a Website: 6 Steps From 0 to Launch - Neil Patel</h1></a>
+            <div class="content">Ready to build a website? Here's step by step guide to building and opimizing your first website including what hosting and CMS to use.</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://websitesetup.org/">https://websitesetup.org<span class="arrow-down"></span>
+            <h1 class="title">How to Make a Website | Step-by-Step Guide for Beginners ...</h1></a>
+            <div class="content">Step 1. Choose a website building platform — To put it simply, a CMS (or website building platform) is a user-friendly platform for building websites ...</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://www.google.com/business/website-builder/">https://www.google.com<span class="result-directory"> › business › website-builder</span><span class="arrow-down"></span>
+            <h1 class="title">Free Website Builder For Your Business - Google My Business</h1></a>
+            <div class="content">Let Google build your first website for free. We'll help you create a beautiful website to impress and engage new customers – and establish your business online.</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://www.pcmag.com/how-to/how-to-create-a-website">https://www.pcmag.com    <span class="result-directory">  › ... › Web Hosting</span><span class="arrow-down"></span>
+            <h1 class="title">How to Create a Website | PCMag</h1></a>
+            <div class="content">You can use an online service to create web pages, or build it offline using a desktop software tool. Or, if you're a coding dynamo, use a plain text editor to create a ...</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://makeawebsitehub.com/">https://makeawebsitehub.com<span class="arrow-down"></span>
+            <h1 class="title">Make a Website in Just 1 Hour With This Easy Guide - 2021</h1></a>
+            <div class="content">This site teaches you how to make a website in just 3 easy to follow steps. There's also lots of really useful resources to help you build traffic in 2021.</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://www.weebly.com/">https://www.weebly.com    <span class="result-directory">  › ...</span><span class="arrow-down"></span>
+            <h1 class="title">Free Website Builder: Build a Free Website or Online Store ...</h1></a>
+            <div class="content">Weebly's free website builder makes it easy to create a website, blog, or online store. Find customizable templates, domains, and easy-to-use tools for any type ...</div>
+        </article>
+        <article>
+            <a class="result-link" href="https://www.squarespace.com/">https://www.squarespace.com<span class="arrow-down"></span>
+            <h1 class="title">Squarespace: Build a Website – Website Builder</h1></a>
+            <div class="content">Squarespace is the all-in-one solution for anyone looking to create a beautiful website. Domains, eCommerce, hosting, galleries, analytics, and 24/7 support all​ ...</div>
+        </article>
+        <div class="related-search">
+            <h1 >Related searches</h1>
+            <hr style="border: 0; border-bottom: 1px solid #e8eaed;">
+            <h2 onclick="search_toggle()">Beginner website builder</h2>
+            <div class="search-title" id="site-box">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI1LjOiXkvUvFbahz59lCfhDPMGj9pASN1hWI1&s=0" alt="wordPress">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp-H7mbR1mOhVFdmxF3CyId4JuZORaJlkyFu2a&s=0" alt="wordPress">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnA0nhzF0eVfwTQMDvmXvB9-TDu7VQ2d9Tv0p4Y0iJptyelcHkYZJh&s=0" alt="wordPress">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7htTH7q8j-TGD3x7AgbahNzXLaSpkrCnCB-kI&s=0" alt="wordPress">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTURCLyawZV5N54GZIjmoyPab78J3XSx7Q9J98N&s=0" alt="wordPress">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRivpDeDqCrJwwgI_9zcohTAc4-YNaxvl0ZR1r-&s=0" alt="wordPress">
+                <a>WordPress</a>
+                <a>GoDaddy</a>
+                <a>SquareSpace</a>
+                <a>Weebly</a>
+                <a>Shopify</a>
+                <a>Jimdo</a>
+            </div>
+
+        </div>
+        <div class="page">
+            <span class="page-logo current" style="background-position-x: -24px;width: 29px;"></span>
+            <span class="page-logo current" style="background-position-x: -54px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -75px;width: 18px;"></span>
+            <span class="page-logo" style="background-position-x: -96px;width: 190px;grid-column: 12/16"></span>
+            <span></span>
+            <span class="current">1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+            <span>6</span>
+            <span>7</span>
+            <span>8</span>
+            <span>9</span>
+            <span>10</span>
+            <span style="text-align: right;;grid-column: 12/16">Next</span>
+        </div>
+        
+    </div>
+    <footer>
+        <div class="first"> <a class="country"> Country </a> <span class="circle"></span><a class="city"><b>City </b>- From your Internet address - Use precise location - Learn more</a></div>
+        <div class="second">
+            <div>
+                <a>Help</a>
+                <a>Send Feedback</a>
+                <a>Privacy</a>
+                <a>Terms</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

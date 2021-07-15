@@ -1,0 +1,120 @@
+.material-icons-outlined{
+    color: #9aa0a6;
+}
+nav{
+    display: flex;
+    height:50px;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding:5px;
+}
+nav *{
+    padding: 10px;
+    margin:5px;
+}
+.nav-text{
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+}
+.nav-text:hover{
+    text-decoration: underline;
+}
+.apps{
+    font-size: 25px;
+    border-radius: 50%;
+    padding: 5px;
+}
+.avatar{
+    padding:0;
+    border-radius: 50%;
+    font-size: 35px;
+    border: 1px solid transparent;
+}
+.apps:hover, .avatar:hover{
+    background-color: rgba(0,0,0,.15);
+}
+.search-container{
+    display: flex;
+    height: 72vh;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.google-image{
+    margin-bottom: 25px;
+}
+.search-box{    
+    border-radius: 25px;
+    padding: 10px;
+    border: 1px solid #dfe1e5;
+    width: 90%;
+    max-width: 580px;
+    display: flex;
+    align-items: center;
+}
+.search-box:focus-visible,.search-box:hover{
+    box-shadow: 0 1px 6px rgba(32,33,36,.28);
+}
+.search-text{
+    background-color: none;
+    border: none;
+    padding: 0;
+}
+.search-text:focus-visible{
+    outline: none;
+    background-color: none;
+}
+.search-icon{
+    color:#9aa0a6;  
+    font-size: 20px;
+    margin-right: 10px;
+}
+.search-button{
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 8px 20px;
+    font-size: 14px;
+    color: #3c4043;
+    margin: 30px 4px;
+    background-color: #f8f9fa;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.search-button:hover{
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    color: #202124;
+    cursor: pointer;
+}
+footer{
+    position:fixed;
+    bottom: 0;
+    width: 100%;
+    color: rgba(0,0,0,.54);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    background-color: #f2f2f2;
+}
+.first{
+    font-size: 15px;
+    padding: 15px 30px;
+}
+.second {
+    border-top: 1px solid #dadce0;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+}
+.second div a{
+    margin-right: 10px;
+}
+.right{
+    text-align: right;
+    margin-right: 40px;
+}
+a{
+    text-decoration: n;
+}

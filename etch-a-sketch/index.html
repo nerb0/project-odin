@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etch-A-Sketch</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+      rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rubik+Mono+One" rel="stylesheet">
+    <link rel="shortcut icon" type="image/jpg" href="images/favicon.ico"/>
+</head>
+<body>
+    <h1 class="header">Etch-A-Sketch</h1>
+    <div class="sketch-container">
+        <div class="buttons">
+            <div style="position:relative">
+                <button class="btn reset" onclick="showSlider()">Create New Grid</button>
+                <div class="slider-container" id="sliderContainer">
+                    <input type="range" min="1" max="64" value="15" class="slider" id="slider">
+                    <p class="slider-text">SIZE: <span id="output">15 x 15</span></p>
+                    <div class="confirm-container">
+                        <button class="cancel" onclick="hideSlider()">CANCEL</button>
+                        <button class="submit" onclick="initiateGridSize()">OK</button>
+                    </div>
+                </div>
+            </div>
+            <div id="brush">
+                <div class="colors">
+                    <div class="color-container" id="primary">
+                        <input type="color" class="color-pick" id="primaryColor" name="primary" value="#000000">
+                    </div>
+                    <div class="color-container" id="secondary">
+                        <input type="color" class="color-pick" id="secondaryColor" name="secondary" value="#ffffff">
+                    </div>
+                    <div class="color-overlay" id="overlay"></div>
+                </div>
+
+                <div class="fill-container">
+                    <button id="defaultBrush"class="tool pencil currentBrush" onclick="setPencil(this)">
+                        <span class="material-icons-outlined">
+                        edit
+                        </span></button>
+                    <button class="tool bucket" onclick="setFill(this)">
+                        <span class="material-icons-outlined">
+                            format_color_fill
+                        </span>
+                    </button>
+                    <button class="tool eraser" onclick="setErase(this)">
+                    </button>
+                    <button class="tool clear" onclick="emptyCanvas()">
+                        <span class="material-icons-outlined">
+                            layers_clear
+                        </span>
+                    </button>
+                </div>
+                
+                <button class="btn active brush" onclick="setCustom(this)">Custom</button>
+                <button class="btn brush" onclick="setDark(this)">Darken</button>
+                <button class="btn brush"  onclick="setLight(this)">Lighten</button>
+                <button class="btn brush" onclick="setRGB(this)">RGB</button>
+            </div>
+            
+        </div>
+        <div class="draw-container">
+            <div style="position:relative; margin:5px">
+                <div id="background"></div>
+                <div class="grid-container" id="container">
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+    <div class="extras">
+        <div class="extra-container">
+            <input type="color" id="bgColorPick" class="bg-color-pick bg-pick">
+            <button id="bgTransparent" class="extraBtn btn bg-transparent bg-pick" onclick="setTransparent()">
+            <button class="extraBtn btn toggleGrid" onclick="toggleGrid()">Toggle Grid</button>
+            <button class="btn" id="snap" onclick="saveSketch()">Snap</button>
+        </div>
+    </div>
+</body>
+<script src="scripts/script.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
+</html>

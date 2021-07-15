@@ -1,0 +1,152 @@
+body{
+    margin: 0;
+}
+
+.btn{
+    border: none;
+    border-bottom-color: #00000057;
+    border-bottom-style: solid;
+    cursor: pointer;
+    font-weight: 500;
+    user-select: bold;
+}
+.btn:hover{
+    border-bottom-color: #0000007e;
+}
+.board-container, .over-lay{
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+}
+.board-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.board{
+    padding: 25px;
+    font-family:sans-serif;
+    font-size: 50px;
+    display: grid;
+    grid-template: repeat(3,1fr)/repeat(3,1fr);
+    border-radius: 10px;
+    gap: 10px;
+    width:300px;
+    height: 300px;
+    max-height: 400px;
+    max-width: 400px;
+}
+.cell{
+    display: flex;
+    border-radius: 5px;
+    background-color: bisque;
+    justify-content: center;
+    align-items: center;
+    border-bottom-width: 10px;
+    transition: border-bottom-width 0.2s;
+    font-weight: 500;
+}
+.cell:hover{
+    border-bottom-width: 15px;
+}
+.cell:active{
+    border-bottom-width: 0px;
+}
+.versus{
+    width: 100px
+}
+.menu-btn-container{
+    height: 70px;
+    width: 400px;
+    display:flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+.end-container{
+    display:grid;
+    background-color: rgba(255, 255, 255, 0.616);
+    grid-template-rows: repeat(2,1fr);
+    padding: 0px 10px 70px ;
+    margin-top: 60px;
+    border-radius: 10px;
+    height:260px;
+    width: 320px;
+    text-align: center;
+    align-items: flex-end;
+    justify-content: center;
+}
+#message{
+    font-family: Oswald;
+}
+.menu-btn{
+    height:50px;
+    font-weight: bolder;
+    border-radius: 5px;
+    transition: border-bottom 0.2s;
+}
+.menu-btn:hover{
+    height:55px;
+    border-bottom-width: 10px;
+}
+.menu-btn:active{
+    height:50px;
+    border-bottom-width: 0px;
+}
+.X{
+    color: white;
+    background-color: #3cc75a;
+}
+.O{
+    color: white;
+    background-color: #bb2323;
+}
+.U{
+    color: white;
+    background-color: rgb(15, 84, 187);
+}
+.W{
+    color: white;
+    background-color: #303f96;
+}
+.draw{
+    color: white;
+    background-color: #5a5a5a;
+}
+
+.over-lay{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 50px;
+    position: absolute;
+    background-color: #b1b1b14f;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+}
+.visible{
+    opacity: 1;
+    pointer-events: all;
+}
+.pop{
+    animation: pop-mark 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+@keyframes pop-mark{
+    0%{
+        font-size: 25px;
+        font-weight: 100;
+    }
+    45%{
+        font-size: 35px;
+        font-weight: 100;
+    }  
+    70%{
+        font-size: 55px;
+        font-weight: bold;
+    } 
+    100%{
+        font-size: 40px;
+        font-weight: 100;
+    }
+}

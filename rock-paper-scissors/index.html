@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock-Paper-Scissor</title>
+    <link rel="shortcut icon" type="image/jpg" href="images/favicon.ico"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DotGothic16|Fredoka+One">
+    <link rel="stylesheet" href="styles/style.css">
+    
+</head>
+<body>
+    <h1 class="title">Rock-Paper-Scissor</h1>
+    <div class="stand users-text">
+        <div> You</div>
+        <div> Enemy</div>
+    </div>
+    <div class="stand">
+        <div><p>Stand:</p>  <img class="profile" src="images/pepega.png"></img> </div>
+        <div id="result"></div>
+        <div><p>Stand:</p>  <img class="profile" src="images/5head.png"></img> </div>
+    </div>
+    <div class="stand lives">
+        <div class="lives-container" id="player-lives">
+            <img class="life" src="images/heart.png"></img> 
+            <img class="life" src="images/heart.png"></img> 
+            <img class="life" src="images/heart.png"></img> 
+            <img class="life" src="images/heart.png"></img> 
+            <img class="life" src="images/heart.png"></img> 
+        </div>
+        <div id="battle-result"></div>
+        <div class="lives-container" id="enemy-lives">
+            <img class="life" src="images/heart.png"></img>
+            <img class="life" src="images/heart.png"></img> 
+            <img class="life" src="images/heart.png"></img> 
+            <img class="life" src="images/heart.png"></img> 
+            <img class="life" src="images/heart.png"></img> 
+        </div>
+    </div>
+    <div class="battle">
+        <div class="weapon" id="option">
+            <div class="s active" id="rock"><i class="rock player"></i></div>
+            <div class="s" id="paper"><i class="paper player"></i></div>
+            <div class="s" id="scissor"><i class="scissors player"></i></div>
+        </div>
+        <div class="selected_container"><div class="select rock" id="player_select"></div><p id="player_selected_text">ROCK</p> </div>
+        <div class="middle"> 
+            <button id="fight" onclick="play()" onmousedown="button_down()" onmouseup="button_up()" onmouseout="button_up()">FIGHT!</button>
+            <button id="try_again" onclick="restart()" onmousedown="button_down()" onmouseup="button_up()" onmouseout="button_up()">TRY AGAIN!</button>
+        </div>
+        <div class="selected_container"><div class="select rock" id="computer_select"></div><p id="enemy_selected_text">?????</p> </div>
+        <div class="weapon" id="enemy">
+            <div class="d e-active" id="enemy_rock"><i class="rock enemy"></i></div>
+            <div class="d" id="enemy_paper"><i class="paper enemy"></i></div>
+            <div class="d" id="enemy_scissor"><i class="scissors enemy"></i></div>
+        </div>
+    </div>
+    <footer class="credits">
+        <b>Art by:</b><a href="https://dribbble.com/shots/2193123-Rock-Paper-Scissors" target="_blank"> sachajerrems</a>  
+    </footer>
+    <script src="scripts/script.js" type="text/javascript"></script>
+</body>
+
+</html>

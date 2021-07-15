@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined">
+</head>
+<body>
+    <h1>CALCULATOR</h1>
+    <div class="calc-container">
+        <div class="display-container" id="display" >
+            <div id="prev"></div>
+            <div id="res">
+            </div>
+        </div>
+        <div class="input-container" id="inputs">
+            <button id="clear" onclick="clearDisplay()">C</button>
+            <button id="backSpace" onclick="removeInput()">
+                <span class="material-icons-outlined">
+                    backspace
+                </span>
+            </button>
+            <button class="operator" data-value="power" id="^">xⁿ</button>
+            <button class="operator" data-value="divide" id="/">/</button>
+            <button class="number" data-value="7">7</button>
+            <button class="number" data-value="8">8</button>
+            <button class="number" data-value="9">9</button>
+            <button class="operator" data-value="multiply" id="x">
+                <span class="material-icons-outlined">
+                    close
+                </span></button>
+            <button class="number" data-value="4">4</button>
+            <button class="number" data-value="5">5</button>
+            <button class="number" data-value="6">6</button>
+            <button class="operator" data-value="subtract" id="-">-</button>
+            <button class="number" data-value="1">1</button>
+            <button class="number" data-value="2">2</button>
+            <button class="number" data-value="3">3</button>
+            <button class="operator" data-value="add" id="+">+</button>
+            <button class="number" data-value=".">.</button>
+            <button class="number" data-value="0">0</button>
+            <button id="equal" onclick="calculate()" data-value="equal" style="grid-column: 3/5;">=</button>
+        </div>
+    </div>
+</body>
+<script src="scripts/script.js"></script>
+</html>
