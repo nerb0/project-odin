@@ -15,14 +15,16 @@ function getNode(id){
     return document.querySelector(id);
 }
 function readLibrary(){
+    /* 
     while(booksTable.firstChild){
         booksTable.firstChild.remove();
-    }
-    library.forEach((book,idx) => {
-        addToLibrary(book,idx);
+    } 
+    */
+    library.forEach((book) => {
+        addToLibrary(book);
     });
 }
-function addToLibrary(book,idx){
+function addToLibrary(book){
     const bookNode = document.createElement('tr');
     const name = document.createElement('td');
     const nameText = document.createElement('p');
@@ -38,40 +40,40 @@ function addToLibrary(book,idx){
     const buttons = document.createElement('td');
     const editBtn = document.createElement('button');
     const removeBtn = document.createElement('button');
-    bookNode.id = `book${idx}`;
+    bookNode.id = `book${book.id}`;
 
     nameText.textContent = book.name; 
-    nameText.setAttribute('data-index', `n${idx}`); 
+    nameText.setAttribute('data-index', `n${book.id}`); 
     authorText.textContent = book.author;
-    authorText.setAttribute('data-index', `a${idx}`); 
+    authorText.setAttribute('data-index', `a${book.id}`); 
     decPage.className = 'page-btn minus';
     decPage.textContent = '<';
-    decPage.setAttribute('data-index', idx);
+    decPage.setAttribute('data-index', book.id);
     decPage.onclick = function(){pageDown(this)};
     addPage.className = 'page-btn add';
     addPage.textContent = '>';
-    addPage.setAttribute('data-index', idx);
+    addPage.setAttribute('data-index', book.id);
     addPage.onclick = function(){pageUp(this)};
     pageInput.setAttribute('type','number');
     pageInput.className = 'page';
     pageInput.setAttribute('value', book.currentPage);
     pageInput.setAttribute('max', book.totalPages);
     pageInput.setAttribute('min', 0);
-    pageInput.setAttribute('data-index', idx);
+    pageInput.setAttribute('data-index', book.id);
     pageInput.onchange = function(){changePage(this)};
 
     status.className = "status"
     statusText.className += 'status-text';
-    statusText.setAttribute('data-index', idx);
-    status.setAttribute('data-index', idx);
+    statusText.setAttribute('data-index', book.id);
+    status.setAttribute('data-index', book.id);
 
     editBtn.className = "edit book-btn material-icons";
     editBtn.textContent = 'edit';
-    editBtn.setAttribute('data-index', idx);
+    editBtn.setAttribute('data-index', book.id);
     editBtn.onclick = function(){editBook(this)};
     removeBtn.className = "remove book-btn material-icons";
     removeBtn.textContent = 'delete';
-    removeBtn.setAttribute('data-index', idx);
+    removeBtn.setAttribute('data-index', book.id);
     removeBtn.onclick = function(){removeBook(this)};
 
     if(book.status == STATE[2]) {
@@ -119,13 +121,14 @@ function addBook() {
     let name = titleCase(getNode('#name').value.split(" "));
     let author = titleCase(getNode('#author').value.split(" "));
     const newBook = new Book( 
+        max,
         name,
         author, 
         current.value, 
         total.value
         );
     localStorage.setItem(`${max++}`, JSON.stringify(newBook));
-    addToLibrary(newBook, library.length);
+    addToLibrary(newBook);
     newBook.addToLibrary();
     bookForm.reset();
     toggleForm();
@@ -133,9 +136,9 @@ function addBook() {
 }
 function removeBook(e){
     let i = e.getAttribute('data-index');
-    library.splice(i, 1);
-    localStorage.removeItem(`${i}`);
-    readLibrary();
+    library[i] = "";
+    localStorage.setItem(`${i}`, "");
+    document.getElementById(`book${i}`).remove();
 }
 function editBook(book){
     book.classList.toggle('on-edit-btn');
@@ -178,18 +181,26 @@ function editBook(book){
 function pageUp(e){
     let index = e.getAttribute('data-index');
     getNode(`input[data-index="${index}"]`).stepUp();
-    if(index != 'curr' && index != 'total') library[index].setPage(+library[index].currentPage + 1, index);
+    if(index != 'curr' && index != 'total') {
+        library[index].setPage(+library[index].currentPage + 1, index);
+        localStorage.setItem(`${index}`, JSON.stringify(library[index]));
+        localStorage.getItem(`${index}`);
+    }
     else if(index == 'total') setMax();
 }
 function pageDown(e){
     let index = e.getAttribute('data-index');
     getNode(`input[data-index="${index}"]`).stepUp(-1);
-    if(index != 'curr' && index != 'total') library[index].setPage(+library[index].currentPage - 1, index);
+    if(index != 'curr' && index != 'total') {
+        library[index].setPage(+library[index].currentPage - 1, index);
+        localStorage.setItem(`${index}`, JSON.stringify(library[index]));
+        localStorage.getItem(`${index}`);
+    }
     else if(index == 'total') setMax();
 }
 function changePage(e){
     let index = e.getAttribute('data-index');
-    library[index].setPage(+e.value, index);
+    library[index].setPage(+e.value);
     getNode(`input[data-index="${index}"]`).value = library[index].currentPage;
 }
 function disableButton(button){
@@ -203,7 +214,7 @@ function enableButton(button){
 /* 
     setting visual book state
 */
-function setStatus(id){
+function changeState(id){
     let status = getNode(`.status-text[data-index="${id}"]`);
     let bookRow = getNode(`#book${id}`);
     library[id].setStatus();
@@ -270,29 +281,34 @@ function toggleForm(){
 function setMax(){
     current.setAttribute('max',total.value);
 }
-function Book(name, author, currPage = 0, totalPages = 1600){
-    this.name = name;
-    this.author = author;
-    this.currentPage = currPage;
-    this.totalPages = totalPages;
-    if(this.currentPage == this.totalPages) this.status = STATE[2];
-    else if(this.currentPage > 0) this.status = STATE[1];
-    else this.status = STATE[0];
-    this.prevState = this.status;
-}
-Book.prototype.addToLibrary = function(){
-    library.push(this);
-}
-Book.prototype.setPage = function(page, index){
-    if(page <= this.totalPages && page >= 0) {
-        this.currentPage = page;
-        setStatus(index);
+
+
+class Book{
+    constructor(id, name, author, currPage = 0, totalPages = 1600){
+        this.id = id
+        this.name = name;
+        this.author = author;
+        this.currentPage = currPage;
+        this.totalPages = totalPages;
+        if(this.currentPage == this.totalPages) this.status = STATE[2];
+        else if(this.currentPage > 0) this.status = STATE[1];
+        else this.status = STATE[0];
+        this.prevState = this.status;
     }
-}
-Book.prototype.setStatus = function(){
-    if(this.currentPage == this.totalPages) this.status = STATE[2];
-    else if(this.currentPage > 0) this.status = STATE[1];
-    else this.status = STATE[0];
+    addToLibrary(){
+        library.push(this);
+    }
+    setPage(page, index){
+        if(page <= this.totalPages && page >= 0) {
+            this.currentPage = page;
+            changeState(index);
+        }
+    }
+    setStatus(){
+        if(this.currentPage == this.totalPages) this.status = STATE[2];
+        else if(this.currentPage > 0) this.status = STATE[1];
+        else this.status = STATE[0];
+    }
 }
 
 document.body.onload = () => {
@@ -308,21 +324,26 @@ function readStorage(){
             const keys = Object.keys(localStorage);
             let items = {...localStorage}, i = 0;
             for( i in items){
-                let book = JSON.parse(localStorage.getItem(i));
-                Object.assign(book, Book.prototype);
-                library.push(book);
+                let item = localStorage.getItem(i);
+                if(item != ""){
+                    let book = JSON.parse(item);
+                    Object.setPrototypeOf(book, Book.prototype.constructor.prototype);
+                    library.push(book);
+                    max = +book.id + 1;
+                }else{
+                    library.push("");
+                }
             }
-            max = i;
         }else{
             library = [
-                new Book("A Song of Fire and Ice", "George R.R Martin", 2, 506),
-                new Book("Sherlock Holmes", "Arthur Conan Doyle", 0, 400),
-                new Book("JS for Babies", "IDK", 205, 205)
+                new Book(0,"A Song of Fire and Ice", "George R.R Martin", 2, 506),
+                new Book(1,"Sherlock Holmes", "Arthur Conan Doyle", 0, 400),
+                new Book(2,"JS for Babies", "IDK", 205, 205)
             ];
             library.forEach((book,idx) => {
                 localStorage.setItem(`${idx}`, JSON.stringify(book));
             })
-            max = 2;
+            max = 3;
         }
         
     
@@ -360,4 +381,7 @@ function titleCase(input){
         input[idx] = word.substr(0,1).toUpperCase() + word.substr(1);
     });
     return input.join(' ');
+}
+function clear(){
+    localStorage.clear()
 }
