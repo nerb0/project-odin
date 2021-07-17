@@ -18,6 +18,7 @@ function createHome(){
     const featured = document.createElement('div');
     const featuredBg = document.createElement('div');
     featuredBg.className = "featured-bg";
+    featuredBg.id='<a href="http://www.freepik.com">Designed by roserodionova / Freepik</a>';
     featured.className = "featured";
 
     // create a container for the tagline
