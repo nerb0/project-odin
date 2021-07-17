@@ -1,0 +1,95 @@
+.featured{
+    position: relative;
+    height: 600px;
+    max-height: 45vh;
+    background-size:  700px 500px;
+    background-color: radial-gradient(circle, 100%, #ff7100,#fb6a02);
+    
+}
+.featured-bg{
+    position:absolute;
+    background: url(https://wallpapercave.com/wp/wp4056191.jpg) no-repeat right;
+    background-attachment: fixed;
+    background-position-y: -100px;
+    height: min(600px,45vh);
+    width: 100%;
+    z-index: -1;
+    background-size: 100%;
+}
+.tagline-container{
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+.tagline-container > *{
+    font-family: 'Montserrat';
+    margin: 0;
+    margin-bottom: 10px;
+}
+.tagline-container > h1{
+    color: white;
+    font-size: clamp(3rem, 10vw, 7rem);
+}
+.tagline-container > h2{
+    color: white;
+    font-size: clamp(2.4rem, 10vw, 5.5rem);
+}
+.tagline-container > h3{
+    color: white;
+    font-size: clamp(1.4rem, 5vw, 3rem);
+}
+.tagline-container > h4{
+    color: white;
+    font-size: clamp(1rem, 5vw, 2rem);
+}
+.schedule-container{
+    box-sizing:border-box;
+    position: absolute;
+    padding: 10px;
+    height: 100%;
+    width: 300px;
+    right:0;
+}
+.schedule{
+    box-sizing:border-box;
+    padding: 10px;
+    background-color: #ffffff6c;
+    height: 100%;
+}
+.sched-header{
+    height:4%; 
+    font-family: 'Work Sans';
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    margin:0;
+    text-align: center;
+}
+.sched-table{
+    box-sizing: border-box;
+    display: grid;
+    font-family: 'Montserrat';
+    padding: 10px;
+    font-size: 13px;
+    grid-template-columns: 1fr 2fr 1fr;
+    width: 100%;
+    height: 90%;
+}
+.sched-table > *{
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+.sched-table > :nth-child(3n + 1){
+    border-bottom: 2px solid #6e6e6e;
+}
+.sched-table > :nth-child(3n+3){
+    border-bottom: 2px solid #1cac1c;
+}
+.dotted{
+    width: 100%;
+    border-bottom: 1px dotted #000000;
+}
+.description{
+    height: 100vh;
+}

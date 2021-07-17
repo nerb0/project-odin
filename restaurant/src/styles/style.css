@@ -1,33 +1,32 @@
-@font-face {
-    font-family: 'Satisfy';
-    src: url(https://fonts.gstatic.com/s/satisfy/v11/rP2Hp2yn6lkG50LoCZOIHQ.woff2) format('woff2');
-}
-@font-face {
-    font-family: 'Work Sans';
-    src: url(https://fonts.gstatic.com/s/worksans/v9/QGY_z_wNahGAdqQ43RhVcIgYT2Xz5u32K0nXBi8Jpg.woff2) format('woff2');
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&family=Raleway:wght@900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap');
 body{
     margin: 0;
     width:100vw;
     overflow-x: hidden;
 }
-.logo{
-    font-family: 'Satisfy';
-    font-size: 30px;
-    margin:10px 0;
-    user-select: none;
-}
 #header{
-    width: 100%;
     height: fit-content;
     text-align: center;
 }
+.logo{
+    height: 40px;
+    margin-bottom: -15px;
+}
+.logoText{
+    font-family: 'Raleway';
+    font-size: 30px;
+    font-weight: bolder;
+    margin: 0;
+    user-select: none;
+    color: #f5c113;
+    text-shadow: 0 1px #272727, 0 -1px #272727,
+        1px 0 #272727, -1px 0 #272727;
+}
 .link-container{
-    width:100%;
     display: flex;
     justify-content: center;
     border-bottom: 1px solid #979797;
-    
 }
 #links{
     width: 350px;
@@ -57,31 +56,10 @@ body{
     right:30px;
     bottom: -5px;
 }
-#links > a:not(.active):hover:after{
-    content: "";
-    position: absolute;
-    opacity: 0.4;
-    border-bottom: 2px solid #272727;
-    left:30px;
-    right:30px;
-    bottom: -5px;
-}
 .active{
     position: relative;
     font-size: 18px;
     font-weight: bold;
-}
-.active::after{
-    content: "";
-    position: absolute;
-    opacity: 1;
-    border-bottom: 2px solid #272727;
-    left:20px;
-    right:20px;
-    bottom: -5px;
-    transition: opacity 0.5s,
-        left 0.3s,
-        right 0.3s;
 }
 #links > a:not(.active){
     opacity: 0.5;
@@ -94,4 +72,49 @@ body{
 }
 #links > a:not(.active):active{
     font-size: 20px;
+}
+#links > a:after{
+    transition: opacity 0.5s,
+        left 0.3s,
+        right 0.3s;
+}
+#links > a:not(.active):after{
+    content: "";
+    position: absolute;
+    opacity: 0;
+    border-bottom: 2px solid #272727;
+    left:100px;
+    right:100px;
+    bottom: -5px;
+}
+#links > a:not(.active):hover:after{
+    content: "";
+    position: absolute;
+    opacity: 0.4;
+    border-bottom: 2px solid #272727;
+    left:30px;
+    right:30px;
+    bottom: -5px;
+}
+.active::after{
+    content: "";
+    position: absolute;
+    opacity: 1;
+    border-bottom: 2px solid #272727;
+    left:20px;
+    right:20px;
+    bottom: -5px;
+}
+.featured{
+    width:100%;
+}
+
+
+@font-face {
+    font-family: 'Satisfy';
+    src: url(https://fonts.gstatic.com/s/satisfy/v11/rP2Hp2yn6lkG50LoCZOIHQ.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'Work Sans';
+    src: url(https://fonts.gstatic.com/s/worksans/v9/QGY_z_wNahGAdqQ43RhVcIgYT2Xz5u32K0nXBi8Jpg.woff2) format('woff2');
 }
