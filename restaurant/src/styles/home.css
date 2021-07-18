@@ -116,11 +116,12 @@
     background-color: transparent;
     font-family: 'Montserrat';
     font-size: 20px;
+    width: 100%;
+    text-align: center;
 }
 .desc-btn{
     position: relative;
     display: flex;
-    justify-content: center;
     align-items: center;
     height: 25px;
     width:200px;
@@ -131,5 +132,6 @@
     background-color: #f5c113;
 }
 .btn-image{
+    text-align: left;
     height: 100%;
 }
