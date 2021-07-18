@@ -2,6 +2,7 @@ import './styles/style.css';
 import createHome from './scripts/home.js';
 import * as util from './scripts/util.js';
 import log from './images/logo2.png';
+import gh from './images/github-64.png';
 
 
 
@@ -14,10 +15,31 @@ let tabFunction = {
     menu: something,
     contact: something
 }
+function createFooter(){
+    const footer = document.createElement('div');
+    footer.className = "footer";
+
+    const credits = document.createElement('p');
+    credits.textContent = 'Logo vector created by ';
+    credits.className = 'credits';
+    const creditLink = document.createElement('a');
+    creditLink.href = "https://www.freepik.com/vectors/logo"
+    creditLink.textContent = 'roserodionova - www.freepik.com';
+
+    const about = new Image()
+    about.className = 'github';
+    about.src = gh;
+    about.setAttribute('align', 'right')
+    credits.appendChild(creditLink);
+    credits.appendChild(about);
+    footer.appendChild(credits);
+
+    return footer
+}
+
 function initiatePage(){
     // get div#content
     const body = document.getElementById('content');
-    const footer = document.createElement('div');
     
     // create container for the header
     const container = document.createElement('div');
@@ -69,7 +91,6 @@ function initiatePage(){
         links.appendChild(link);
     });
 
-    footer.className = "footer";
 
     // Create container for the content of each tab
     const main = document.createElement('div');
@@ -79,13 +100,13 @@ function initiatePage(){
     linkContainer.appendChild(links)
     container.appendChild(logo); // add the logo in a container to center
     container.appendChild(logoText); 
+
     body.appendChild(container); // add the logo first because
     body.appendChild(linkContainer); // insert the links after
     body.appendChild(main);
-    body.appendChild(footer);
+    body.appendChild(createFooter());
 }   
 
 
-
 initiatePage();
-createHome();
+tabFunction[current]();

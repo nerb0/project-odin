@@ -95,11 +95,7 @@
     box-sizing: border-box;
     margin-left:clamp(15%, 2vw, 25%);
     margin-right:clamp(15%, 2vw, 25%);
-    height:500px;
     padding:20px;
-}
-.description{
-    height: 100%;
 }
 .desc-image{
     height:clamp(100px, 20vw, 250px);
@@ -128,7 +124,6 @@
     padding: 8px 20px;
     border-radius: 100px;
     margin: 0 auto;
-    margin-top: 70px;
     background-color: #f5c113;
 }
 .btn-image{
