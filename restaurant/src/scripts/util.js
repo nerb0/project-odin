@@ -1,7 +1,7 @@
 
 // remove the active class on every nodes in an array of HTML elements
-const removeActiveList = (arr) =>{
-    arr.forEach((node) => node.classList.remove('active'))
+const removeClass = (arr, c) => {
+    arr.forEach((node) => node.classList.remove(c))
 }
 
 // hide node if viewport is small
@@ -49,7 +49,7 @@ export {
     createMain,
     insertToMain,
     insertChildren,
-    removeActiveList,
+    removeClass,
     checkViewport,
     nodeResize
 }
