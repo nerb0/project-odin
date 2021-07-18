@@ -91,15 +91,57 @@ function createMenu(){
     const content = util.createContainer('main');
     const menuContainer = document.createElement('div');
     menuContainer.className = "menu-container";
-    if(window.innerWidth < 1160) menuContainer.style.gridTemplateColumns = '1fr';
-    else menuContainer.style.gridTemplateColumns = '8fr 2fr';
-     
-    window.addEventListener('resize', () => {
-        if(window.innerWidth < 1160) menuContainer.style.gridTemplateColumns = '1fr';
-        else menuContainer.style.gridTemplateColumns = '8fr 2fr';
+    const drawer =  document.createElement('div');
+    drawer.id = "mini-drawer";
+    drawer.className = "mini-drawer";
+    
+    const burgerBtn = document.createElement('button');
+    burgerBtn.textContent = "Burgers";
+    burgerBtn.id = "burgers";
+    burgerBtn.className = "drawer-btn curr";
+    const drinkBtn = document.createElement('button');
+    drinkBtn.textContent = "Drinks";
+    drinkBtn.id = "drinks";
+    drinkBtn.className = "drawer-btn";
+    const comboBtn = document.createElement('button');
+    comboBtn.textContent = "Combo";
+    comboBtn.id = "combos";
+    comboBtn.className = "drawer-btn";
+    let buttons = [burgerBtn, drinkBtn, comboBtn];
+    buttons.forEach((button) => {
+        button.classList.add("btn");
+        button.onclick = () =>{
+            if(!button.classList.contains('curr')){
+                const newMeal = createMeals(Math.floor(Math.random() * 8 + 2), options[button.id]);
+                util.insertTo(newMeal, 'meal-container');
+                util.removeClass(buttons, 'curr')
+                button.classList.add('curr')
+            }
+        }
     })
+    util.insertChildren(drawer, [burgerBtn, drinkBtn, comboBtn]);
+
+    if(window.innerWidth < 1160) {
+        menuContainer.style.gridTemplateColumns = '1fr';
+        drawer.style.display = "grid"
+    }
+    else {
+        menuContainer.style.gridTemplateColumns = '8fr 2fr';
+        drawer.style.display = "none"
+    }
+
+    window.onresize = () => {
+        if(window.innerWidth < 1160) {
+            menuContainer.style.gridTemplateColumns = '1fr';
+            drawer.style.display = "grid"
+        }
+        else {
+            menuContainer.style.gridTemplateColumns = '8fr 2fr';
+            drawer.style.display = "none"
+        }
+    }
     util.insertChildren(menuContainer, [initiateMeal(9, options.burgers), createOptions()]);
-    util.insertChildren(content, [menuContainer]);
+    util.insertChildren(content, [drawer, menuContainer]);
     util.insertTo(content, 'main-container');
 }
 export default createMenu

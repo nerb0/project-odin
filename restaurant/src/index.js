@@ -11,7 +11,7 @@ import gh from './images/github-64.png';
 
 
 
-let current = 'contact';
+let current = 'menu';
 let tabFunction = {
     home: createHome,
     menu: createMenu,
