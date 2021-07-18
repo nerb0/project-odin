@@ -10,7 +10,7 @@ import gh from './images/github-64.png';
 const something = () => {
     console.log('waw')
 }
-let current = 'home';
+let current = 'menu';
 let tabFunction = {
     home: createHome,
     menu: createMenu,
