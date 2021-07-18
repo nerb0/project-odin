@@ -1,5 +1,7 @@
+/* 
 import '../styles/style.css';
-import '../styles/menu.css';
+import '../styles/menu.css'; 
+*/
 import * as util from './util.js';
 import borgir from '../images/logo2.png';
 import drink from '../images/3.png';
@@ -14,6 +16,13 @@ const options = {
 function createMeals(len, type){
     const mealSubContainer = util.createContainer('mealSubContainer');
     mealSubContainer.className = "meal-sub-container";
+    if(window.innerWidth < 1160) mealSubContainer.style.gridTemplateColumns = `repeat(${Math.floor(window.innerWidth/200)}, 1fr)`;
+    else mealSubContainer.style.gridTemplateColumns = 'repeat(5, 1fr)';
+     
+    window.addEventListener('resize', () => {
+        if(window.innerWidth < 1160) mealSubContainer.style.gridTemplateColumns = `repeat(${Math.floor(window.innerWidth/200)}, 1fr)`;
+        else mealSubContainer.style.gridTemplateColumns = `repeat(5, 1fr)`;;
+    })
     const meals = [];
     for(let i = 0; i < len; i++){
         const meal = document.createElement('div');
@@ -39,13 +48,7 @@ function initiateMeal(len, type){
     const mealContainer = util.createContainer('meal-container');
     mealContainer.className = 'meal-container';
     const mealSubContainer = createMeals(len, type);
-    if(window.innerWidth < 1160) mealSubContainer.style.gridTemplateColumns = `repeat(${Math.floor(window.innerWidth/220)}, 1fr)`;
-    else mealSubContainer.style.gridTemplateColumns = 'repeat(5, 1fr)';
-     
-    window.addEventListener('resize', () => {
-        if(window.innerWidth < 1160) mealSubContainer.style.gridTemplateColumns = `repeat(${Math.floor(window.innerWidth/250)}, 1fr)`;
-        else mealSubContainer.style.gridTemplateColumns = `repeat(5, 1fr)`;;
-    })
+    
     util.insertChildren(mealContainer, [mealSubContainer]);
     return mealContainer;
 }
@@ -70,10 +73,13 @@ function createOptions(){
     buttons.forEach((button) => {
         button.classList.add("btn");
         button.onclick = () =>{
-            const newMeal = createMeals(Math.floor(Math.random() * 8 + 2), options[button.id]);
-            util.insertTo(newMeal, 'meal-container');
-            util.removeClass(buttons, 'current')
-            button.classList.add('current')
+            if(!button.classList.contains('current')){
+                const newMeal = createMeals(Math.floor(Math.random() * 8 + 2), options[button.id]);
+                util.insertTo(newMeal, 'meal-container');
+                util.removeClass(buttons, 'current')
+                button.classList.add('current')
+            }
+            
         }
     })
 

@@ -1,5 +1,7 @@
+/* 
 import '../styles/style.css';
-import '../styles/home.css';
+import '../styles/home.css'; 
+*/
 import * as util from './util.js';
 import bandf from '../images/4.png';
 import ok from '../images/1.png';
@@ -113,7 +115,7 @@ function createHome(){
     //create a wide div for feature food
     const featured = document.createElement('div');
     featured.className = "featured";
-    util.nodeResize(featured, '150vw' , '120vw');
+    util.nodeResize(featured, '160vw' , '130vw');
     window.addEventListener('resize' , 
         () => util.nodeResize(featured, '150vw' , '120vw'),
         false);

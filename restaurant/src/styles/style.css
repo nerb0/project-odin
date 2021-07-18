@@ -114,7 +114,7 @@ body{
     padding: 5px 5px;
     font-size: 12px;
     font-family: 'Work Sans';
-    height: 20px;
+    height: 25  px;
     display: flex;
     align-items: center;
 }
@@ -127,12 +127,15 @@ body{
     color: white;
 }
 .credits{
-    width: calc(100% - 20px);
+    width: calc(100% - 50px);
 }
 .github{
-    
-    height: 15px;
-    width: 15px;
+    padding:3px;
+    height: 20px;
+    border-radius: 50%;
+}
+.github:hover{
+    background-color: white;
 }
 #main{
     animation: fade-in 1s;

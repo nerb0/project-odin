@@ -12,11 +12,11 @@ const checkViewport = (node, size, display) => {
     window.addEventListener('resize',() => {
         if(window.innerWidth < size) node.style.display = "none";
         else node.style.display = display;
-    });
+    }, false);
 }
 // resize node background if viewport is small
 const nodeResize = (node, min, max) => {
-    if(window.innerWidth < 1000)  {
+    if(window.innerWidth < 1200)  {
         node.style.backgroundPositionY = 'top';
         node.style.backgroundSize = min;
     }

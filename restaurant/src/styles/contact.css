@@ -1,0 +1,41 @@
+.map-container{
+    position: relative;
+    width: 100%;
+}
+.map-image{
+    width:100%;
+}
+.map-gps{
+    position:absolute;
+    display: grid;
+    grid-template-rows: 8fr 1fr;
+    top: 45%;
+    right: 50%;
+    text-align: center;
+    font-family: 'Work Sans';
+    font-size: clamp(10px, 2vw, 13px);
+}
+.map-arrow{
+    position: relative;
+    height: min(3vw, 50px)
+}
+.map-message{
+    position:relative;
+}
+.map-arrow:hover{
+    height: min(3.2vw, 55px)
+}
+.map-message::after{
+    text-decoration: none;
+    position:absolute;
+    content: "";
+    opacity: 0;
+    width: 100px;
+    left:-25px;
+    transition: opacity 0.4s;
+    color:black
+}
+.map-arrow:hover + .map-message::after{
+    opacity: 1;
+    content: "We are here";
+}

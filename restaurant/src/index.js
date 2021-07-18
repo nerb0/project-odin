@@ -1,20 +1,21 @@
 import './styles/style.css';
+import './styles/contact.css';
+import './styles/menu.css';
+import './styles/home.css';
 import createHome from './scripts/home.js';
 import createMenu from './scripts/menu.js';
+import createContact from './scripts/contact.js';
 import * as util from './scripts/util.js';
 import log from './images/logo2.png';
 import gh from './images/github-64.png';
 
 
 
-const something = () => {
-    console.log('waw')
-}
-let current = 'menu';
+let current = 'contact';
 let tabFunction = {
     home: createHome,
     menu: createMenu,
-    contact: something
+    contact: createContact
 }
 function createFooter(){
     const footer = document.createElement('div');
@@ -27,14 +28,17 @@ function createFooter(){
     creditLink.href = "https://www.freepik.com/vectors/logo"
     creditLink.textContent = 'roserodionova / Freepik';
 
-    const about = new Image()
-    about.className = 'github';
-    about.src = gh;
-    about.setAttribute('align', 'right')
+    const github = new Image()
+    const about = document.createElement('a');
+    about.href = "https://arch-bsoj.github.io/project-odin/";
+    about.target = "_blank"
+    github.className = 'github';
+    github.src = gh;
+    github.setAttribute('align', 'right')
+    about.appendChild(github)
     credits.appendChild(creditLink);
-    credits.appendChild(about);
     footer.appendChild(credits);
-
+    footer.appendChild(about);
     return footer
 }
 

@@ -56,7 +56,7 @@
 .schedule{
     box-sizing:border-box;
     padding: 10px;
-    background-color: #ffffff6c;
+    background-color: #f5c01380;
     height: 90%;
 }
 .sched-header{
@@ -85,6 +85,8 @@
 .sched-table > :nth-child(3n+3){
     box-sizing: border-box;
     border-bottom: 2px solid #1cac1c;
+    font-weight: 700;
+    color:white;
     margin: 0 5px
 }
 .sched-table > :nth-child(3n + 2){
@@ -93,6 +95,7 @@
 }
 .description-container{
     box-sizing: border-box;
+    margin-top: 50px;
     margin-left:clamp(15%, 2vw, 25%);
     margin-right:clamp(15%, 2vw, 25%);
     padding:20px;
@@ -115,7 +118,7 @@
     width: min(200px,30%);
     padding: 8px 20px;
     border-radius: 100px;
-    margin: 0 auto;
+    margin: 50px auto;
     background-color: #f5c113;
 }
 .btn-image{
