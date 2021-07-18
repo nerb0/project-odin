@@ -34,7 +34,9 @@ function initiatePage(){
     home.textContent = "Home";
     menu.textContent = "Menu";
     contact.textContent = "Contact";
-
+/* 
+    CHANGE THE link list to be function;
+*/
     // insert the elements to an object so other scripts will be able to access the elements.
     util.setlinkList({home, menu, contact});
     util.linkList[util.current].classList.add('active');
@@ -56,7 +58,7 @@ function initiatePage(){
 
     footer.className = "footer";
 
-    // Create temporary element for the content of each tab
+    // Create container for the content of each tab
     const main = document.createElement('div');
     main.id = "main-container";
 
@@ -66,7 +68,7 @@ function initiatePage(){
     container.appendChild(logoText); 
     body.appendChild(container); // add the logo first because
     body.appendChild(linkContainer); // insert the links after
-    body.appendChild(main)
+    body.appendChild(main);
     body.appendChild(footer);
     createHome();
 }   

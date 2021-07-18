@@ -4,48 +4,38 @@ import './util.js';
 
 const DAYS = ['Sunday' ,'Monday' ,'Tuesday', 'Wednesday', 'Thursday' ,'Friday' ,'Saturday']
 
-function createHome(){
-    // remove the main content if there is
-    const prev = document.getElementById('main');
-    if(prev) prev.remove(); 
-
-    // create new one
-    const content = document.createElement('div');
-    content.id = "main";
-    content.className = "content";
-    
-    //create a wide div for feature food
-    const featured = document.createElement('div');
-    const featuredBg = document.createElement('div');
-    featuredBg.className = "featured-bg";
-    featuredBg.id='<a href="http://www.freepik.com">Designed by roserodionova / Freepik</a>';
-    featured.className = "featured";
-
+// create tagline
+function createTagline(){
     // create a container for the tagline
     const taglineContainer = document.createElement('div')
     taglineContainer.className = "tagline-container"
 
     // create a node for the biggest font
-    const firstTag = document.createElement('h1');
+    const firstTag = document.createElement('div');
     firstTag.textContent = "CHONKY";
 
     // create a node for the 2nd biggest font
-    const secondTag = document.createElement('h2');
+    const secondTag = document.createElement('div');
     secondTag.textContent = "JUICY";
 
     // create a node for the 2nd biggest font
-    const dogtag = document.createElement('h3');
-    dogtag.textContent = "cheesy";
+    const dogtag = document.createElement('div');
+    dogtag.textContent = "CHEESY";
     
     // create a node for the 2nd biggest font
-    const esetag = document.createElement('h4');
-    esetag.textContent = "tasty";
+    const esetag = document.createElement('div');
+    esetag.textContent = "Tasty";
     
     taglineContainer.appendChild(firstTag);
     taglineContainer.appendChild(secondTag);
     taglineContainer.appendChild(dogtag);
     taglineContainer.appendChild(esetag);
 
+    return taglineContainer;
+}
+
+// create sched
+function createSchedule(){
     /* 
         SCHEDULE
     */
@@ -77,18 +67,43 @@ function createHome(){
     schedule.appendChild(schedHeader)
     schedule.appendChild(schedTable);
     scheduleContainer.appendChild(schedule);
-    featured.appendChild(featuredBg);
-    featured.appendChild(scheduleContainer);
-    featured.appendChild(taglineContainer);
+    return scheduleContainer;
+}
 
+// create description
+function createDescription(){
     // create container for description
     const description = document.createElement('div');
     description.className = "description";
 
     const profile = document.createElement('div');
+    description.appendChild(profile);
 
-    content.appendChild(featured)
-    content.appendChild(description)
+    return description;
+}
+
+
+function createHome(){
+    // remove the main content if there is
+    const prev = document.getElementById('main');
+    if(prev) prev.remove(); 
+
+    // create new one
+    const content = document.createElement('div');
+    content.id = "main";
+    content.className = "content";
+    
+    //create a wide div for feature food
+    const featured = document.createElement('div');
+    const featuredBg = document.createElement('div');
+    featured.className = "featured";
+    // featuredBg.id='<a href="http://www.freepik.com">Designed by roserodionova / Freepik</a>';
+    // featured.appendChild(featuredBg);
+    featured.appendChild(createSchedule());
+    featured.appendChild(createTagline());
+
+    content.appendChild(featured);
+    content.appendChild(createDescription());
     document.getElementById('main-container').appendChild(content)
     return 'home';
 }
