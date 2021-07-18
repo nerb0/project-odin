@@ -23,13 +23,13 @@
 }
 .map-arrow{
     position: relative;
-    height: min(3vw, 50px)
+    height: min(5.5vw, 50px)
 }
 .map-message{
     position:relative;
 }
 .map-arrow:hover{
-    height: min(3.2vw, 55px)
+    height: min(5.8vw, 55px);
 }
 .map-message::after{
     text-decoration: none;
