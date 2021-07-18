@@ -115,7 +115,7 @@
     border: none;
     background-color: transparent;
     font-family: 'Montserrat';
-    font-size: 20px;
+    font-size: clamp(12px, 3vw, 20px);
     width: 100%;
     text-align: center;
 }
@@ -124,7 +124,7 @@
     display: flex;
     align-items: center;
     height: 25px;
-    width:200px;
+    width: min(200px,30%);
     padding: 8px 20px;
     border-radius: 100px;
     margin: 0 auto;
