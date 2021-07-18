@@ -5,26 +5,29 @@
     min-height: 800px;
 }
 .meal-container{
+    padding:10px;
+    border-right: 1px solid #e0e0e0;
+}
+.meal-sub-container{
     box-sizing: border-box;
     display: grid;
-    padding:10px;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
-    border-right: 1px solid #e0e0e0;
-    text-align: center;
+    border: 1px solid #f5c113;
 }
-.meal-container > div{
+.meal-sub-container > div{
     cursor: pointer;
     padding:10px 5px;
     position: relative;
     height: 300px;
-    border: 1px solid #f5c113;
+    transition: background-color 0.3s;
+    text-align: center;
 }
-.meal-container > div:hover{
+.meal-sub-container > div:hover{
     background-color: #f5c113;
 }
-.meal-container > div:hover::after{
-    border-color: white;
+.meal-sub-container > div:hover::after{
+    border-color: white;    
 }
 .meal-name{
     font-family: 'Work Sans';
@@ -34,9 +37,16 @@
 }
 .meal-price{
     font-family: 'Work Sans';
-    text-align: right;
+    text-align: center;
+    background-color: #f5c113;
+    width:60px;
+    border-radius: 10px;
+    transition: background-color 0.3s;
 }
-.meal-container > div::after{
+.meal-sub-container > div:hover .meal-price{
+    background-color: white;
+}
+.meal-sub-container > div::after{
     position: absolute;
     content: "";
     padding: 3px;
@@ -49,6 +59,36 @@
 
 
 .options-container{
+    box-sizing: border-box;
     display: grid;
-    width: 20%;
+    grid-template-rows: repeat(3, 1fr);
+    height: 400px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+.options-container > button:not(.current){
+    box-sizing: border-box;
+    height:60px;
+    width:200px;
+    background-color: #f5c113;
+    border-radius: 50px;
+    transition: background-color 0.5s;
+}
+.options-container > button:hover:not(.current){
+    height:70px;
+}
+.options-container > button:active:not(.current){
+    height:55px;
+}
+.current{
+    cursor: default;
+    background-color: white;
+    border: 2px solid #f5c113;
+    height:60px;
+    width:200px;
+    border-radius: 50px
+}
+.no-border-right{
+    border-right: none;
 }

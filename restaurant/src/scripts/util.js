@@ -5,13 +5,13 @@ const removeClass = (arr, c) => {
 }
 
 // hide node if viewport is small
-const checkViewport = (node) => {
-    if(window.innerWidth < 900) node.style.display = "none";
-    else node.style.display = "block";
+const checkViewport = (node, size, display) => {
+    if(window.innerWidth < size) node.style.display = "none";
+    else node.style.display = display;
     
     window.addEventListener('resize',() => {
-        if(window.innerWidth < 900) node.style.display = "none";
-        else node.style.display = "block";
+        if(window.innerWidth < size) node.style.display = "none";
+        else node.style.display = display;
     });
 }
 // resize node background if viewport is small
@@ -31,23 +31,22 @@ const insertChildren = (parent, arr) => {
     });
 }
 // insert to main-container
-const insertToMain = (content) => document.getElementById('main-container').appendChild(content);
-const createMain = () =>{
+const insertTo = (content, parent) => document.getElementById(parent).appendChild(content);
+const createContainer = (id) =>{
     // remove the main content if there is
-    const prev = document.getElementById('main');
+    const prev = document.getElementById(id);
     if(prev) prev.remove(); 
 
     // create new one
     const content = document.createElement('div');
-    content.id = "main";
-    content.className = "content";
+    content.id = id;
     return content;
 }
 
 
 export {
-    createMain,
-    insertToMain,
+    createContainer,
+    insertTo,
     insertChildren,
     removeClass,
     checkViewport,

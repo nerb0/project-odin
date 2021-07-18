@@ -39,7 +39,7 @@ function createSchedule(){
     // create a container for schedule inside the featured div
     const scheduleContainer = document.createElement('div');
     scheduleContainer.className = "schedule-container";
-    util.checkViewport(scheduleContainer);
+    util.checkViewport(scheduleContainer, 900, 'block');
 
 
     // create the schedule div
@@ -108,8 +108,8 @@ function createDescription(){
 
 
 function createHome(){
-    const content = util.createMain();
-    
+    const content = util.createContainer('main');
+
     //create a wide div for feature food
     const featured = document.createElement('div');
     featured.className = "featured";
@@ -120,7 +120,7 @@ function createHome(){
 
     util.insertChildren(featured, [createSchedule(), createTagline()]);
     util.insertChildren(content,[featured,createDescription()])
-    util.insertToMain(content);
+    util.insertTo(content, 'main-container');
     return 'home';
 }
 

@@ -107,14 +107,6 @@
     text-align: justify;
     word-wrap: break-word;
 }
-.btn{
-    border: none;
-    background-color: transparent;
-    font-family: 'Montserrat';
-    font-size: clamp(12px, 3vw, 20px);
-    width: 100%;
-    text-align: center;
-}
 .desc-btn{
     position: relative;
     display: flex;
