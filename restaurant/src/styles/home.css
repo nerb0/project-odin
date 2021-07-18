@@ -4,7 +4,7 @@
     height: min(400px, 45vh);
     background: url(https://wallpapercave.com/wp/wp4056191.jpg) no-repeat right;
     background-attachment: fixed;
-    background-position-y: top;
+    background-position-y: center;
     box-shadow: inset 0 0 10em 10em #00000060;
     padding:10px;
     background-size: 100vw;
@@ -29,21 +29,21 @@
 }
 .tagline-container > :first-child{
     color: white;
-    font-size: clamp(60px, 6vw, 120px);
+    font-size: clamp(60px, 10vh, 120px);
     margin:-10px 0;
 }
 .tagline-container > :nth-child(2){
     color: white;
-    font-size: clamp(50px, 6vw, 100px);
+    font-size: clamp(50px, 10vh, 100px);
     margin:-10px 0;
 }
 .tagline-container > :nth-child(3){
     color: white;
-    font-size: clamp(30px, 4vw, 60px);
+    font-size: clamp(30px, 6vh, 60px);
 }
 .tagline-container > :last-child{
     color: white;
-    font-size: clamp(10px, 6vw, 30px);
+    font-size: clamp(20px, 6vh, 40px);
 }
 .schedule-container{
     box-sizing: border-box;
@@ -62,7 +62,7 @@
 .sched-header{
     height:4%; 
     font-family: 'Work Sans';
-    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    font-size: clamp(1.2rem, 3vh, 2rem);
     margin:0;
     text-align: center;
 }
@@ -79,16 +79,15 @@
 .sched-table > *{
     box-sizing: border-box;
     display: flex;
-    justify-content: center;
     align-items: flex-end;
-}
-.sched-table > :nth-child(3n + 1){
-    border-bottom: 2px solid #6e6e6e;
+    justify-content: center;
 }
 .sched-table > :nth-child(3n+3){
+    box-sizing: border-box;
     border-bottom: 2px solid #1cac1c;
+    margin: 0 5px
 }
-.dotted{
+.sched-table > :nth-child(3n + 2){
     width: 100%;
     border-bottom: 1px dotted #000000;
 }

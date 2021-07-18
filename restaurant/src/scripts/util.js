@@ -1,12 +1,4 @@
 
-let current = 'home';   // Implies the current active tab
-let linkList = {};      // container for the tab link nodes
-
-// set method for current
-const setCurrent = (curr) => current = curr;    
-
-// set method for the list of tab links
-const setlinkList = (values) => linkList = values;
 
 // remove the active class on every nodes in an array of HTML elements
 const removeActiveList = (arr) =>{
@@ -14,11 +6,22 @@ const removeActiveList = (arr) =>{
         node.classList.remove('active');
     })
 }
+const checkViewport = (node) => {
+    if(window.innerWidth < 700) node.style.display = "none";
+    else node.style.display = "block";
+    
+    window.onresize = () => {
+        if(window.innerWidth < 700) node.style.display = "none";
+        else node.style.display = "block";
+    }
+}
+const insertToMain = (content) => {
+    document.getElementById('main-container').appendChild(content);
+}
+
 
 export {
-    current,
-    linkList,
-    setlinkList,
-    setCurrent,
-    removeActiveList
+    insertToMain,
+    removeActiveList,
+    checkViewport
 }

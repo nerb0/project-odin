@@ -1,8 +1,9 @@
 import '../styles/style.css';
 import '../styles/home.css';
-import './util.js';
+import * as util from './util.js';
 
 const DAYS = ['Sunday' ,'Monday' ,'Tuesday', 'Wednesday', 'Thursday' ,'Friday' ,'Saturday']
+
 
 // create tagline
 function createTagline(){
@@ -42,6 +43,8 @@ function createSchedule(){
     // create a container for schedule inside the featured div
     const scheduleContainer = document.createElement('div');
     scheduleContainer.className = "schedule-container";
+    util.checkViewport(scheduleContainer);
+
 
     // create the schedule div
     const schedule = document.createElement('div');
@@ -60,7 +63,6 @@ function createSchedule(){
         schedTableElements.push(node);
         if(i%3 == 0) node.textContent = DAYS[i/3];
         else if(i%3 == 2) node.textContent = "OPEN";
-        else node.className = "dotted"
         schedTable.appendChild(node);
     }
     // Append all necessary elements in order
@@ -95,18 +97,25 @@ function createHome(){
     
     //create a wide div for feature food
     const featured = document.createElement('div');
-    const featuredBg = document.createElement('div');
     featured.className = "featured";
+    if(window.innerWidth < 700)  {
+        featured.style.backgroundPositionY = 'top';
+        featured.style.backgroundSize = '150vw';
+    }
+    else {
+        featured.style.backgroundPositionY = 'center';
+        featured.style.backgroundSize = '120vw';
+    }
+    
+
     // featuredBg.id='<a href="http://www.freepik.com">Designed by roserodionova / Freepik</a>';
     // featured.appendChild(featuredBg);
     featured.appendChild(createSchedule());
     featured.appendChild(createTagline());
-
     content.appendChild(featured);
     content.appendChild(createDescription());
-    document.getElementById('main-container').appendChild(content)
+    util.insertToMain(content);
     return 'home';
 }
-
 
 export default createHome;

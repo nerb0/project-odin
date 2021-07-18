@@ -3,6 +3,17 @@ import createHome from './scripts/home.js';
 import * as util from './scripts/util.js';
 import log from './images/logo2.png';
 
+
+
+const something =( ) => {
+    console.log('waw')
+}
+let current = 'home';
+let tabFunction = {
+    home: createHome,
+    menu: something,
+    contact: something
+}
 function initiatePage(){
     // get div#content
     const body = document.getElementById('content');
@@ -31,28 +42,30 @@ function initiatePage(){
     const home = document.createElement('a');
     const menu = document.createElement('a');
     const contact = document.createElement('a');
+    home.id = "home";
+    menu.id = "menu";
+    contact.id = "contact";
     home.textContent = "Home";
     menu.textContent = "Menu";
     contact.textContent = "Contact";
-/* 
-    CHANGE THE link list to be function;
-*/
+    const tabList = {home,menu, contact}
+
     // insert the elements to an object so other scripts will be able to access the elements.
-    util.setlinkList({home, menu, contact});
-    util.linkList[util.current].classList.add('active');
+    tabList[current].classList.add('active');
 
     // set onclick functionality for the link
-    Object.values(util.linkList).forEach((link) => {
+    Object.values(tabList).forEach((link) => {
         link.onclick = () => {
             if(!link.classList.contains('active')){
-                util.setCurrent(link.textContent.toLowerCase());
-                util.removeActiveList(Object.values(util.linkList));
+                current = link.id;
+                util.removeActiveList(Object.values(tabList));
                 link.classList.add('active')
+                tabFunction[current]();
             }
         }
     });
     // add the links to the subcontainer
-    Object.values(util.linkList).forEach((link) => {
+    Object.values(tabList).forEach((link) => {
         links.appendChild(link);
     });
 
@@ -70,7 +83,9 @@ function initiatePage(){
     body.appendChild(linkContainer); // insert the links after
     body.appendChild(main);
     body.appendChild(footer);
-    createHome();
 }   
 
-initiatePage()
+
+
+initiatePage();
+createHome();
