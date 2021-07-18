@@ -5,7 +5,7 @@ import log from './images/logo2.png';
 
 
 
-const something =( ) => {
+const something = () => {
     console.log('waw')
 }
 let current = 'home';

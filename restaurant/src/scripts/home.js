@@ -1,8 +1,8 @@
 import '../styles/style.css';
 import '../styles/home.css';
 import * as util from './util.js';
-
-const DAYS = ['Sunday' ,'Monday' ,'Tuesday', 'Wednesday', 'Thursday' ,'Friday' ,'Saturday']
+import bandf from '../images/4.png';
+import ok from '../images/1.png';
 
 
 // create tagline
@@ -37,6 +37,7 @@ function createTagline(){
 
 // create sched
 function createSchedule(){
+    const DAYS = ['Sunday' ,'Monday' ,'Tuesday', 'Wednesday', 'Thursday' ,'Friday' ,'Saturday']
     /* 
         SCHEDULE
     */
@@ -75,13 +76,42 @@ function createSchedule(){
 // create description
 function createDescription(){
     // create container for description
+    const desContainer = document.createElement('div');
+    desContainer.className = "description-container";
+
     const description = document.createElement('div');
     description.className = "description";
 
-    const profile = document.createElement('div');
-    description.appendChild(profile);
+    const descImage = new Image();
+    descImage.src = bandf;
+    descImage.setAttribute('align','left');
+    descImage.className = 'desc-image';
 
-    return description;
+    const descText = document.createElement('p');
+    descText.textContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\
+        Donec ipsum diam, convallis bibendum laoreet at, vestibulum sed sem. \
+        Praesent a elit ultricies, bibendum erat ac, congue sem. \
+        Interdum et malesuada fames ac ante ipsum primis in faucibus.\
+        Aenean auctor fringilla enim at tristique. Ut efficitur sollicitudin eros eu blandit.\
+        Cras consectetur ut ante at pellentesque. Phasellus suscipit, ipsum at hendrerit iaculis, ligula urna faucibus eros, eget aliquet quam metus ut justo.\
+        Quisque in porta ipsum. Ut at felis mi. In scelerisque tempor massa. Aenean lectus dui, convallis quis neque nec, malesuada dictum ipsum.\
+        Nunc orci orci, rhoncus porta ante ac, feugiat accumsan risus. Nunc tincidunt mauris vel aliquam fermentum.";
+    descText.className = 'desc-text';
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'desc-btn';
+    const descBtn = document.createElement('button');
+    descBtn.textContent = "Order Now";
+    descBtn.className = 'btn';
+    const btnImg = new Image();
+    btnImg.src = ok;
+    btnImg.className = 'btn-image'; 
+    btnContainer.appendChild(btnImg);
+    btnContainer.appendChild(descBtn)
+    description.appendChild(descImage);
+    description.appendChild(descText);
+    desContainer.appendChild(description);
+    description.appendChild(btnContainer);
+    return desContainer;
 }
 
 
@@ -98,15 +128,10 @@ function createHome(){
     //create a wide div for feature food
     const featured = document.createElement('div');
     featured.className = "featured";
-    if(window.innerWidth < 700)  {
-        featured.style.backgroundPositionY = 'top';
-        featured.style.backgroundSize = '150vw';
-    }
-    else {
-        featured.style.backgroundPositionY = 'center';
-        featured.style.backgroundSize = '120vw';
-    }
-    
+    util.nodeResize(featured, '150vw' , '120vw');
+    window.addEventListener('resize' , 
+        () => util.nodeResize(featured, '150vw' , '120vw'),
+        false);
 
     // featuredBg.id='<a href="http://www.freepik.com">Designed by roserodionova / Freepik</a>';
     // featured.appendChild(featuredBg);
