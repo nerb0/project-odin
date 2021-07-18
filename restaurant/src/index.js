@@ -1,5 +1,6 @@
 import './styles/style.css';
 import createHome from './scripts/home.js';
+import createMenu from './scripts/menu.js';
 import * as util from './scripts/util.js';
 import log from './images/logo2.png';
 import gh from './images/github-64.png';
@@ -12,7 +13,7 @@ const something = () => {
 let current = 'home';
 let tabFunction = {
     home: createHome,
-    menu: something,
+    menu: createMenu,
     contact: something
 }
 function createFooter(){
@@ -20,11 +21,11 @@ function createFooter(){
     footer.className = "footer";
 
     const credits = document.createElement('p');
-    credits.textContent = 'Logo vector created by ';
+    credits.textContent = 'Icons designed by ';
     credits.className = 'credits';
     const creditLink = document.createElement('a');
     creditLink.href = "https://www.freepik.com/vectors/logo"
-    creditLink.textContent = 'roserodionova - www.freepik.com';
+    creditLink.textContent = 'roserodionova / Freepik';
 
     const about = new Image()
     about.className = 'github';

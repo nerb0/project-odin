@@ -116,14 +116,7 @@ function createDescription(){
 
 
 function createHome(){
-    // remove the main content if there is
-    const prev = document.getElementById('main');
-    if(prev) prev.remove(); 
-
-    // create new one
-    const content = document.createElement('div');
-    content.id = "main";
-    content.className = "content";
+    const content = util.createMain();
     
     //create a wide div for feature food
     const featured = document.createElement('div');

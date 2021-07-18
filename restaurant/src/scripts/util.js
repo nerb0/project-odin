@@ -27,10 +27,21 @@ const nodeResize = (node, min, max) => {
 }
 // insert to main-container
 const insertToMain = (content) => document.getElementById('main-container').appendChild(content);
+const createMain = () =>{
+    // remove the main content if there is
+    const prev = document.getElementById('main');
+    if(prev) prev.remove(); 
 
+    // create new one
+    const content = document.createElement('div');
+    content.id = "main";
+    content.className = "content";
+    return content;
+}
 
 
 export {
+    createMain,
     insertToMain,
     removeActiveList,
     checkViewport,
