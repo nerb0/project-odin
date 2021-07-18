@@ -144,4 +144,5 @@ function createMenu(){
     util.insertChildren(content, [drawer, menuContainer]);
     util.insertTo(content, 'main-container');
 }
+
 export default createMenu

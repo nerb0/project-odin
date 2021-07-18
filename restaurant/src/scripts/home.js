@@ -5,7 +5,7 @@ import '../styles/home.css';
 import * as util from './util.js';
 import bandf from '../images/4.png';
 import ok from '../images/1.png';
-
+import createMenu from './menu.js';
 
 // create tagline
 function createTagline(){
@@ -32,43 +32,6 @@ function createTagline(){
     return taglineContainer;
 }
 
-// create sched
-function createSchedule(){
-    const DAYS = ['Sunday' ,'Monday' ,'Tuesday', 'Wednesday', 'Thursday' ,'Friday' ,'Saturday']
-    /* 
-        SCHEDULE
-    */
-    // create a container for schedule inside the featured div
-    const scheduleContainer = document.createElement('div');
-    scheduleContainer.className = "schedule-container";
-    util.checkViewport(scheduleContainer, 900, 'block');
-
-
-    // create the schedule div
-    const schedule = document.createElement('div');
-    schedule.className = "schedule";
-    // create the header for the schedule div
-    const schedHeader = document.createElement('h3');
-    schedHeader.textContent = "Schedule: ";
-    schedHeader.className = "sched-header";
-
-    // set-up the schedule table/grid inside the container
-    const schedTable = document.createElement('div');
-    schedTable.className = "sched-table"; 
-    let schedTableElements = []; // in-case of emergency, use to manipulate node
-    for(let i = 0; i < 21; i++){
-        const node = document.createElement('div');
-        schedTableElements.push(node);
-        if(i%3 == 0) node.textContent = DAYS[i/3];
-        else if(i%3 == 2) node.textContent = "OPEN";
-        schedTable.appendChild(node);
-    }
-    // Append all necessary elements in order
-    schedule.appendChild(schedHeader)
-    schedule.appendChild(schedTable);
-    scheduleContainer.appendChild(schedule);
-    return scheduleContainer;
-}
 
 // create description
 function createDescription(){
@@ -102,26 +65,59 @@ function createDescription(){
     const btnImg = new Image();
     btnImg.src = ok;
     btnImg.className = 'btn-image';
+    btnContainer.onclick = () => {
+        util.setCurrent('menu');
+        createMenu();
+    }
+
     util.insertChildren(btnContainer, [btnImg, descBtn]);
     util.insertChildren(description, [descImage, descText, btnContainer]);
     desContainer.appendChild(description);
     return desContainer;
 }
 
+// new create Schedule
+function createSchedule(){
+    const scheduleContainer = document.createElement('div');
+    scheduleContainer.className = "schedule-container";
 
+    const logo = document.createElement('div');
+    logo.className = "material-icons-sharp sched-logo"
+    logo.textContent = "schedule"
+    const schedOneCont = document.createElement('div');
+    const schedOne = document.createElement('h1');
+    schedOne.className = "sched-one";
+    schedOneCont.className = "open";
+    util.insertChildren(schedOneCont, [logo, schedOne]);
+
+    const schedTwoCont = document.createElement('div');
+    const schedTwo = document.createElement('h1');
+    schedTwo.className = "sched-two";
+    schedTwoCont.className = "open";
+    util.insertChildren(schedTwoCont, [logo.cloneNode(true), schedTwo]);
+
+    const schedTreeCont = document.createElement('div');
+    const schedTree = document.createElement('h1');
+    schedTree.className = "sched-tree";
+    schedTreeCont.className = "closed";
+    util.insertChildren(schedTreeCont, [logo.cloneNode(true), schedTree]);
+
+    util.insertChildren(scheduleContainer, [schedOneCont, schedTwoCont, schedTreeCont]);
+    return scheduleContainer;
+}
 function createHome(){
     const content = util.createContainer('main');
 
     //create a wide div for feature food
     const featured = document.createElement('div');
     featured.className = "featured";
-    util.nodeResize(featured, '160vw' , '130vw');
-    window.addEventListener('resize' , 
-        () => util.nodeResize(featured, '150vw' , '120vw'),
-        false);
+    window.onresize = () => {
+        util.nodeResize(featured, '160vw' , '130vw');
+    };
 
-    util.insertChildren(featured, [createSchedule(), createTagline()]);
-    util.insertChildren(content,[featured,createDescription()])
+    util.nodeResize(featured, '160vw' , '130vw');
+    util.insertChildren(featured, [createTagline()]);
+    util.insertChildren(content,[featured, createSchedule(), createDescription()])
     util.insertTo(content, 'main-container');
     return 'home';
 }

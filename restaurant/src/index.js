@@ -11,7 +11,6 @@ import gh from './images/github-64.png';
 
 
 
-let current = 'menu';
 let tabFunction = {
     home: createHome,
     menu: createMenu,
@@ -78,16 +77,16 @@ function initiatePage(){
     const tabList = {home,menu, contact}
 
     // insert the elements to an object so other scripts will be able to access the elements.
-    tabList[current].classList.add('active');
+    tabList[util.current].classList.add('active');
 
     // set onclick functionality for the link
     Object.values(tabList).forEach((link) => {
         link.onclick = () => {
             if(!link.classList.contains('active')){
-                current = link.id;
+                util.setCurrent(link.id);
                 util.removeClass(Object.values(tabList), 'active');
                 link.classList.add('active')
-                tabFunction[current]();
+                tabFunction[util.current]();
             }
         }
     });
@@ -114,4 +113,5 @@ function initiatePage(){
 
 
 initiatePage();
-tabFunction[current]();
+tabFunction[util.current]();
+

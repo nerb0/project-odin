@@ -45,54 +45,56 @@
     color: white;
     font-size: clamp(20px, 6vh, 40px);
 }
+
+
 .schedule-container{
-    box-sizing: border-box;
-    position: absolute;
-    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: 50px;
+    width: 100%;
+    background-color: #f5c113;
+    align-items: center;
+}
+.schedule-container > div{
     height: 100%;
-    width: 300px;
-    right:0;
-}
-.schedule{
-    box-sizing:border-box;
-    padding: 10px;
-    background-color: #f5c01380;
-    height: 90%;
-}
-.sched-header{
-    height:4%; 
     font-family: 'Work Sans';
-    font-size: clamp(1.2rem, 3vh, 2rem);
+    display: grid;
+    grid-template-columns: 2fr 8fr;
+    align-items: center;
+    font-size: clamp(9px, 0.5vw,12px);
+}
+.schedule-container *{
+    position: relative;
     margin:0;
+}
+.open{
+    border-bottom: 4px solid #20ac43;
+}
+.closed{
+    border-bottom: 4px solid #912714;
+}
+.sched-one::after{
+    content: "Mon - Thur";
+}
+.schedule-container > div:hover > .sched-one::after, .sched-one:hover::after {
+    content: "6:00a.m  -  8:00p.m";
+}
+.sched-two::after{
+    content: "Fri - Sat";
+}
+.schedule-container > div:hover > .sched-two::after, .sched-two:hover::after{
+    content: "7:00a.m  -  5:30p.m";
+}
+.sched-tree::after{
+    content: "Sundays";
+}
+.schedule-container > div:hover > .sched-tree::after, .sched-tree:hover::after{
+    content: "CLOSED";
+}
+.sched-logo{
     text-align: center;
 }
-.sched-table{
-    box-sizing: border-box;
-    display: grid;
-    font-family: 'Montserrat';
-    padding: 10px;
-    font-size: 13px;
-    grid-template-columns: 1fr 2fr 1fr;
-    width: 100%;
-    height: 90%;
-}
-.sched-table > *{
-    box-sizing: border-box;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-}
-.sched-table > :nth-child(3n+3){
-    box-sizing: border-box;
-    border-bottom: 2px solid #1cac1c;
-    font-weight: 700;
-    color:white;
-    margin: 0 5px
-}
-.sched-table > :nth-child(3n + 2){
-    width: 100%;
-    border-bottom: 1px dotted #000000;
-}
+
 .description-container{
     box-sizing: border-box;
     margin-top: 50px;

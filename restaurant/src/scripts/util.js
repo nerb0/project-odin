@@ -1,4 +1,4 @@
-
+let current = "home"
 // remove the active class on every nodes in an array of HTML elements
 const removeClass = (arr, c) => {
     arr.forEach((node) => node.classList.remove(c))
@@ -43,8 +43,11 @@ const createContainer = (id) =>{
     return content;
 }
 
+const setCurrent = (curr) => current = curr; 
 
 export {
+    current,
+    setCurrent,
     createContainer,
     insertTo,
     insertChildren,
