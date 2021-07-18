@@ -1,15 +1,21 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons+Sharp:wght@400&display=inline-block');
+
+
 .map-container{
     position: relative;
     width: 100%;
+    background: url(../images/map.png);
+    background-position: center;
+    height: 500px;  
 }
 .map-image{
-    width:100%;
+    height:max(500px, 40vw);
 }
 .map-gps{
     position:absolute;
     display: grid;
-    grid-template-rows: 8fr 1fr;
-    top: 45%;
+    grid-template-rows: 10fr 1fr;
+    top: 50%;
     right: 50%;
     text-align: center;
     font-family: 'Work Sans';
@@ -38,4 +44,117 @@
 .map-arrow:hover + .map-message::after{
     opacity: 1;
     content: "We are here";
+}
+
+
+.contact-container{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    margin: 40px 15%;
+    font-family: 'Work Sans';
+}
+.contact-container *{
+    margin:0;
+}
+.text-container, .number-container{
+    margin:20px 0;
+    display:grid;
+    grid-template-columns: 1fr 8fr;
+    height:100px;
+}
+.text-container + .number-container > *{
+    display: flex;
+    align-items: center;
+}
+.num-logo{
+    color:#f5c113;
+}
+
+.form-container{
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 4fr 1fr;
+    row-gap:20px;
+    align-items: center;
+    width: 100%;
+}
+.header{
+    font-size: clamp(25px, 4vw,35px);
+}
+.sub-header{
+    font-size: clamp(20px, 3vw,25px);
+}
+.form-header{
+    align-self: flex-start;
+}
+.name-input-container{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:20px;
+}
+input{
+    font-size: 15px;
+    outline:none;
+    border: none;
+    border-bottom: 3px solid #f5c113;
+    width: 100%;
+}
+.msg-input-container{
+    align-self: flex-start;
+}
+.msg-input{
+    outline: none;
+    border: none;
+    border-bottom: 3px solid #f5c113;
+    width: 100%;
+    max-height:150px;
+    min-height:30px;
+    resize:vertical;
+}
+
+
+.first-container::after{
+    content: "First Name"
+}
+.last-container::after{
+    content: "Last Name"
+}
+.email-container::after{
+    content: "Email"
+}
+.msg-container::after{
+    content: "Message";
+}
+.input-container{
+    position:relative;
+}
+input ~ div::after ,textarea ~ div::after{
+    font-family: 'Work Sans';
+    font-size: clamp(15px, 2vw,20px);
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0.5;
+    user-select: none;
+    pointer-events: none;
+    transition: opacity 0.3s,
+        top 0.3s,
+        font-size 0.3s;
+}
+input:focus-within ~ div::after, textarea:focus-within ~ div::after,  input:valid ~ div::after, textarea:valid ~ div::after{
+    opacity: 1;
+    top:-20px;
+    font-size: clamp(10px, 2vw,15px);
+    color: #be950f;
+    font-weight: bold;
+}
+.submit-btn{
+    justify-self: center;
+    width:200px;
+    padding:5px 10px;
+    border-radius: 40px;
+    transition: background-color 0.5s;
+    font-size: clamp(17px, 2vw,25px);
+}
+.submit-btn:hover{
+    background-color: #f5c113;
 }
