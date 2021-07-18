@@ -6,17 +6,17 @@ const removeActiveList = (arr) =>{
 
 // hide node if viewport is small
 const checkViewport = (node) => {
-    if(window.innerWidth < 700) node.style.display = "none";
+    if(window.innerWidth < 900) node.style.display = "none";
     else node.style.display = "block";
     
     window.addEventListener('resize',() => {
-        if(window.innerWidth < 700) node.style.display = "none";
+        if(window.innerWidth < 900) node.style.display = "none";
         else node.style.display = "block";
     });
 }
 // resize node background if viewport is small
 const nodeResize = (node, min, max) => {
-    if(window.innerWidth < 700)  {
+    if(window.innerWidth < 1000)  {
         node.style.backgroundPositionY = 'top';
         node.style.backgroundSize = min;
     }
@@ -24,6 +24,11 @@ const nodeResize = (node, min, max) => {
         node.style.backgroundPositionY = 'center';
         node.style.backgroundSize = max;
     }
+}
+const insertChildren = (parent, arr) => {
+    arr.forEach((node) => {
+        parent.appendChild(node);
+    });
 }
 // insert to main-container
 const insertToMain = (content) => document.getElementById('main-container').appendChild(content);
@@ -43,6 +48,7 @@ const createMain = () =>{
 export {
     createMain,
     insertToMain,
+    insertChildren,
     removeActiveList,
     checkViewport,
     nodeResize

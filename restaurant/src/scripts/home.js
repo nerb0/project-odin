@@ -26,12 +26,7 @@ function createTagline(){
     // create a node for the 2nd biggest font
     const esetag = document.createElement('div');
     esetag.textContent = "Tasty";
-    
-    taglineContainer.appendChild(firstTag);
-    taglineContainer.appendChild(secondTag);
-    taglineContainer.appendChild(dogtag);
-    taglineContainer.appendChild(esetag);
-
+    util.insertChildren(taglineContainer, [firstTag, secondTag, dogtag, esetag]);   
     return taglineContainer;
 }
 
@@ -104,13 +99,10 @@ function createDescription(){
     descBtn.className = 'btn';
     const btnImg = new Image();
     btnImg.src = ok;
-    btnImg.className = 'btn-image'; 
-    btnContainer.appendChild(btnImg);
-    btnContainer.appendChild(descBtn)
-    description.appendChild(descImage);
-    description.appendChild(descText);
+    btnImg.className = 'btn-image';
+    util.insertChildren(btnContainer, [btnImg, descBtn]);
+    util.insertChildren(description, [descImage, descText, btnContainer]);
     desContainer.appendChild(description);
-    description.appendChild(btnContainer);
     return desContainer;
 }
 
@@ -126,12 +118,8 @@ function createHome(){
         () => util.nodeResize(featured, '150vw' , '120vw'),
         false);
 
-    // featuredBg.id='<a href="http://www.freepik.com">Designed by roserodionova / Freepik</a>';
-    // featured.appendChild(featuredBg);
-    featured.appendChild(createSchedule());
-    featured.appendChild(createTagline());
-    content.appendChild(featured);
-    content.appendChild(createDescription());
+    util.insertChildren(featured, [createSchedule(), createTagline()]);
+    util.insertChildren(content,[featured,createDescription()])
     util.insertToMain(content);
     return 'home';
 }
