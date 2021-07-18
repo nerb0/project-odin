@@ -81,7 +81,7 @@ function initiatePage(){
         link.onclick = () => {
             if(!link.classList.contains('active')){
                 current = link.id;
-                util.removeActiveList(Object.values(tabList));
+                util.removeClass(Object.values(tabList), 'active');
                 link.classList.add('active')
                 tabFunction[current]();
             }

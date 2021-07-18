@@ -5,6 +5,8 @@ module.exports = {
   mode: 'development',
   entry: {
     util: './src/scripts/util.js',
+    home: './src/scripts/home.js',
+    menu: './src/scripts/menu.js',
     index: './src/index.js',
   },
   devtool: 'inline-source-map',

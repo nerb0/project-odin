@@ -1,5 +1,54 @@
 .menu-container{
-    height:500px;
-    width:100%;
-    background-color: #e0e0e0;
+    display:grid;
+    grid-template-columns: 8fr 2fr;
+    width: 100%;
+    min-height: 800px;
+}
+.meal-container{
+    box-sizing: border-box;
+    display: grid;
+    padding:10px;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    border-right: 1px solid #e0e0e0;
+    text-align: center;
+}
+.meal-container > div{
+    cursor: pointer;
+    padding:10px 5px;
+    position: relative;
+    height: 300px;
+    border: 1px solid #f5c113;
+}
+.meal-container > div:hover{
+    background-color: #f5c113;
+}
+.meal-container > div:hover::after{
+    border-color: white;
+}
+.meal-name{
+    font-family: 'Work Sans';
+}
+.meal-image{
+    height: 55%;
+}
+.meal-price{
+    font-family: 'Work Sans';
+    text-align: right;
+}
+.meal-container > div::after{
+    position: absolute;
+    content: "";
+    padding: 3px;
+    display: inline-block;
+    border-right:3px solid #f5c113;
+    border-bottom:3px solid #f5c113;
+    transform: rotate(-45deg);
+    right: 10px;
+}
+
+
+.options-container{
+    display: grid;
+    width: 20%;
 }
