@@ -1,0 +1,39 @@
+:root{
+    --content-margin: 25%;
+    --container-border: solid #e0e0e0;
+}
+
+body{
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+#nav-container{
+    padding: 0 var(--content-margin);
+    height: 50px;
+    border-bottom: 1px var(--container-border);
+    box-shadow: 0 0 2px 2px #0000001a;
+}
+#main-container{
+    position: relative;
+    margin: 0 var(--content-margin);
+    padding-top: 20px;
+    min-height: 90vh;
+    border-right: 1px var(--container-border);
+    border-left: 1px var(--container-border);
+}
+#drawer-container{
+    position:absolute;
+    left: 0;
+    /* width:250px; */
+    height:100%;
+    background-color: bisque;
+}
+#footer-container{
+    height:40px;
+    background-color: #4d4d4d;
+}
+button, input, textarea{
+    border: none;
+    outline: none;
+}

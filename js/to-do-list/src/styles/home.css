@@ -1,0 +1,111 @@
+:root{
+    --form-background: #bbb;
+}
+
+#task-container{
+    position: relative;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+#legend-container{
+    position: absolute;
+    background-color: blue;
+    height: 250px;
+    width: 100px;
+    right: -100px; 
+}
+
+
+#task-form-container{
+    position: absolute;
+    background-color: var(--form-background);
+    display: grid;
+    row-gap: 20px;
+    grid-template-rows: 1fr 3fr 1fr 1fr;
+    height: 320px;
+    width: max(75%, 350px);
+    padding: 20px 5px;
+    align-items: flex-start;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity 0.4s;
+    right:100px;
+    text-align: left;
+}
+#task-form-container > div{
+    padding: 0 5px;
+}
+#task-form-container::after{
+    position: absolute;
+    content: "";
+    right: -5px;
+    top:10px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid var(--form-background);
+}
+#description-container{
+    display: flex;
+    flex-direction: column;
+    height:150px;
+}
+#dual-input{
+    display: grid;
+    grid-template-columns: 9fr 2fr;
+    column-gap: 20px;
+}
+.input-form{
+    background-color: transparent;
+    border-bottom: 2px solid black;
+    width: 100%;
+    -moz-appearance: textfield;
+}
+#input-description{
+    box-sizing:border-box;
+    flex: 0 1  auto;
+    resize: vertical;
+    min-height: 30px;
+}
+#input-title ~ div::after{
+    content: "Title";
+}
+#input-description ~ div::after{
+    content: "Description"
+}
+#input-deadline ~ div::after{
+    content: "Deadline"
+}
+#input-priority ~ div::after{
+    content: "Priority"
+}
+input ~ div::after, textarea ~ div::after{
+    position: absolute;
+    font-family: Arial, Helvetica, sans-serif;
+    top:2px;
+    font-size:15px;
+    opacity: 0.5;
+    transition: opacity 0.4s,
+        top 0.4s,
+        font-size 0.4s;
+    user-select: none;
+    pointer-events: none;
+}
+input:valid ~ div::after, input:focus ~ div::after, textarea:valid ~ div::after, textarea:focus ~ div::after{
+    top:-15px;
+    font-size:12px;
+    opacity: 1;
+    color: blue;
+}
+
+
+
+#add-task-container{
+    background-color: #e0e0e0;
+    text-align: right;
+}
+.add-task-btn{
+    padding: 5px 10px;
+    text-align: right;
+    background-color: transparent;
+}
+

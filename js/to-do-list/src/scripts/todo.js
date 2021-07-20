@@ -1,4 +1,7 @@
 
+let projects = new List();
+let tasks = new List();
+
 class Project{
     constructor(name, list){
         this.name = name;
@@ -18,7 +21,7 @@ class Project{
     }
 }
 
-class todoNote{
+class Task{
     constructor(title, description, dueDate, priority, id){
         this.title = title;
         this.description = description;
@@ -49,8 +52,8 @@ class todoNote{
 function List(){
     let _list = [];
     function addToList() {
-        for(let note of [...arguments]){
-            _list.push(note);
+        for(let _task of [...arguments]){
+            _list.push(_task);
         }
     }
     const remove = (index) => {
@@ -66,14 +69,12 @@ function List(){
     }
 };
 
-const todoList = new List();
-todoList.addToList(
-    new todoNote("Create a to-do-list","","",""),
-    new todoNote("Create a to-do-list","","",""),
-    new todoNote("Create a to-do-list","","",""),
-);
-console.log(todoList.getList());
+function createTask(){
 
-const projectList = new List();
-projectList.addToList(
-);
+}
+
+
+
+export{
+    createTask,
+}
