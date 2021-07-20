@@ -1,24 +1,11 @@
-def convert(ascii, high, low, shift)
-    ascii += shift
-    if ascii > high
-        ascii -= 26
-    elsif ascii < low
-        ascii += 26
-    end
-    ascii
-
-end
-
 def caesar_cipher(string, shift)
     string = string.codepoints.map {|letter| 
-        if letter.between?(97,123)
-            letter = convert(letter, 123, 97, shift)
-        elsif letter.between?(65,91)
-            letter = convert(letter, 91, 65, shift)
-        else letter
+        if letter.between?(97,122) || letter.between?(65,90)
+            low = letter < 91 ? 65 : 97
+            letter  = (((letter - low) + shift) % 26) + low
         end
-    }.map {|point| point = "" << point}
-    .join("")
+        letter = "" << letter
+    }.join("")
     p string
 end 
-caesar_cipher("Aoaj sdsds", -3)
+caesar_cipher("Aoaj sdsdz", -55)
