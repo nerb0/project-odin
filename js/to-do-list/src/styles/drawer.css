@@ -1,0 +1,95 @@
+#inner-drawer-container{
+    position: relative;
+    height: 100%;
+}
+
+
+
+#drawer-btn-container{
+    position:absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 50px;
+    top:0;
+    right: -50px;
+    cursor: pointer;
+}
+.drawer-btn{
+    position:relative;
+    height: 5px;
+    width:35px;
+    pointer-events: none;
+    background-color: #7f7f7f;
+    left:0;
+    transition: transform 0.4s,
+        background-color 0.2s;
+}
+.drawer-btn:after, .drawer-btn::before{
+    content: "";
+    position:absolute;
+    width: 35px;
+    border-bottom: 5px solid #7f7f7f;
+    transition: transform 0.4s,
+        top 0.4s;
+        pointer-events: none;
+    left:0;
+}
+.drawer-btn::after{
+    transform: rotate(0);
+    top:10px;
+}
+.drawer-btn::before{
+    transform: rotate(0);
+    top:-10px;
+}
+.opened{
+    background-color: #7f7f7f00;
+}
+.opened::after{
+    transform: rotate(-45deg);
+    top: 0;
+}
+.opened::before{
+    transform: rotate(45deg);
+    top: 0;
+}
+
+
+#drawer-tab-container{
+    padding-top: 20px;
+}
+.tab-container{
+    position: relative;
+    display: grid;
+    grid-template-columns: 2fr 8fr;
+    font-size: 25px;
+    margin-bottom: 25px;
+}
+.tab-logo{
+    color: #535353;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    height:100%;
+}
+#tab-projects{
+    border-bottom: 1px solid #03030344;
+}
+#logo-inbox::after{
+    content: "inbox";
+}
+#logo-projects::after{
+    content: "event_note";
+}
+
+#project-form-container{
+    position: absolute;
+    background-color: #535353;
+    height: 250px;
+    width:300px;
+    right: -300px;
+    top:0;
+}

@@ -1,6 +1,8 @@
 import './styles/home.css'
 import './styles/index.css'
+import './styles/drawer.css'
 import createHome from './scripts/home'
+import createDrawer from './scripts/drawer'
 import { createContainer , insertChildren } from './scripts/util';
 
 
@@ -13,7 +15,8 @@ function initialDisplay(){
     const content = document.getElementById("content");
     const nav = createContainer('nav', 'nav');
     const drawer = createContainer('drawer');
-    const main = createContainer('main');
+    drawer.appendChild(createDrawer());
+    const main = createContainer('main');   
     const footer = createContainer('footer', 'footer');
 
     insertChildren(content, [drawer, nav, main, footer])
