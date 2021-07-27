@@ -18,8 +18,10 @@ function initialDisplay(){
     drawer.appendChild(createDrawer());
     const main = createContainer('main');   
     const footer = createContainer('footer', 'footer');
+    const overlay = document.createElement('div');
+    overlay.id = "overlay"
 
-    insertChildren(content, [drawer, nav, main, footer])
+    insertChildren(content, [overlay, drawer, nav, main, footer])
 }
 
 initialDisplay();

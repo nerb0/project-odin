@@ -1,4 +1,14 @@
 
+
+function replace(id){
+    const prev = document.getElementById(id);
+    if(prev) prev.remove();
+    const main = document.createElement('div');
+    main.id = id;
+
+    return main;
+}
+
 function toggleDisplay(id){
     const node = document.getElementById(id);
     if(node.style.visibility == 'hidden') {
@@ -58,4 +68,5 @@ export {
     createContainer,
     insertChildren,
     toggleDisplay,
+    replace
 }

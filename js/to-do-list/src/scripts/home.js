@@ -8,10 +8,10 @@ function addTasks(){
     const description = document.getElementById('input-description').value;
     const deadline = document.getElementById('input-deadline').value;
     const priority = document.getElementById('input-priority').value;
-    const project = document.getElementById('input-priority').value;
+    const project = document.getElementById('input-project-name').value;
     
     const task =  todo.createTask(title, description, deadline, priority, project);
-    document.getElementById('tasks').appendChild(task);
+    document.getElementById(`${project}-container`).appendChild(task);
 }
 
 
@@ -30,12 +30,13 @@ function createTaskForm(){
 
     const title = util.createInput('title', 'input', "input-form");
     const description = util.createInput("description","textarea", "input-form", "description");
-    const deadline = util.createInput("deadline", "input", "input-form");
+    const deadline = util.createInput("deadline", "input", "input-form", 'date');
     const priority = util.createInput("priority", "input", "input-form", "priority", "number");
     const dual = document.createElement("div");
     dual.id = "dual-input";
     const project = util.createInput("project-name", "input", "input-form");
     const submit  = document.createElement("button");
+    submit.id = "btn-add-task"
     submit.textContent = "ADD";
     submit.type = "submit";
     
@@ -45,6 +46,7 @@ function createTaskForm(){
     return container;
 }
 
+// create the node for the adding task button
 function createAddTask(){
     const container = util.createContainer('add-task');
     const form = createTaskForm()
@@ -76,16 +78,14 @@ function createAddTask(){
     return container
 }
 
-function showTasks(){
+// create the nodes for the tasks
+function initializeTasks(){
     const container = util.createContainer('task','div');
-    const main = document.createElement('ul');
-    main.id = "tasks";
-    todo.displayTasks(main);
-
-    util.insertChildren(container, [ createAddTask(), main,]);
+    util.insertChildren(container, [ todo.showTasks()]);
     return container
 }
 
+// create the container for the contents
 function createHome(){
     const legendContainer = util.createContainer('legend', 'div');
     
@@ -94,7 +94,7 @@ function createHome(){
 
     util.insertChildren(
         main, 
-        [legendContainer, showTasks()]
+        [legendContainer, createAddTask(), initializeTasks()]
     );
     document.getElementById("main-container").appendChild(main);
     

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Raleway:wght@300&display=swap&family=Material+Icons+Round:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Raleway:wght@300;500;600;900&display=swap&family=Material+Icons+Round:wght@400&display=swap');
 
 :root{
     --content-margin: 25%;
@@ -21,7 +21,7 @@ body{
     position: relative;
     margin: 0 var(--content-margin);
     padding-top: 20px;
-    min-height: 90vh;
+    min-height: 100vh;
     border-right: 1px var(--container-border);
     border-left: 1px var(--container-border);
 }
@@ -36,10 +36,6 @@ body{
     z-index: 5;
     transition: left 0.4s;
 }
-.opened-container{
-    box-shadow: 0 0 5px 2px #e0e0e0;
-    left: 0 !important;
-}
 #footer-container{
     height:40px;
     background-color: #4d4d4d;
@@ -50,4 +46,20 @@ button, input, textarea{
     font-family: 'Rajdhani';
     font-weight: 600;
     padding:0;
+}
+
+
+#overlay{
+    position: absolute;
+    height:100%;
+    width:100%;
+    z-index: 5;
+    background-color: #00000033;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.visible{
+    opacity:1;
+    pointer-events: all;
 }

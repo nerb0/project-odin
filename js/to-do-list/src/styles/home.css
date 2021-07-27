@@ -1,5 +1,5 @@
 :root{
-    --form-background: #bbb;
+    --form-background:  #e0e0e0;
 }
 
 #task-container{
@@ -18,6 +18,15 @@
 #main{
     padding:0;
 }
+.task-header{
+    width: 100%;
+    padding: 2px 5px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Raleway';
+    border-left: 5px solid;
+    border-color: #cecece;
+}
 #tasks{
     display: flex;
     flex-direction: column;
@@ -31,30 +40,34 @@
     font-family: Raleway;
     font-size: 15px;
 }
-#tasks > li {
+#tasks > div{
+    width: 100%;
+}
+#tasks > div > li {
     box-sizing: border-box;
     width: 100%;
     position: relative;
     display: grid;
+    font-weight: 300;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: 1fr 4fr;
     list-style: none;
     height:45px;
     padding-left: 35px;
     padding-right: 30px;
-    border-bottom: 1px solid var(--form-background);
+    border-bottom: 1px solid #e0e0e0;
     min-height: 20px;
     transition: height 0.5s;
     cursor: pointer;
 }
-#tasks > li:hover {
+#tasks > div > li:hover {
     background-color: #f5f5f5;
     height:65px;
 }
-#tasks > li:hover::after {
+#tasks > div > li:hover::after {
     opacity: 0.7;
 }
-#tasks > li::after{
+#tasks > div > li::after{
     content: "";
     position: absolute;
     height: 7px;
@@ -68,8 +81,8 @@
     transition: transform 0.5s ease-in,
         opacity 0.2s;
 }
-#tasks > li > p:first-child {
-    font-weight: bold;
+#tasks > div > li > p:first-child {
+    font-weight: 500;
 }
 .expanded::after{
     transform: rotate(-495deg) !important;
@@ -108,7 +121,7 @@
     right:100px;
     text-align: left;
     list-style: none;
-    z-index: 2;
+    z-index: 6;
 }
 #task-form-container > div{
     padding: 0 5px;
@@ -134,7 +147,8 @@
 }
 .input-form{
     background-color: transparent;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid;
+    border-color: #ce541c;
     width: 100%;
     box-sizing: border-box;
 }
@@ -149,31 +163,43 @@
     min-height: 40px;
 }
 #input-project-name{
-    border: 1px solid #e0e0e0;
+    border: 1px solid white;
     padding:5px 2px;
     border-radius: 5px;
 }
-#input-title ~ div::after{
+#btn-add-task{
+    background-color: transparent;
+    margin: 0 auto;
+    padding: 5px 20px;
+    cursor: pointer;
+}
+#btn-add-task:hover{
+    color:white
+}
+
+
+#input-title + div::after{
     content: "Title";
 }
-#input-description ~ div::after{
+#input-description + div::after{
     content: "Description"
 }
-#input-deadline ~ div::after{
+#input-deadline + div::after{
     content: "Deadline"
 }
-#input-priority ~ div::after{
+#input-priority + div::after{
     content: "Priority"
 }
-#input-project-name ~ div::after{
+#input-project-name + div::after{
     content: "Project Name";
     left: 8px;
 }
-input ~ div::after, textarea ~ div::after{
+input + div::after, textarea + div::after{
     position: absolute;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Rajdhani';
+    font-weight: 600;
     left: 5px;
-    top:5px;
+    top:3px;
     font-size:15px;
     opacity: 0.5;
     transition: opacity 0.4s,
@@ -182,11 +208,11 @@ input ~ div::after, textarea ~ div::after{
     user-select: none;
     pointer-events: none;
 }
-input:valid ~ div::after, input:focus ~ div::after , textarea:valid ~ div::after, textarea:focus ~ div::after{
+input:valid + div::after , input:focus + div::after , textarea:valid + div::after, textarea:focus + div::after{
     top:-15px;
     font-size:12px;
     opacity: 1;
-    color: blue;
+    color: #ce541c;
 }
 
 
@@ -195,8 +221,11 @@ input:valid ~ div::after, input:focus ~ div::after , textarea:valid ~ div::after
     border-bottom: 1px solid #e0e0e0;
 }
 .add-task-btn{
+    position: relative;
+    z-index: 7;
+    background-color: white;
     padding: 5px 10px;
     text-align: right;
-    background-color: transparent;
 }
+
 

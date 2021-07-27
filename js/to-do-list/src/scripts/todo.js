@@ -1,9 +1,25 @@
-import {insertChildren, createContainer} from './util.js' 
-import {last} from 'date-fns'
-import {upperFirst} from 'lodash'
+import {insertChildren, createContainer, replace} from './util.js' 
+import {kebabCase,upperFirst, last, isFunction} from 'lodash'
 
+
+const colors = {
+    "Inbox": "#e0e0e0",
+    "First Project": "red",
+    "Second Project": "blue",
+}
+class Inbox{
+    constructor(list =[]){
+        this.list = list;
+    }
+    get list(){
+        return this._list;
+    }
+    set list(newList) {
+        this._list = newList;
+    }
+}
 class Project{
-    constructor(name, list){
+    constructor(name, list =[]){
         this.name = name;
         this.list = list;
     }
@@ -61,9 +77,20 @@ class Task{
     }
 }
 
+const createHeader = (from) => {
+    const project = createContainer(from);
+    const header = document.createElement('div');
+    header.className = "task-header";
+    header.textContent = from;
+    header.style.borderColor = colors[from];
+    project.appendChild(header);
+    
+    return project;
+}
 
-const createTaskNode = (_task) => {
-    const container = createContainer(`task-${_task.id}`, 'li');
+const createTaskNode = (_task, from) => {
+    // assign unique id to the task with respect to their project (parent)?
+    const container = createContainer(`${kebabCase(from)}-${_task.id}`, 'li'); 
     container.className = "task-node";
     const title = document.createElement('p');
     title.textContent = upperFirst(_task.title);
@@ -85,50 +112,127 @@ const createTaskNode = (_task) => {
     }
     return container;
 }
-const displayTasks = (container) =>{
-    List.getList().forEach((_task) => {
-        container.appendChild(createTaskNode(_task))
-    })
+
+const displayTasks = (container, listType, from) =>{
+    const lists = List.getList(listType); 
+    const project = createHeader(from);
+    switch (listType) {
+        case 'projects': // list the tasks from all the projects
+            if(from){ // list the tasks from a specific project
+                lists[from].list.forEach((_task) => {
+                    project.appendChild(createTaskNode(_task, from));
+                })
+                container.appendChild(project);
+            }
+            else{
+                for(let key in lists){
+                    const project = createHeader(key);
+                    lists[key].list.forEach((_task) => {
+                        project.appendChild(createTaskNode(_task, key))
+                    })
+                    container.appendChild(project);
+                }
+            }
+            break;
+        case 'inbox':
+            lists[from].list.forEach((_task) => {
+                project.appendChild(createTaskNode(_task, from));
+            })
+            container.appendChild(project);
+            break; 
+        default:
+            for(let all of lists){
+                for(let key in all){        
+                    const project = createHeader(key);
+                    all[key].list.forEach((_task) => {
+                        project.appendChild(createTaskNode(_task, key));
+                    })
+                    container.appendChild(project)
+                }
+            }
+            break;
+    }  
 }
 
-
 const List = (() => {
-    let _list = [
-        new Task("one", "asdasda", "20/20/20", 1, 1),
-        new Task("two", "asdasda", "20/20/21", 2, 2),
-        new Task("three", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda", "20/20/22", 3, 3),
-        new Task("four", "asdasda", "20/20/23", 4, 4),
-    ];
-    const addToList = (_task) => {
-        _task.id = last(_list).id
-        _list.push(_task);
+    const projects = {
+        "First Project" : new Project("First Project", [
+            new Task("one", "asdasda", "20/20/20", 1, 1),
+            new Task("two", "asdasda", "20/20/21", 2, 2),
+            new Task("three", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda", "20/20/22", 3, 3),
+            new Task("four", "asdasda", "20/20/23", 4, 4)
+        ]),
+        "Second Project" : new Project("Second Project", [
+            new Task("awre", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda", "20/20/22", 3, 3),
+            new Task("four", "asdasda", "20/20/23", 4, 4)
+        ]),
+    }
+    const inbox = {
+        "Inbox": new Inbox([
+            new Task("Inbox", "asdasda", "20/20/20", 1, 1),
+            new Task("Inbox", "asdasda", "20/20/20", 1, 1)
+            ]),
+    }
+
+    const addToList = (_task,from) => {
+        if(projects[from]){
+            _task.id = last(projects[from].list).id
+            projects[from].list.push(_task);
+            return true;
+        }else{
+            projects[from] = new Project(from, []);
+            _task.id = 0;
+            projects[from].list.push(_task);
+            return false;
+        }
+    }
+    const addProject = (name) => {
+        _list[name] = new Project("name", []);
     }
     const remove = (index) => {
         _list.splice(index, 1)
     }
-    const getList = () =>{
-        return _list;
+    const getList = (from) =>{
+        if(from){
+            return (from == 'projects')? projects : inbox;
+        }else{
+            return [
+                inbox,
+                projects,
+            ]
+        }
     }
     return{
         addToList,
         remove,
         getList,
+        addProject,
     }
 })();
 
-
-
-
-
-function createTask(title, description, dueDate, priority){
-    const _task = new Task(title, description, dueDate, priority);
-    List.addToList(_task);
-    return createTaskNode(_task);
+function showTasks(listType, from){
+    const main = replace('tasks') // container for the tasks
+    displayTasks(main, listType, from);
+    return main
+}
+function showProjects(){
+    return List.getList('projects');
 }
 
+function createTask(title, description, dueDate, priority, project){
+    const _task = new Task(title, description, dueDate, priority);
+    let node;
+    if(!List.addToList(_task, project)){
+        node = createHeader(project);
+        node.appendChild(createTaskNode(_task))
+    }
+    else node = createTaskNode(_task);
+    return node;
+}
 
 
 export{
     createTask,
-    displayTasks
+    showTasks,
+    showProjects
 }

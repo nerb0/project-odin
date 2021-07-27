@@ -1,8 +1,20 @@
+:root{
+    --drawer-btn-width: clamp(3px, 2vw, 5px);
+    --drawer-btn-size: clamp(30px, 2vw, 50px)
+}
+
 #inner-drawer-container{
     position: relative;
     height: 100%;
+    z-index: 7;
 }
-
+.opened-container +  #overlay{
+    opacity: 1;
+    pointer-events: all;
+}
+.opened-container ~ div  .add-task-btn{
+    z-index: 0 !important;
+}
 
 
 #drawer-btn-container{
@@ -15,10 +27,11 @@
     top:0;
     right: -50px;
     cursor: pointer;
+    z-index: -1;
 }
 .drawer-btn{
     position:relative;
-    height: 5px;
+    height: var(--drawer-btn-width);
     width:35px;
     pointer-events: none;
     background-color: #7f7f7f;
@@ -55,8 +68,15 @@
     transform: rotate(45deg);
     top: 0;
 }
+.opened + #drawer-btn-container{
+    z-index: 3;
+}
 
 
+.opened-container{
+    box-shadow: 0 0 5px 2px #e0e0e0;
+    left: 0 !important;
+}
 #drawer-tab-container{
     padding-top: 20px;
 }
@@ -64,32 +84,90 @@
     position: relative;
     display: grid;
     grid-template-columns: 2fr 8fr;
-    font-size: 25px;
+    padding:6px 0 ;
+    cursor: pointer;
+}
+.tab-container:not(#projects-container){
     margin-bottom: 25px;
 }
-.tab-logo{
-    color: #535353;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px;
-    height:100%;
+#projects-container{
+    border-bottom: 1px solid #e0e0e0;
 }
-#tab-projects{
-    border-bottom: 1px solid #03030344;
+.tab-container:hover{
+    background-color: #ececec;
+}
+.drawer-tab, .tab-logo{
+    display: flex;
+    align-items: center;
+    height:100%;
+    font-size: clamp(20px,2vw,25px);
+}
+.tab-logo{
+    justify-content: center;
+    color: #535353;
+}
+#logo-all::after{
+    content: "notes ";
 }
 #logo-inbox::after{
     content: "inbox";
+}
+#logo-today::after{
+    content: "today";
+}
+#logo-this-week::after{
+    content: "date_range";
 }
 #logo-projects::after{
     content: "event_note";
 }
 
+
 #project-form-container{
+    box-sizing: border-box;
     position: absolute;
-    background-color: #535353;
+    background-color: white;
     height: 250px;
     width:300px;
     right: -300px;
     top:0;
+    padding: 20px 10px;
+    cursor: default;
+    border-left: 1px solid #7f7f7f;
+    opacity: 0;
+    pointer-events: none;
+}
+ 
+#project-form-container > div{
+    margin-bottom: 15px;
+}
+#input-new-project-description{
+    resize: vertical;
+    max-height: 120px
+}
+#input-new-project-name ~ div::after{
+    content: "New Project Name"
+}
+#input-new-project-description ~ div::after{
+    content: "Project Description";
+}
+
+
+#projects-list-container{
+    display: block;
+    margin: 0;
+    font-size: clamp(14px, 1.2vw, 17px);
+    margin-left: clamp(25px, 5vw, 70px);
+}
+
+.tab-projects-list{
+    padding: 5px 2px;
+}
+.tab-projects-list:hover{
+    background-color: #ececec;
+    cursor: pointer;
+}
+.tab-current{
+    background-color: #ececec !important;
+    pointer-events: none !important;
 }
