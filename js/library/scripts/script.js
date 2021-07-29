@@ -7,7 +7,7 @@ const bookForm = getNode("#addBookForm");
 const bgOverlay = getNode("#overlay");
 const current = getNode("#current");
 const total = getNode("#total");
-let library = [];
+let library = {};
 let max = 0;
 
 
@@ -20,9 +20,9 @@ function readLibrary(){
         booksTable.firstChild.remove();
     } 
     */
-    library.forEach((book) => {
-        addToLibrary(book);
-    });
+    for(let key in library){
+        addToLibrary(library[key]);
+    };
 }
 function addToLibrary(book){
     const bookNode = document.createElement('tr');
@@ -120,6 +120,7 @@ function addToLibrary(book){
 function addBook() {
     let name = titleCase(getNode('#name').value.split(" "));
     let author = titleCase(getNode('#author').value.split(" "));
+    console.log(max)
     const newBook = new Book( 
         max,
         name,
@@ -127,17 +128,16 @@ function addBook() {
         current.value, 
         total.value
         );
+    newBook.addToLibrary(max);
     localStorage.setItem(`${max++}`, JSON.stringify(newBook));
     addToLibrary(newBook);
-    newBook.addToLibrary();
     bookForm.reset();
     toggleForm();
-    console.log(max)
 }
 function removeBook(e){
     let i = e.getAttribute('data-index');
-    library[i] = "";
-    localStorage.setItem(`${i}`, "");
+    delete library[i];
+    localStorage.removeItem(`${i}`);
     document.getElementById(`book${i}`).remove();
 }
 function editBook(book){
@@ -296,7 +296,7 @@ class Book{
         this.prevState = this.status;
     }
     addToLibrary(){
-        library.push(this);
+        library[this.id] = this;
     }
     setPage(page, index){
         if(page <= this.totalPages && page >= 0) {
@@ -323,26 +323,23 @@ function readStorage(){
         if(localStorage.length > 0){
             const keys = Object.keys(localStorage);
             let items = {...localStorage}, i = 0;
-            for( i in items){
+            for(let i in items){
                 let item = localStorage.getItem(i);
-                if(item != ""){
-                    let book = JSON.parse(item);
-                    Object.setPrototypeOf(book, Book.prototype.constructor.prototype);
-                    library.push(book);
-                    max = +book.id + 1;
-                }else{
-                    library.push("");
-                }
+                let book = JSON.parse(item);
+                Object.setPrototypeOf(book, Book.prototype.constructor.prototype);
+                library[i] = book;
+                max = +book.id + 1;
             }
+            console.log(library)
         }else{
-            library = [
-                new Book(0,"A Song of Fire and Ice", "George R.R Martin", 2, 506),
-                new Book(1,"Sherlock Holmes", "Arthur Conan Doyle", 0, 400),
-                new Book(2,"JS for Babies", "IDK", 205, 205)
-            ];
-            library.forEach((book,idx) => {
-                localStorage.setItem(`${idx}`, JSON.stringify(book));
-            })
+            library = {
+                0: new Book(0,"A Song of Fire and Ice", "George R.R Martin", 2, 506),
+                1: new Book(1,"Sherlock Holmes", "Arthur Conan Doyle", 0, 400),
+                2: new Book(2,"JS for Babies", "IDK", 205, 205)
+            }
+            for(let key in library){
+                localStorage.setItem(key, JSON.stringify(library[key]));
+            }
             max = 3;
         }
         
