@@ -13,12 +13,13 @@ function createNav(){
 
 function initialDisplay(){
     const content = document.getElementById("content");
-    const nav = createContainer('nav', 'nav');
-    const drawer = createContainer('drawer');
+    const nav = createContainer('nav', 'nav');// container for the nav bar
+    const drawer = createContainer('drawer');// container for the drawer
     drawer.appendChild(createDrawer());
-    const main = createContainer('main');   
-    const footer = createContainer('footer', 'footer');
-    const overlay = document.createElement('div');
+    // drawer.classList.add('opened-container');
+    const main = createContainer('main');// container for the tasks content
+    const footer = createContainer('footer', 'footer'); // container for the footer
+    const overlay = document.createElement('div'); // container for the overlay
     overlay.id = "overlay"
 
     insertChildren(content, [overlay, drawer, nav, main, footer])

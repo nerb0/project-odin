@@ -1,5 +1,6 @@
 import {insertChildren, createContainer, replace} from './util.js' 
-import {kebabCase,upperFirst, last, isFunction} from 'lodash'
+import {kebabCase,upperFirst, last} from 'lodash'
+import { addDays, format, formatRelative, parseISO } from 'date-fns';
 
 
 const colors = {
@@ -88,21 +89,35 @@ const createHeader = (from) => {
     return project;
 }
 
+
+// create the node for each task;
 const createTaskNode = (_task, from) => {
     // assign unique id to the task with respect to their project (parent)?
     const container = createContainer(`${kebabCase(from)}-${_task.id}`, 'li'); 
     container.className = "task-node";
+
+    const check = document.createElement('input');
+    check.type = 'checkbox';
+    check.className = 'task-checkbox'
+    check.setAttribute('data-task',container.id);
+
     const title = document.createElement('p');
     title.textContent = upperFirst(_task.title);
+
     const description = document.createElement('div');
     description.className = "task-description";
     description.textContent = _task.description;
+
     const deadline = document.createElement('p');
-    deadline.textContent = _task.dueDate;
+    deadline.textContent = formatRelative( parseISO(_task.dueDate), new Date(), {unit:'day'});
+    container.setAttribute('data-index', deadline.textContent);
+
+
     const project = document.createElement('p');
     project.textContent = _task.project;
 
-    insertChildren(container, [title, project, deadline, description ]);
+    
+    insertChildren(container, [check,title, deadline, description ]);
     container.onclick = (event) => {
         event.stopPropagation();
         const prev = document.getElementsByClassName('expanded');
@@ -155,31 +170,39 @@ const displayTasks = (container, listType, from) =>{
 }
 
 const List = (() => {
-    const projects = {
-        "First Project" : new Project("First Project", [
-            new Task("one", "asdasda", "20/20/20", 1, 1),
-            new Task("two", "asdasda", "20/20/21", 2, 2),
-            new Task("three", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda", "20/20/22", 3, 3),
-            new Task("four", "asdasda", "20/20/23", 4, 4)
-        ]),
-        "Second Project" : new Project("Second Project", [
-            new Task("awre", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda", "20/20/22", 3, 3),
-            new Task("four", "asdasda", "20/20/23", 4, 4)
-        ]),
-    }
+
     const inbox = {
         "Inbox": new Inbox([
-            new Task("Inbox", "asdasda", "20/20/20", 1, 1),
-            new Task("Inbox", "asdasda", "20/20/20", 1, 1)
+            new Task("Inbox", "asdasda", format(addDays(new Date(), 1),'yyyy-MM-dd'), 1, 1),
+            new Task("Inbox", "asdasda",  format(addDays(new Date(), 1),'yyyy-MM-dd'), 1, 1)
             ]),
+    }
+    const projects = {
+        "First Project" : new Project("First Project", [
+            //      name     description             date            date_format  prio  id           
+            new Task("one", "asdasda", format(new Date(),'yyyy-MM-dd'), 1, 1),
+            new Task("two", "asdasda",  format(addDays(new Date(), 21),'yyyy-MM-dd'), 2, 2),
+            new Task("three", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 3),'yyyy-MM-dd'), 3, 3),
+            new Task("four", "asdasda",  format(addDays(new Date(), 1),'yyyy-MM-dd'), 4, 4)
+        ]),
+        "Second Project" : new Project("Second Project", [
+            new Task("awre", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 2),'yyyy-MM-dd'), 3, 3),
+            new Task("four", "asdasda",  format(addDays(new Date(), 5),'yyyy-MM-dd') , 4, 4)
+        ]),
     }
 
     const addToList = (_task,from) => {
         if(projects[from]){
-            _task.id = last(projects[from].list).id
+            _task.id = (last(projects[from].list))? 
+                last(projects[from].list).id : 0;
             projects[from].list.push(_task);
             return true;
-        }else{
+        }else if(from.toLowerCase() == 'inbox'){
+            _task.id = last(inbox["Inbox"].list).id;
+            inbox["Inbox"].list.push(_task);
+            return true;
+        }
+        else{
             projects[from] = new Project(from, []);
             _task.id = 0;
             projects[from].list.push(_task);
@@ -187,7 +210,11 @@ const List = (() => {
         }
     }
     const addProject = (name) => {
-        _list[name] = new Project("name", []);
+        if(projects[name]) return false;
+        else{
+            projects[name] = new Project("name", []);
+            return true;
+        }
     }
     const remove = (index) => {
         _list.splice(index, 1)
@@ -215,6 +242,7 @@ function showTasks(listType, from){
     displayTasks(main, listType, from);
     return main
 }
+ 
 function showProjects(){
     return List.getList('projects');
 }
@@ -229,10 +257,13 @@ function createTask(title, description, dueDate, priority, project){
     else node = createTaskNode(_task);
     return node;
 }
-
+function createProject(name){
+    return List.addProject(name);
+}
 
 export{
     createTask,
     showTasks,
-    showProjects
+    showProjects,
+    createProject
 }

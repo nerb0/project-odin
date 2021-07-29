@@ -74,7 +74,7 @@
 
 
 .opened-container{
-    box-shadow: 0 0 5px 2px #e0e0e0;
+    box-shadow: 0 0 5px 2px #0000002f;
     left: 0 !important;
 }
 #drawer-tab-container{
@@ -137,7 +137,6 @@
     opacity: 0;
     pointer-events: none;
 }
- 
 #project-form-container > div{
     margin-bottom: 15px;
 }
@@ -151,7 +150,25 @@
 #input-new-project-description ~ div::after{
     content: "Project Description";
 }
-
+#add-project-container{
+    position: absolute;
+    right: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.add-project-btn{
+    border-radius: 50%;
+    font-size: clamp(24px, 2vw, 30px);
+    background-color: transparent;
+    cursor: pointer;
+    color:#7a7a7a;
+}
+.add-project-btn:hover, .active-project-btn{
+    background-color: white;
+    color:black
+}
 
 #projects-list-container{
     display: block;
@@ -159,7 +176,6 @@
     font-size: clamp(14px, 1.2vw, 17px);
     margin-left: clamp(25px, 5vw, 70px);
 }
-
 .tab-projects-list{
     padding: 5px 2px;
 }
@@ -169,5 +185,5 @@
 }
 .tab-current{
     background-color: #ececec !important;
-    pointer-events: none !important;
+    cursor: default !important;
 }

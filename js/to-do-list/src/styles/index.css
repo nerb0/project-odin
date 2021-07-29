@@ -1,3 +1,10 @@
+
+/* 
+    IMPORTED FONTS:
+    Rajdhani - 400/600/700, 
+    Raleway - 300/500/600/900,
+    Material Icons Round - 400
+*/
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Raleway:wght@300;500;600;900&display=swap&family=Material+Icons+Round:wght@400&display=swap');
 
 :root{
@@ -51,6 +58,9 @@ button, input, textarea{
 
 #overlay{
     position: absolute;
+    display:flex;
+    justify-content: center;
+    align-items: center;
     height:100%;
     width:100%;
     z-index: 5;
@@ -60,6 +70,9 @@ button, input, textarea{
     transition: opacity 0.4s;
 }
 .visible{
-    opacity:1;
-    pointer-events: all;
+    opacity:1 !important;
+    pointer-events: all !important;
+}
+.unselectable{
+    pointer-events: none !important;
 }
