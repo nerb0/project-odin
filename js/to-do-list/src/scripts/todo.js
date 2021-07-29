@@ -1,6 +1,6 @@
 import {insertChildren, createContainer, replace} from './util.js' 
 import {kebabCase,upperFirst, last} from 'lodash'
-import { addDays, format, formatRelative, parseISO } from 'date-fns';
+import { addDays, differenceInDays, format, formatRelative, parseISO } from 'date-fns';
 
 
 const colors = {
@@ -8,19 +8,8 @@ const colors = {
     "First Project": "red",
     "Second Project": "blue",
 }
-class Inbox{
-    constructor(list =[]){
-        this.list = list;
-    }
-    get list(){
-        return this._list;
-    }
-    set list(newList) {
-        this._list = newList;
-    }
-}
 class Project{
-    constructor(name, list =[]){
+    constructor(name, list = {}){
         this.name = name;
         this.list = list;
     }
@@ -39,15 +28,18 @@ class Project{
 }
 
 class Task{
-    constructor(title, description, dueDate, priority, id){
+    constructor(title, description, dueDate, priority, status){
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
-        this.id = id;
+        this.status = status; // -1 = incomplete/ 0 = ongoing / 1 = complete
     }
     get title(){
         return this._title;
+    }
+    get status(){
+        return this._status;
     }
     get description(){
         return this._description;
@@ -60,6 +52,9 @@ class Task{
     }
     get id(){
         return this._id;
+    }
+    set status(newStatus){
+        this._status = newStatus;
     }
     set id(newId){
         this._id = newId;
@@ -89,35 +84,56 @@ const createHeader = (from) => {
     return project;
 }
 
-
 // create the node for each task;
-const createTaskNode = (_task, from) => {
+const createTaskNode = (_task, from, id) => {
     // assign unique id to the task with respect to their project (parent)?
-    const container = createContainer(`${kebabCase(from)}-${_task.id}`, 'li'); 
+    const container = createContainer(`${kebabCase(from)}-${id}`, 'li'); 
     container.className = "task-node";
+    container.setAttribute('data-from', from);
+    container.setAttribute('data-index', id);
 
+
+    // Node for checkbox
     const check = document.createElement('input');
     check.type = 'checkbox';
     check.className = 'task-checkbox'
     check.setAttribute('data-task',container.id);
+    // toggling status
+    check.onclick = (e) =>{
+        e.stopPropagation()
+        if(_task.status == 1) _task.status = 0;
+        else _task.status = 1;
+        container.classList.toggle('task-over');
+    }
 
+    // Node for task title
     const title = document.createElement('p');
     title.textContent = upperFirst(_task.title);
 
+    // Node for task description
     const description = document.createElement('div');
     description.className = "task-description";
     description.textContent = _task.description;
 
+    // Node for task deadline
     const deadline = document.createElement('p');
     deadline.textContent = formatRelative( parseISO(_task.dueDate), new Date(), {unit:'day'});
-    container.setAttribute('data-index', deadline.textContent);
 
-
-    const project = document.createElement('p');
-    project.textContent = _task.project;
-
+    /// set the status to incomplete if task is ongoing and past the deadline
+    if(differenceInDays( parseISO(_task.dueDate), new Date()) < 0 && _task.status == 0){
+        _task.status = -1; 
+        container.classList.add('task-incomplete');
+    }
+    // set the class for container to have strikethrough if task is complete or incomplete
+    if(_task.status == -1 || _task.status == 1){
+        container.classList.add('task-over');
+        if(_task.status == 1) check.checked = true;
+        else container.classList.add('task-incomplete');
+    }
+    
     
     insertChildren(container, [check,title, deadline, description ]);
+    // expanding a task 
     container.onclick = (event) => {
         event.stopPropagation();
         const prev = document.getElementsByClassName('expanded');
@@ -128,106 +144,107 @@ const createTaskNode = (_task, from) => {
     return container;
 }
 
-const displayTasks = (container, listType, from) =>{
-    const lists = List.getList(listType); 
+const displayTasks = (container, specific = false, from) =>{
+    const lists = List.getList(); 
     const project = createHeader(from);
-    switch (listType) {
-        case 'projects': // list the tasks from all the projects
-            if(from){ // list the tasks from a specific project
-                lists[from].list.forEach((_task) => {
-                    project.appendChild(createTaskNode(_task, from));
-                })
-                container.appendChild(project);
+    if(specific){
+        // list the tasks from all the projects
+        if(from){ // list the tasks from a specific project
+            for(let task in lists[from].list){
+                project.appendChild(createTaskNode(lists[from].list[task], from, task));
             }
-            else{
-                for(let key in lists){
+            container.appendChild(project);
+        }
+        else{
+            for(let key in lists){ // list all the tasks from project
+                if(key != 'Inbox'){
                     const project = createHeader(key);
-                    lists[key].list.forEach((_task) => {
-                        project.appendChild(createTaskNode(_task, key))
-                    })
+                    for(let task in lists[key].list){
+                        project.appendChild(createTaskNode(lists[key].list[task], key, task))
+                    }
                     container.appendChild(project);
                 }
             }
-            break;
-        case 'inbox':
-            lists[from].list.forEach((_task) => {
-                project.appendChild(createTaskNode(_task, from));
-            })
-            container.appendChild(project);
-            break; 
-        default:
-            for(let all of lists){
-                for(let key in all){        
-                    const project = createHeader(key);
-                    all[key].list.forEach((_task) => {
-                        project.appendChild(createTaskNode(_task, key));
-                    })
-                    container.appendChild(project)
-                }
+        }
+    }
+    else{
+        /* TODO:: Filter the task to enable 
+        flexibility for sorting and filtering */
+
+        for(let key in lists){ // list all the tasks
+            const project = createHeader(key);
+            for(let task in lists[key].list){
+                project.appendChild(createTaskNode(lists[key].list[task], key, task));
             }
-            break;
-    }  
+            container.appendChild(project)
+        }
+    } 
 }
 
 const List = (() => {
+    let _lists = localStorage.getItem('list');
 
-    const inbox = {
-        "Inbox": new Inbox([
-            new Task("Inbox", "asdasda", format(addDays(new Date(), 1),'yyyy-MM-dd'), 1, 1),
-            new Task("Inbox", "asdasda",  format(addDays(new Date(), 1),'yyyy-MM-dd'), 1, 1)
-            ]),
+    // localStorage
+    if(_lists){
+        _lists = JSON.parse(_lists);
+        for(let project in _lists){
+            Object.setPrototypeOf(_lists[project], Project.prototype.constructor.prototype)
+            for(let task in _lists[project].list){
+                Object.setPrototypeOf(_lists[project].list[task], Task.prototype.constructor.prototype)
+            }
+        }
+    }else{
+        _lists = {
+            "Inbox": new Project("Inbox", {
+            1: new Task("Inbox", "asdasda", format(addDays(new Date(), -1),'yyyy-MM-dd'), 1, 0),
+            2: new Task("Inbox", "asdasda",  format(addDays(new Date(), -2),'yyyy-MM-dd'), 1, 1)
+            }),
+            "First Project" : new Project("First Project", {
+                1: new Task("one", "asdasda", format(new Date(),'yyyy-MM-dd'), 1, 1),
+                2: new Task("two", "asdasda",  format(addDays(new Date(), 21),'yyyy-MM-dd'), 2, 0),
+                3: new Task("three", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 3),'yyyy-MM-dd'), 3, 0),
+                4: new Task("four", "asdasda",  format(new Date(),'yyyy-MM-dd'), 4, 0)
+            }),
+            "Second Project" : new Project("Second Project", {
+                1: new Task("awre", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 2),'yyyy-MM-dd'), 3, 0),
+                2: new Task("four", "asdasda",  format(addDays(new Date(), 5),'yyyy-MM-dd'), 4, 0)
+            }),
+        }
+        localStorage.setItem('list', JSON.stringify(_lists));
     }
-    const projects = {
-        "First Project" : new Project("First Project", [
-            //      name     description             date            date_format  prio  id           
-            new Task("one", "asdasda", format(new Date(),'yyyy-MM-dd'), 1, 1),
-            new Task("two", "asdasda",  format(addDays(new Date(), 21),'yyyy-MM-dd'), 2, 2),
-            new Task("three", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 3),'yyyy-MM-dd'), 3, 3),
-            new Task("four", "asdasda",  format(addDays(new Date(), 1),'yyyy-MM-dd'), 4, 4)
-        ]),
-        "Second Project" : new Project("Second Project", [
-            new Task("awre", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 2),'yyyy-MM-dd'), 3, 3),
-            new Task("four", "asdasda",  format(addDays(new Date(), 5),'yyyy-MM-dd') , 4, 4)
-        ]),
+    console.log(_lists)
+    const updateStorage = () => {
+        localStorage.setItem('list', JSON.stringify(_lists));
     }
-
     const addToList = (_task,from) => {
-        if(projects[from]){
-            _task.id = (last(projects[from].list))? 
-                last(projects[from].list).id : 0;
-            projects[from].list.push(_task);
-            return true;
-        }else if(from.toLowerCase() == 'inbox'){
-            _task.id = last(inbox["Inbox"].list).id;
-            inbox["Inbox"].list.push(_task);
-            return true;
+        if(_lists[from]){
+            let key = last(Object.keys(_lists[from].list));
+            if(!key) key = 0;
+            _lists[from].list[++key] = _task;
+            updateStorage();
+            return {key};
         }
         else{
-            projects[from] = new Project(from, []);
-            _task.id = 0;
-            projects[from].list.push(_task);
+            _lists[from] = new Project(from);
+            _lists[from].list[0] = _task;
+            updateStorage();
             return false;
         }
     }
     const addProject = (name) => {
-        if(projects[name]) return false;
+        if(_lists[name]) return false;
         else{
-            projects[name] = new Project("name", []);
+            _lists[name] = new Project("name", []);
+            updateStorage();
             return true;
         }
     }
     const remove = (index) => {
         _list.splice(index, 1)
+        updateStorage();
     }
-    const getList = (from) =>{
-        if(from){
-            return (from == 'projects')? projects : inbox;
-        }else{
-            return [
-                inbox,
-                projects,
-            ]
-        }
+    const getList = () =>{
+        return _lists;
     }
     return{
         addToList,
@@ -244,19 +261,22 @@ function showTasks(listType, from){
 }
  
 function showProjects(){
-    return List.getList('projects');
+    return List.getList();
 }
 
 function createTask(title, description, dueDate, priority, project){
-    const _task = new Task(title, description, dueDate, priority);
+    const _task = new Task(title, description, dueDate, priority, 0);
     let node;
-    if(!List.addToList(_task, project)){
+    const res = List.addToList(_task, project);
+    console.log(res.key)
+    if(!res){
         node = createHeader(project);
-        node.appendChild(createTaskNode(_task))
+        node.appendChild(createTaskNode(_task, project, 0));
     }
-    else node = createTaskNode(_task);
+    else node = createTaskNode(_task, project, res.key);
     return node;
 }
+
 function createProject(name){
     return List.addProject(name);
 }

@@ -50,7 +50,7 @@
     display: grid;
     font-size: clamp(12px, 1vw, 15px);
     font-weight: 300;
-    grid-template-columns: 1fr 6fr 2fr;
+    grid-template-columns: 1fr 8fr 3fr;
     grid-template-rows: 1fr 4fr;
     list-style: none;
     height:45px;
@@ -58,7 +58,6 @@
     border-bottom: 1px solid #e0e0e0;
     min-height: 20px;
     transition: height 0.5s;
-    cursor: pointer;
 }
 #tasks > div > li:hover {
     background-color: #f5f5f5;
@@ -81,7 +80,7 @@
     transition: transform 0.5s ease-in,
         opacity 0.2s;
 }
-#tasks > div > li > p:first-child {
+#tasks > div > li > p:nth-child(2) {
     display: inline-block;
     font-weight: 500;
     word-wrap: break-word;
@@ -100,11 +99,28 @@
     text-overflow: clip;
     overflow: hidden; 
     height: 100%;
-    width: 100%;
+    width: 90%;
     grid-row: 2/3;
     grid-column: 1/4;
+    margin:0 5%;
 }
 .task-checkbox{
+    position: relative;
+    margin: 15px;
+    cursor: pointer;
+}
+.task-over{
+    color:gray;
+    text-decoration-line: line-through;
+}
+.task-incomplete{
+    opacity:0.4;
+}
+.task-incomplete > input{
+    pointer-events: none;
+    cursor: default;
+}
+.task-complete > input{
     
 }
 

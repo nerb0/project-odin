@@ -5,11 +5,11 @@ import { format } from 'date-fns';
 
 
 function addTasks(){
-    const title = document.getElementById('input-title').value;
+    const title = _.startCase(_.toLower(document.getElementById('input-title').value));
     const description = document.getElementById('input-description').value;
     const deadline = document.getElementById('input-deadline').value;
     const priority = document.getElementById('input-priority').value;
-    const project = document.getElementById('input-project-name').value;
+    const project = _.startCase(_.toLower(document.getElementById('input-project-name').value));
     
     const task =  todo.createTask(title, description, deadline, priority, project);
     const container = document.getElementById(`${project}-container`);
@@ -110,6 +110,6 @@ function createHome(){
     document.getElementById("main-container").appendChild(main);
     document.getElementById("overlay").appendChild(createTaskForm());
 
-}
+}   
 
 export default createHome

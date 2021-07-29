@@ -37,13 +37,16 @@ function createProjectTab(id){
     } 
     return tab;
 }
+
 // initialize listofprojects
 function listProjects() {
     const container = util.replace("projects-list-container");
     const projects = todo.showProjects();
     for(let key in projects){
-        const tab = createProjectTab(key);
-        container.appendChild(tab);
+        if(key != 'Inbox'){
+            const tab = createProjectTab(key);
+            container.appendChild(tab);
+        }
     }
     return container;
 }
@@ -72,7 +75,7 @@ function createForm(){
     })
     container.onsubmit = () => {
         util.toggleDisplay(container.id);
-        const value = document.getElementById('input-new-project-name').value;
+        const value = _.startCase(_.toLower(document.getElementById('input-new-project-name').value));
         addProject(value);
         container.reset();
     }
@@ -155,8 +158,8 @@ function createDrawer() {
     util.insertChildren(projects,[createAddProjectsBtn(projects), createForm()]);
 
     all.onclick = function(){changeTab(this)};
-    inbox.onclick = function(){changeTab(this, 'inbox', 'Inbox')};
-    projects.onclick = function(){changeTab(this, 'projects')};
+    inbox.onclick = function(){changeTab(this, true, 'Inbox')};
+    projects.onclick = function(){changeTab(this, true)};
 
     util.insertChildren(tabs, [all,inbox,today, week, projects])
     util.insertChildren(container, [createButton(),tabs, listProjects()])
