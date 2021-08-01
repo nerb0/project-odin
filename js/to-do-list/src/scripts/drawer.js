@@ -61,6 +61,7 @@ function createForm(){
     const desc = util.createInput('new-project-description', 'textarea','input-form');
     const color = document.createElement('input');
     color.type = 'color';
+    color.id = "input-new-project-color";
     const submit = document.createElement('button');
     submit.textContent = "Add Project";
     submit.type = "submit";
@@ -76,7 +77,9 @@ function createForm(){
     container.onsubmit = () => {
         util.toggleDisplay(container.id);
         const value = _.startCase(_.toLower(document.getElementById('input-new-project-name').value));
-        addProject(value);
+        const color = document.getElementById('input-new-project-color').value;
+        console.log(color)
+        addProject(value, color);
         container.reset();
     }
 
@@ -100,8 +103,8 @@ function createAddProjectsBtn(parent) {
     container.appendChild(button)
     return container;
 }
-function addProject(name){
-    if(todo.createProject(name))
+function addProject(name, color){
+    if(todo.createProject(name, color))
         document.getElementById('projects-list-container').appendChild(createProjectTab(name));
     else
         console.log('wawaw');

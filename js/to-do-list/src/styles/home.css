@@ -19,13 +19,26 @@
     padding:0;
 }
 .task-header{
-    width: 100%;
+    width: 98%;
     padding: 2px 5px;
+    padding-right: 4%;
     font-size: 16px;
     font-weight: 600;
     font-family: 'Raleway';
     border-left: 5px solid;
     border-color: #cecece;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.task-header > * {
+    background: none;
+}
+.task-header > button{
+    opacity: 0.5;
+}
+.task-header > button:hover{
+    opacity: 1;
 }
 #tasks{
     display: flex;
@@ -51,7 +64,7 @@
     font-size: clamp(12px, 1vw, 15px);
     font-weight: 300;
     grid-template-columns: 1fr 8fr 3fr;
-    grid-template-rows: 1fr 4fr;
+    grid-template-rows: 1fr 4fr 1fr;
     list-style: none;
     height:45px;
     padding-right: 30px;
@@ -92,12 +105,16 @@
 .expanded{
     height: 150px !important;
 }
+.task-description, .task-title, .task-deadline{
+    background: transparent;
+}
 .task-description{
     display: inline-block;
     word-wrap: break-word;
     white-space: pre-wrap;
     text-overflow: clip;
-    overflow: hidden; 
+    overflow: hidden;
+    resize: none;
     height: 100%;
     width: 90%;
     grid-row: 2/3;
@@ -109,22 +126,44 @@
     margin: 15px;
     cursor: pointer;
 }
-.task-over{
+.task-over:not(.on-edit-task){
     color:gray;
     text-decoration-line: line-through;
 }
-.task-incomplete{
+.task-no-more{
     opacity:0.4;
 }
-.task-incomplete > input{
+.task-no-more > input, .task-no-more .task-edit{
     pointer-events: none;
     cursor: default;
 }
-.task-complete > input{
-    
+.task-buttons{
+    display: inline-block;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    text-overflow: clip;
+    overflow: hidden;
+    grid-row: 3/4;
+    grid-column: 3/4;
+    text-align: right;
 }
-
-
+.task-buttons > button{
+    background: none;
+    opacity: 0.7;
+    cursor: pointer;
+}
+.task-buttons > button:hover{
+    opacity: 1;
+}
+.task-buttons > button > span{
+    font-size: 20px;
+}
+.task-edit > span{
+    color: #198a31;
+}
+.task-delete > span{
+    color: #8a1919;
+}
 
 #task-form-container{
     position: fixed;

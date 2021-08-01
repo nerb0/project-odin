@@ -1,17 +1,20 @@
 import {insertChildren, createContainer, replace} from './util.js' 
-import {kebabCase,upperFirst, last} from 'lodash'
+import {kebabCase,upperFirst, last, toLower, startCase} from 'lodash'
 import { addDays, differenceInDays, format, formatRelative, parseISO } from 'date-fns';
 
-
+/* 
+for checking duplicate color
 const colors = {
-    "Inbox": "#e0e0e0",
-    "First Project": "red",
-    "Second Project": "blue",
+    "#e0e0e0": '',
+    "red": '',
+    "blue" : '',
 }
+ */
 class Project{
-    constructor(name, list = {}){
+    constructor(name, color, list = {}){
         this.name = name;
         this.list = list;
+        this.color = color;
     }
     get name(){
         return this._name;
@@ -78,10 +81,32 @@ const createHeader = (from) => {
     const header = document.createElement('div');
     header.className = "task-header";
     header.textContent = from;
-    header.style.borderColor = colors[from];
+    
+    if(from) header.style.borderColor = List.getList()[from].color;
+    if(from != 'Inbox'){
+        const button = createTaskBtn('delete');
+        button.id = from;
+        button.onclick = () => {
+            List.remove(from);
+            project.remove();
+        }
+        header.appendChild(button)
+    }
+    
     project.appendChild(header);
     
     return project;
+}
+
+const createTaskBtn = (name) => {
+    const button = document.createElement('button');
+    button.className = `task-${name}`;
+    const text = document.createElement('span');
+    text.className = `${name}-task-btn material-icons-round`;
+    text.textContent = name;
+
+    button.appendChild(text);
+    return button;
 }
 
 // create the node for each task;
@@ -92,7 +117,6 @@ const createTaskNode = (_task, from, id) => {
     container.setAttribute('data-from', from);
     container.setAttribute('data-index', id);
 
-
     // Node for checkbox
     const check = document.createElement('input');
     check.type = 'checkbox';
@@ -101,49 +125,106 @@ const createTaskNode = (_task, from, id) => {
     // toggling status
     check.onclick = (e) =>{
         e.stopPropagation()
-        if(_task.status == 1) _task.status = 0;
-        else _task.status = 1;
+        _task.status = !_task.status;
         container.classList.toggle('task-over');
     }
 
     // Node for task title
     const title = document.createElement('p');
+    title.className = "task-title";
     title.textContent = upperFirst(_task.title);
+
+    // Node for task deadline
+    const deadline = document.createElement('p');
+    deadline.className = "task-deadline";
+    deadline.textContent = formatRelative( parseISO(_task.dueDate), new Date(), {unit:'day'});
 
     // Node for task description
     const description = document.createElement('div');
     description.className = "task-description";
     description.textContent = _task.description;
 
-    // Node for task deadline
-    const deadline = document.createElement('p');
-    deadline.textContent = formatRelative( parseISO(_task.dueDate), new Date(), {unit:'day'});
 
-    /// set the status to incomplete if task is ongoing and past the deadline
-    if(differenceInDays( parseISO(_task.dueDate), new Date()) < 0 && _task.status == 0){
-        _task.status = -1; 
-        container.classList.add('task-incomplete');
+    /// set the task to unselectable if task is past the deadline
+    if(differenceInDays( parseISO(_task.dueDate), new Date()) < 0){
+        if (_task.status == 0)_task.status = -1; // set the status to incomplete if task is ongoing
+        container.classList.add('task-no-more'); // set the task inputs and buttons to be unselectable
     }
     // set the class for container to have strikethrough if task is complete or incomplete
     if(_task.status == -1 || _task.status == 1){
         container.classList.add('task-over');
         if(_task.status == 1) check.checked = true;
-        else container.classList.add('task-incomplete');
     }
     
+    const taskBtns = document.createElement('div');
+    taskBtns.className = "task-buttons";
+    taskBtns.onclick = (e) => e.stopPropagation();
+    const editTask = createTaskBtn('edit');
+    editTask.onclick = function(){
+        if(!container.classList.contains('on-edit-task')){ // replace task nodes to be input
+            const titleInput = document.createElement('input');
+            titleInput.className = "task-title";
+            titleInput.setAttribute('maxlength', "50");
+            titleInput.setAttribute('value', _task.title);
     
-    insertChildren(container, [check,title, deadline, description ]);
+            const dateInput = document.createElement('input');
+            dateInput.className = "task-deadline";
+            dateInput.setAttribute('type', 'date');
+            dateInput.setAttribute('min', format(new Date(), "yyyy-MM-dd"));
+            dateInput.setAttribute('value', _task.dueDate);
+            dateInput.setAttribute('required', '');
+    
+            const descInput = document.createElement('textarea');
+            descInput.textContent =  _task.description;
+            descInput.className = "task-description"; 
+            descInput.setAttribute('maxlength', "250");
+    
+            [titleInput, descInput, dateInput].forEach((node) => 
+                node.onclick = (e) => e.stopPropagation()
+            );
+            container.replaceChild(titleInput,  container.children[1]);
+            container.replaceChild(dateInput, container.children[2]);
+            container.replaceChild(descInput, container.children[3]);
+            editTask.children[0].textContent = 'check';
+        }else{ // replace input nodes to be normal node and update localStorage
+            const _title = startCase(toLower(container.children[1].value));
+            const _dueDate = container.children[2].value;
+            const _description = container.children[3].value;
+            List.editTask(_task, _title, _dueDate, _description);
+
+            title.textContent = _task.title;
+            deadline.textContent = _task.dueDate;
+            description.textContent = _task.description;
+    
+            container.replaceChild(title, container.children[1]);
+            container.replaceChild(deadline,container.children[2]);
+            container.replaceChild(description, container.children[3]);
+            editTask.children[0].textContent = 'edit';
+        }
+        container.classList.toggle('on-edit-task');
+    }
+    const deleteTask = createTaskBtn('delete');
+    deleteTask.onclick = () => {
+        container.remove();
+        List.remove(from, id);
+    }
+    insertChildren(taskBtns, [editTask, deleteTask]);
+
+    insertChildren(container, [check,title, deadline, description, taskBtns ]);
     // expanding a task 
     container.onclick = (event) => {
         event.stopPropagation();
         const prev = document.getElementsByClassName('expanded');
-        if(prev[0]) 
-           prev[0].classList.remove("expanded");
+        if(prev[0]) {
+            prev[0].classList.remove("expanded");
+        }
         else container.classList.add("expanded");
+        
     }
     return container;
 }
 
+// TODO:: FILTER TASK by date and sort
 const displayTasks = (container, specific = false, from) =>{
     const lists = List.getList(); 
     const project = createHeader(from);
@@ -185,7 +266,7 @@ const List = (() => {
     let _lists = localStorage.getItem('list');
 
     // localStorage
-    if(_lists){
+    if(_lists){ // load the local storage list
         _lists = JSON.parse(_lists);
         for(let project in _lists){
             Object.setPrototypeOf(_lists[project], Project.prototype.constructor.prototype)
@@ -193,64 +274,78 @@ const List = (() => {
                 Object.setPrototypeOf(_lists[project].list[task], Task.prototype.constructor.prototype)
             }
         }
-    }else{
+    }else{ // load default list on first load
         _lists = {
-            "Inbox": new Project("Inbox", {
+            "Inbox": new Project("Inbox", "#e0e0e0", {
             1: new Task("Inbox", "asdasda", format(addDays(new Date(), -1),'yyyy-MM-dd'), 1, 0),
             2: new Task("Inbox", "asdasda",  format(addDays(new Date(), -2),'yyyy-MM-dd'), 1, 1)
             }),
-            "First Project" : new Project("First Project", {
-                1: new Task("one", "asdasda", format(new Date(),'yyyy-MM-dd'), 1, 1),
-                2: new Task("two", "asdasda",  format(addDays(new Date(), 21),'yyyy-MM-dd'), 2, 0),
-                3: new Task("three", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 3),'yyyy-MM-dd'), 3, 0),
-                4: new Task("four", "asdasda",  format(new Date(),'yyyy-MM-dd'), 4, 0)
+            "First Project" : new Project("First Project", "red", {
+                1: new Task("One", "asdasda", format(new Date(),'yyyy-MM-dd'), 1, 1),
+                2: new Task("Two", "asdasda",  format(addDays(new Date(), 21),'yyyy-MM-dd'), 2, 0),
+                3: new Task("Three", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 3),'yyyy-MM-dd'), 3, 0),
+                4: new Task("Four", "asdasda",  format(new Date(),'yyyy-MM-dd'), 4, 0)
             }),
-            "Second Project" : new Project("Second Project", {
-                1: new Task("awre", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 2),'yyyy-MM-dd'), 3, 0),
-                2: new Task("four", "asdasda",  format(addDays(new Date(), 5),'yyyy-MM-dd'), 4, 0)
+            "Second Project" : new Project("Second Project", "blue", {
+                1: new Task("Awre", "asdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasdaasdasda",  format(addDays(new Date(), 2),'yyyy-MM-dd'), 3, 0),
+                2: new Task("Four", "asdasda",  format(addDays(new Date(), 5),'yyyy-MM-dd'), 4, 0)
             }),
         }
         localStorage.setItem('list', JSON.stringify(_lists));
     }
-    console.log(_lists)
+    // update the whole lists in the storage since I didn't add project variable on tasks
     const updateStorage = () => {
         localStorage.setItem('list', JSON.stringify(_lists));
     }
+
+    // adding tasks to list
     const addToList = (_task,from) => {
-        if(_lists[from]){
+        if(_lists[from]){ // if project is existing
             let key = last(Object.keys(_lists[from].list));
             if(!key) key = 0;
             _lists[from].list[++key] = _task;
             updateStorage();
             return {key};
         }
-        else{
+        else{ // if it is not; create new project
             _lists[from] = new Project(from);
             _lists[from].list[0] = _task;
             updateStorage();
             return false;
         }
     }
-    const addProject = (name) => {
+    const editTask = (_task, title, dueDate, description) => {
+        _task.title = title;
+        _task.dueDate = dueDate;
+        _task.description = description;
+        updateStorage();
+    }
+    // adding projects to list
+    const addProject = (name, color) => {
         if(_lists[name]) return false;
         else{
-            _lists[name] = new Project("name", []);
+            _lists[name] = new Project("name", color);
             updateStorage();
             return true;
         }
     }
-    const remove = (index) => {
-        _list.splice(index, 1)
+
+    const remove = (from, id) => {
+        if(id) delete _lists[from].list[id];
+        else delete _lists[from];
         updateStorage();
     }
+
     const getList = () =>{
         return _lists;
     }
+    
     return{
         addToList,
         remove,
         getList,
         addProject,
+        editTask,
     }
 })();
 
@@ -269,6 +364,7 @@ function createTask(title, description, dueDate, priority, project){
     let node;
     const res = List.addToList(_task, project);
     console.log(res.key)
+    // if task is from a new project
     if(!res){
         node = createHeader(project);
         node.appendChild(createTaskNode(_task, project, 0));
@@ -277,8 +373,8 @@ function createTask(title, description, dueDate, priority, project){
     return node;
 }
 
-function createProject(name){
-    return List.addProject(name);
+function createProject(name, color){
+    return List.addProject(name, color);
 }
 
 export{

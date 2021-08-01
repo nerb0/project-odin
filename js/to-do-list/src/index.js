@@ -1,8 +1,8 @@
-import './styles/home.css'
-import './styles/index.css'
-import './styles/drawer.css'
-import createHome from './scripts/home'
-import createDrawer from './scripts/drawer'
+import './styles/home.css';
+import './styles/index.css';
+import './styles/drawer.css';
+import createHome from './scripts/home';
+import createDrawer from './scripts/drawer';
 import { createContainer , insertChildren } from './scripts/util';
 
 

@@ -53,6 +53,7 @@ button, input, textarea{
     font-family: 'Rajdhani';
     font-weight: 600;
     padding:0;
+    cursor: pointer;
 }
 
 
