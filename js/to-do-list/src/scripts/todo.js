@@ -1,6 +1,6 @@
 import {insertChildren, createContainer, replace} from './util.js' 
 import {kebabCase,upperFirst, last, toLower, startCase} from 'lodash'
-import { addDays, differenceInDays, format, formatRelative, parseISO } from 'date-fns';
+import { addDays, differenceInDays, format, formatRelative, isToday, parseISO } from 'date-fns';
 
 /* 
 for checking duplicate color
@@ -87,8 +87,9 @@ const createHeader = (from) => {
         const button = createTaskBtn('delete');
         button.id = from;
         button.onclick = () => {
-            List.remove(from);
-            project.remove();
+            List.remove(from); // remove from localStorage
+            project.remove(); // remove project's task container
+            document.getElementById(from).remove(); // remove project tab
         }
         header.appendChild(button)
     }

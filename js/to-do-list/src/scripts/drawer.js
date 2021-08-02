@@ -10,10 +10,10 @@ function changeTab(node, listType, from){
     if(prev[0] != node){
         if(prev[0])prev[0].classList.remove('tab-current');
         const tasks = todo.showTasks(listType, from);
-        if(from){
+        if(from){ // set the adding task project name to be the same as the tab and unselectable
             util.setValue('input-project-name', from);
             document.getElementById('input-project-name').classList.add('unselectable');
-        }else{
+        }else{ // set the adding task project name to be the empty and selectable
             util.setValue('input-project-name', '');
             document.getElementById('input-project-name').classList.remove('unselectable');
         }
