@@ -1,5 +1,5 @@
 def substrings(words, arr)
-    res = {};
+    res = {}
     arr.each {|string| 
         count = words.downcase.scan(string).length
         res[string] = count unless count < 1
