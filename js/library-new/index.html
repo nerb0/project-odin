@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+	<div id="modal" class="modal">
+		<form class="book-form" id="newBookForm">
+			<a href="#" class="close-modal">X</a>
+			<label class="input">
+				<input type="text" name="" id="bookTitle" required>
+				<span>Book Title</span>
+			</label>
+			<label class="input">
+				<input type="text" name="" id="bookAuthor" required>
+				<span>Author</span>
+			</label>
+			<label class="input">
+				<input type="number" min="1" name="" id="bookPages" value="1" required>
+				<span>Book Pages</span>
+			</label>
+			<label class="input">
+				<input type="number" name="" id="pagesRead">
+				<span>Total Pages Read</span>
+			</label>
+			<input type="submit" value="Add Book">
+		</form>
+	</div>
+	<nav>
+		<img src="images/book-alphabet.svg" alt="">
+		<h3 class="logo-text">library</h3>
+	</nav>
+	<a href="#modal" class="add-book-btn">Add New Book</a>
+		<div class="legend">
+			<div class="legend-unread">Unread</div>
+			<div class="legend-reading">Reading</div>
+			<div class="legend-complete">Complete</div>
+		</div>
+	<div class="book-container" id="bookContainer">
+	</div>
+</body>
+<script src="scripts/script.js"></script>
+
+</html>
