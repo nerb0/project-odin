@@ -6,6 +6,7 @@
 
 ## Intermediate HTML and CSS
 - [Sign Up Form](https://nerb-visage.github.io/project-odin/html%26css/sign-up-form)
+- [Admin Dashboard](https://nerb-visage.github.io/project-odin/html%26css/admin-dashboard)
 
 ## Intermediate JS
 - [Library](https://nerb-visage.github.io/project-odin/js/library)
