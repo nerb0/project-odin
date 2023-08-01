@@ -13,4 +13,4 @@
 - [Calculator](https://nerb-visage.github.io/project-odin/js/calculator)
 - [Tic-Tac-Toe](https://nerb-visage.github.io/project-odin/js/tic-tac)
 - [Restaurant](https://nerb-visage.github.io/project-odin/js/restaurant/dist)
-- [To-do-Webpage](https://nerb-visage.github.io/project-odin/js/to-do-list/dist)
+- [To-do-Webpage](https://nerb-visage.github.io/project-odin/js/to-do-remake/dist)
