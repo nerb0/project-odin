@@ -1,5 +1,5 @@
 import { isThisWeek, isToday } from "date-fns";
-import { ProjectController } from "../classes";
+import ProjectLibrary from "../classes/ProjectLibrary";
 import ProjectCard, { CreateProjectForm, EmptyProjectCard } from "./Project";
 import TodoCard, { TodoList } from "./Todo";
 
@@ -29,7 +29,7 @@ function Sidelink(
 		addTodoBtn.removeAttribute("data-project");
 		container.classList.add('active-link');
 		contentHeaderRef.textContent = title;
-    TodoList(ProjectController.getTodos(filter))
+    TodoList(ProjectLibrary.getTodos(filter))
   });
   return container;
 }
@@ -74,8 +74,8 @@ export default function Sidebar() {
   projectList.className = "overflow--scroll flex flex-col w-full gap-y-1 pl-4";
   projectList.id = "projectList";
   projectList.append(
-		...Object.keys(ProjectController.projectList).map((id) =>
-			ProjectCard(ProjectController.projectList[id], id)
+		...Object.keys(ProjectLibrary.projectList).map((id) =>
+			ProjectCard(ProjectLibrary.projectList[id], id)
 		)
   );
 

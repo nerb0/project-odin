@@ -1,4 +1,4 @@
-import { ProjectController } from "../classes";
+import ProjectLibrary from "../classes/ProjectLibrary";
 import Sidebar from "./Sidebar";
 import TodoCard, { CreateTodoForm, EmptyTodoCard, TodoList } from "./Todo";
 
@@ -12,7 +12,7 @@ export function ContentLayout() {
   todoContainer.id = "todoContainer";
   todoContainer.className = "flex-1 flex flex-col mt-6";
 
-	const todos = ProjectController.getTodos()
+	const todos = ProjectLibrary.getTodos()
 	if (todos.length ) {
 		const todoNodes = todos.map(({ todo, id, projectId}) => TodoCard(todo, id, projectId));
 		todoContainer.append(...todoNodes);

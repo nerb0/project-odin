@@ -4,7 +4,7 @@ import ellipsis from "../images/ellipsis.svg";
 import check from "../images/checkmark-outline.svg";
 // @ts-ignore
 import cross from "../images/close-outline.svg";
-import { ProjectController as ProjectController } from "../classes";
+import ProjectLibrary from "../classes/ProjectLibrary";
 import TodoCard, { TodoList } from "./Todo";
 import { ActionMenu } from "./FloatingMenu";
 
@@ -29,10 +29,10 @@ export function CreateProjectForm() {
 	container.onsubmit = function(e) {
 		e.preventDefault();
 		const projectList = document.getElementById("projectList");
-		const project = ProjectController.createProject(input.value);
+		const project = ProjectLibrary.createProject(input.value);
 
 		projectList.append(
-			ProjectCard(project, ProjectController.currentProjectId)
+			ProjectCard(project, ProjectLibrary.currentProjectId)
 		);
 
 		const emptyProject = document.getElementById("emptyProject");
@@ -81,7 +81,7 @@ export default function ProjectCard(project: IProject, id: string | number) {
 		addTodoBtn.setAttribute("data-project", `${id}`);
 		addTodoBtn.setAttribute("data-show-control", title.id);
 		contentHeaderRef.textContent = project.name;
-		TodoList(ProjectController.getProjectTodos(id))
+		TodoList(ProjectLibrary.getProjectTodos(id))
 	};
 
 	actionIcon.onclick = function(e) {
@@ -134,12 +134,12 @@ export default function ProjectCard(project: IProject, id: string | number) {
 	};
 
 	deleteBtn.onclick = function(e) {
-		const project = ProjectController.deleteProject(id);
+		const project = ProjectLibrary.deleteProject(id);
 
 		const projectList = container.parentElement;
 		if (project) {
-			const newCard = ProjectCard(project, ProjectController.currentProjectId);
-			projectList.append(ProjectCard(project, ProjectController.currentProjectId))
+			const newCard = ProjectCard(project, ProjectLibrary.currentProjectId);
+			projectList.append(ProjectCard(project, ProjectLibrary.currentProjectId))
 		}
 		const showControl = document.getElementById("addTodoBtn").getAttribute("data-show-control");
 		console.log(showControl);

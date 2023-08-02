@@ -6,9 +6,10 @@ import star from "../images/star.svg";
 import starHalf from "../images/star-half.svg";
 // @ts-ignore
 import starOutline from "../images/star-outline.svg";
-import { ProjectController, Todo, TodoPriority, TodoStatus } from "../classes";
+import  ProjectLibrary from "../classes/ProjectLibrary";
 import { format, toDate } from "date-fns";
 import { ActionMenu } from "./FloatingMenu";
+import { TodoPriority, TodoStatus } from "../classes/Todo";
 
 export const EmptyTodoCard = `<div class="flex-1 text-center" id="emptyTodo">No Tasks Found</div>`;
 
@@ -42,9 +43,9 @@ export function CreateTodoForm(projectId = "1") {
 			<label>
 				<span class="font-bold italic">Project: </span>
 				<select placeholder="Title" class="px-2 py-1 rounded-md bg-gray-800/50" name="projectId" required>
-					${Object.keys(ProjectController.projectList)
+					${Object.keys(ProjectLibrary.projectList)
 			.reduce((acc, currId) => {
-				const project = ProjectController.projectList[currId];
+				const project = ProjectLibrary.projectList[currId];
 				acc.push(
 					`<option value="${currId}" ${projectId == currId && "selected"
 					}>${project.name}</option>`
@@ -87,7 +88,7 @@ export function CreateTodoForm(projectId = "1") {
 		e.preventDefault();
 		const formData = new FormData(container);
 		const todoList = document.getElementById("todoContainer");
-		const newTodo = ProjectController.projectList[
+		const newTodo = ProjectLibrary.projectList[
 			formData.get("projectId") as string
 		].createTodo(
 			formData.get("title") as string,
@@ -156,7 +157,7 @@ export default function TodoCard(
 	};
 
 	deleteBtn.onclick = function(e) {
-		ProjectController.projectList[projectId].deleteTodo(id);
+		ProjectLibrary.projectList[projectId].deleteTodo(id);
 		const todoList = container.parentElement;
 		container.remove();
 		if(!todoList.children.length) {

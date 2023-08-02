@@ -1,4 +1,5 @@
-import { Project, Todo } from "../classes";
+import Project from "../classes/Project";
+import Todo from "../classes/Todo";
 
 export {};
 

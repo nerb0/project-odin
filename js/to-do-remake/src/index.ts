@@ -1,8 +1,10 @@
+import Todo, { TodoStatus } from "./classes/Todo";
+import ProjectLibrary from "./classes/ProjectLibrary";
 import { IndexLayout } from "./components/Layout";
 import Sidebar from "./components/Sidebar";
-import { Project, ProjectController, Todo, TodoStatus } from "./classes";
-import "./globals.css";
 import { addDays, addWeeks } from "date-fns";
+import "./globals.css";
+import Project from "./classes/Project";
 
 function Modal() {
   const container = document.createElement("div");
@@ -83,11 +85,11 @@ window.onload = () => {
 				TodoStatus.IN_PROGRESS
 			),
 		};
-		ProjectController.projectList = {
+		ProjectLibrary.projectList = {
 			1: project1,
 			2: project2
 		};
-		localStorage.setItem("projectList", JSON.stringify(ProjectController.projectList));
+		localStorage.setItem("projectList", JSON.stringify(ProjectLibrary.projectList));
 	} else {
 		const retrievedProjects = JSON.parse(localStorage.getItem("projectList"));
 		const transformedProjectList = Object.entries(retrievedProjects).reduce((acc, [projectId, retrievedProject]) => {
@@ -99,7 +101,7 @@ window.onload = () => {
 			}, {} as Record<PropertyKey, Todo>);
 			return {...acc, [projectId]: transformedProject};
 		}, {} as Record<PropertyKey, Project>);
-		ProjectController.projectList = transformedProjectList;
+		ProjectLibrary.projectList = transformedProjectList;
 	}
 
   const root = document.getElementById("root");
