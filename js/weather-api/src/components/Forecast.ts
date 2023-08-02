@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 // @ts-ignore
-import sliderLeft from "../images/AngleLeft.svg";
+import SliderLeft from "../images/AngleLeft.svg";
 // @ts-ignore
-import sliderRight from "../images/AngleRight.svg";
+import SliderRight from "../images/AngleRight.svg";
 
 function ForecastDayCard(forecast: ForecastDay, date: string) {
   const container = document.createElement("div");
@@ -17,7 +17,7 @@ function ForecastDayCard(forecast: ForecastDay, date: string) {
 
 function ForecastHourCard(forecast: ForecastHour) {
   const container = document.createElement("div");
-  container.className = "p-2 inline-block w-fit items-center text-sky-50";
+  container.className = "p-2 inline-block w-fit text-center text-sky-50";
   container.innerHTML = `
 		<img class="w-20 h-20 invert brightness-0" src="${forecast.condition.icon}" />
 		<div class="font-bold">${format(new Date(forecast.time), "hh:mm a")}</div>
@@ -28,21 +28,39 @@ function ForecastHourCard(forecast: ForecastHour) {
 
 function ForecastHourSlider(side: "left" | "right") {
   const slider = document.createElement("img");
-  slider.className = "h-12 w-12 invert";
-  slider.src = side == "left" ? sliderLeft : sliderRight;
+  slider.className = "h-10 w-10 invert cursor-pointer";
+  slider.src = side == "left" ? SliderLeft : SliderRight;
   return slider;
 }
 
 function ForecastHourList(forecasts: ForecastHour[]) {
   const forecastList = document.createElement("div");
-  forecastList.className = "overflow-x-auto whitespace-nowrap [&>:not(:last-child)]:mr-3 flex-1 no-scrollbar";
+  forecastList.className =
+    "overflow-x-hidden whitespace-nowrap [&>*]:mx-4 flex-1";
   forecastList.append(...forecasts.map(ForecastHourCard));
+  forecastList.scrollTo({ left: 0, behavior: "smooth" });
 
   const sliderLeft = ForecastHourSlider("left");
   const sliderRight = ForecastHourSlider("right");
-  // const sliderContainer = document.createElement("div");
-  // sliderContainer.className = "flex justify-center";
-  // sliderContainer.append(sliderLeft, sliderRight);
+
+  sliderLeft.onclick = () => {
+		sliderRight.classList.remove("opacity-50", "pointer-events-none");
+    if (forecastList.scrollLeft <= forecastList.clientWidth)
+      sliderLeft.classList.add("opacity-50", "pointer-events-none");
+    forecastList.scrollTo({
+      left: forecastList.scrollLeft - forecastList.clientWidth,
+      behavior: "smooth",
+    });
+  };
+  sliderRight.onclick = () => {
+		sliderLeft.classList.remove("opacity-50", "pointer-events-none");
+    if (forecastList.scrollLeft >= forecastList.clientWidth * 2)
+      sliderRight.classList.add("opacity-50", "pointer-events-none");
+    forecastList.scrollTo({
+      left: forecastList.scrollLeft + forecastList.clientWidth,
+      behavior: "smooth",
+    });
+  };
 
   const container = document.createElement("div");
   container.className = "flex items-center mt-4";
@@ -61,8 +79,9 @@ export default function ForecastContainer(forecasts: Forecast[]) {
       const active = card.parentNode.querySelector(".is-active");
       if (active) active.classList.remove("is-active");
       card.classList.add("is-active");
-			if (container.contains(forecastHourList)) forecastHourList.replaceWith(forecastDayList);
-			else forecastDayList.replaceWith(forecastHourList);
+      if (container.contains(forecastHourList))
+        forecastHourList.replaceWith(forecastDayList);
+      else forecastDayList.replaceWith(forecastHourList);
     };
     return card;
   }

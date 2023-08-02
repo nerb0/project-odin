@@ -44,7 +44,7 @@ declare global {
     icon: string;
     code: number;
   };
-	type ForecastList = WeatherData & {
+	type ForecastList = WeatherData & ForecastError & {
 		forecast: {
 			forecastday: Forecast[];
 		};
@@ -99,4 +99,10 @@ declare global {
     will_it_rain: number;
     will_it_snow: number;
   };
+	type ForecastError = {
+		error?: {
+			code: number;
+			message: string;
+		}
+	}
 }

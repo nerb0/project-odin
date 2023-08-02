@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { addMinutes, format } from "date-fns";
 
 function WeatherIcon(condition: WeatherCondition) {
   const image = document.createElement("img");
@@ -31,16 +31,27 @@ function WeatherConditionText(time: string, weather: Weather) {
 }
 
 function WeatherLocationInfo(location: WeatherLocation) {
+	let locationDate = new Date(location.localtime);
+
 	const date = document.createElement("div");
 	date.className = "font-bold text-lg";
-	date.textContent = format(new Date(location.localtime), "LLL d, yyyy");
+	date.textContent = format(locationDate, "LLL d, yyyy");
 
 	const locationName = document.createElement("div");
 	locationName.textContent = `${location.name}, ${location.country}`;
 
+	const time = document.createElement("div");
+	time.textContent = format(locationDate, "hh:mm a");
+
+	setInterval(() => {
+		locationDate = addMinutes(locationDate, 1);
+		time.textContent = format(new Date(locationDate), "hh:mm a");
+		date.textContent = format(new Date(locationDate), "LLL d, yyyy");
+	}, 1000 * 60)
+
   const container = document.createElement("div");
   container.className = "flex flex-col items-end";
-  container.append(date, locationName);
+  container.append(date, locationName, time);
 
   return { container, date, locationName};
 }
