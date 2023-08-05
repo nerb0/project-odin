@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist/",
+		"sourceMap": true,
+		"noImplicitAny": true,
+		"module": "es6",
+		"target": "es5",
+		"jsx": "react",
+		"allowJs": true,
+		"typeRoots": [
+			"./node_modules/@types",
+			"./src/@types"
+		],
+		"moduleResolution": "node"
+	},
+	"include": [
+		"src",
+		"./src/**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}
