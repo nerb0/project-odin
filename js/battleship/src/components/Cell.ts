@@ -4,7 +4,7 @@ import { cn } from "../util";
 
 export default function Cell(x: number, y: number, owner: Player) {
 	const container = document.createElement("div");
-	container.className = cn("border border-black flex justify-center items-center cursor-pointer active:scale-[0.98] hover:scale-105 transition-transform") ;
+	container.className = cn("flex justify-center items-center cursor-pointer active:scale-[0.98] hover:scale-105 transition-transform") ;
 	container.dataset.x = x.toString();
 	container.dataset.y = y.toString();
 

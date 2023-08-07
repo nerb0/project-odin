@@ -1,7 +1,7 @@
 import CGameBoard from "../modules/PlayerBoard";
 import CPlayer from "../modules/Player";
 import CShip from "../modules/Ship";
-import { PlayerBoardController as CPlayerBoardController } from "../modules/GameController";
+import CPlayerBoardController from "../modules/PlayerBoardController";
 
 export {};
 

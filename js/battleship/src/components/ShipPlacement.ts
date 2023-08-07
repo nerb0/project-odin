@@ -28,11 +28,12 @@ function ShipList(ships: Ship[] = GameController.current.getShips()) {
 export function ShipPlacement() {
 	const virtualBoard = document.createElement("div");
 	virtualBoard.className =
-		"rounded-md grid grid-cols-10 grid-rows-10 gap-2 border-2 border-gray-400 min-h-[600px] h-[600px] w-[600px] p-2 bg-gray-300";
+		"rounded-md grid grid-cols-10 grid-rows-10 min-h-[600px] h-[600px] w-[600px] p-2 bg-gray-300 \
+		[&>div]:border-t-2 [&>div]:border-l-2 [&>div]:border-gray-700 [&>:nth-child(10n)]:border-r-2 [&>:nth-child(n+91)]:border-b-2";
 
 	function PlacementCell(x: number, y: number) {
 		const cell = document.createElement("div");
-		cell.className = "border-2 border-gray-700 cursor-pointer";
+		cell.className = "cursor-pointer";
 		cell.dataset.x = `${x}`;
 		cell.dataset.y = `${y}`;
 		cell.onclick = () => {
