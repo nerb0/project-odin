@@ -6,7 +6,7 @@ import star from "../images/star.svg";
 import starHalf from "../images/star-half.svg";
 // @ts-ignore
 import starOutline from "../images/star-outline.svg";
-import  ProjectLibrary from "../classes/ProjectLibrary";
+import ProjectLibrary from "../classes/ProjectLibrary";
 import { format, toDate } from "date-fns";
 import { ActionMenu } from "./FloatingMenu";
 import { TodoPriority, TodoStatus } from "../classes/Todo";
@@ -44,15 +44,16 @@ export function CreateTodoForm(projectId = "1") {
 				<span class="font-bold italic">Project: </span>
 				<select placeholder="Title" class="px-2 py-1 rounded-md bg-gray-800/50" name="projectId" required>
 					${Object.keys(ProjectLibrary.projectList)
-			.reduce((acc, currId) => {
-				const project = ProjectLibrary.projectList[currId];
-				acc.push(
-					`<option value="${currId}" ${projectId == currId && "selected"
-					}>${project.name}</option>`
-				);
-				return acc;
-			}, [])
-			.join("")}
+						.reduce((acc, currId) => {
+							const project = ProjectLibrary.projectList[currId];
+							acc.push(
+								`<option value="${currId}" ${
+									projectId == currId && "selected"
+								}>${project.name}</option>`
+							);
+							return acc;
+						}, [])
+						.join("")}
 				</select>
 			</label>
 			<input type="text" name="title" placeholder="Title" required></input>
@@ -61,19 +62,20 @@ export function CreateTodoForm(projectId = "1") {
 				<label>
 					<span class="font-bold italic">Due Date: </span>
 					<input type="date" name="dueDate" placeholder="Due Date" min="${format(
-				new Date(),
-				"yyyy-MM-dd"
-			)}" value="${format(new Date(), "yyyy-MM-dd")}"></input>
+						new Date(),
+						"yyyy-MM-dd"
+					)}" value="${format(new Date(), "yyyy-MM-dd")}"></input>
 				</label>
 				<label>
 					<span class="font-bold italic" required>Priority: </span>
 					<select class="px-2 py-1 rounded-md bg-gray-800/50" name="priority" required>
 						${["LOW", "MEDIUM", "HIGH"]
-			.map((priority, idx) => {
-				return `<option value="${idx}" ${idx == 0 && "selected"
-					}>${priority}</option>`;
-			})
-			.join("")}
+							.map((priority, idx) => {
+								return `<option value="${idx}" ${
+									idx == 0 && "selected"
+								}>${priority}</option>`;
+							})
+							.join("")}
 					</select>
 				</label>
 			</div>
@@ -84,7 +86,7 @@ export function CreateTodoForm(projectId = "1") {
 		</div>
 	`;
 
-	container.onsubmit = function(e) {
+	container.onsubmit = function (e) {
 		e.preventDefault();
 		const formData = new FormData(container);
 		const todoList = document.getElementById("todoContainer");
@@ -108,7 +110,9 @@ export function CreateTodoForm(projectId = "1") {
 		// 		formData.get("projectId") as string
 		// 	)
 		// );
-		const showControl = document.getElementById("addTodoBtn").getAttribute("data-show-control");
+		const showControl = document
+			.getElementById("addTodoBtn")
+			.getAttribute("data-show-control");
 		document.getElementById(showControl).click();
 		container.reset();
 		window.location.href = "#";
@@ -141,14 +145,14 @@ export default function TodoCard(
 	actionIcon.className =
 		"cursor-pointer h-6 invert opacity-50 hover:opacity-100 hover:scale-105 transition-all ease-in-out";
 	actionIcon.src = ellipsis;
-	actionIcon.onclick = function(e) {
+	actionIcon.onclick = function (e) {
 		actionMenu.classList.toggle("invisible");
 	};
 	const actionContainer = document.createElement("div");
 	actionContainer.className = "flex items-center relative";
 	actionContainer.append(actionMenu, actionIcon);
 
-	editBtn.onclick = function(e) {
+	editBtn.onclick = function (e) {
 		title.children[0].dispatchEvent(new MouseEvent("click"));
 		actionMenu.classList.add("invisible");
 
@@ -156,11 +160,11 @@ export default function TodoCard(
 		modal.querySelector("#todoEdit").dispatchEvent(new MouseEvent("click"));
 	};
 
-	deleteBtn.onclick = function(e) {
+	deleteBtn.onclick = function (e) {
 		ProjectLibrary.projectList[projectId].deleteTodo(id);
 		const todoList = container.parentElement;
 		container.remove();
-		if(!todoList.children.length) {
+		if (!todoList.children.length) {
 			todoList.innerHTML = EmptyTodoCard;
 		}
 	};
@@ -178,7 +182,7 @@ export default function TodoCard(
 	titleImportantBtn.onclick = (e) => {
 		titleImportantBtn.src = todo.toggleImportant() ? star : starOutline;
 	};
-	title.children[0].addEventListener("click", function(e) {
+	title.children[0].addEventListener("click", function (e) {
 		const modal = document.getElementById("modalContent");
 		window.location.assign("#modal");
 		modal.innerHTML = `
@@ -195,8 +199,9 @@ export default function TodoCard(
 					</div>
 					<div class="overflow-y-scroll">
 						<span class="italic font-bold">Description: </span>
-						<pre id="todoDescription" class="max-h-[300px] overflow-y-auto break-words whitespace-pre-wrap" name="description">${todo.description
-			}</pre>
+						<pre id="todoDescription" class="max-h-[300px] overflow-y-auto break-words whitespace-pre-wrap" name="description">${
+							todo.description
+						}</pre>
 					</div>
 					<div>
 						<span class="italic font-bold">Priority: </span>
@@ -250,7 +255,7 @@ export default function TodoCard(
 		const todoEditApplyBtn = document.createElement("button");
 		todoEditApplyBtn.className = `${todoEdit.className} bg-green-800 hover:bg-green-900`;
 		todoEditApplyBtn.textContent = "Apply";
-		todoEditApplyBtn.addEventListener("click", function(e) {
+		todoEditApplyBtn.addEventListener("click", function (e) {
 			e.preventDefault();
 			todo.edit({
 				title: todoTitleInput.value,
@@ -277,7 +282,7 @@ export default function TodoCard(
 		const todoCancelBtn = document.createElement("button");
 		todoCancelBtn.className = `${todoCancel.className} bg-red-900/40 hover:bg-red-900/60`;
 		todoCancelBtn.textContent = "Cancel";
-		todoCancelBtn.addEventListener("click", function(e) {
+		todoCancelBtn.addEventListener("click", function (e) {
 			e.preventDefault();
 			todoEditApplyBtn.replaceWith(todoEdit);
 			todoCancelBtn.replaceWith(todoCancel);
@@ -286,7 +291,7 @@ export default function TodoCard(
 			});
 		});
 
-		todoEdit.addEventListener("click", function(e) {
+		todoEdit.addEventListener("click", function (e) {
 			e.preventDefault();
 			todoDescriptionInput.textContent = todo.description;
 			todoEdit.replaceWith(todoEditApplyBtn);
@@ -323,7 +328,7 @@ export default function TodoCard(
 	statusToggle.className = "h-4 aspect-square cursor-pointer";
 	statusToggle.type = "checkbox";
 	statusToggle.checked = todo.status === TodoStatus.DONE;
-	statusToggle.onclick = function(e) {
+	statusToggle.onclick = function (e) {
 		todo.toggleStatus();
 		if (todo.status === TodoStatus.DONE) {
 			title.classList.add("line-through", "text-gray-500/80");

@@ -5,9 +5,7 @@ export function BoardView(player: Player) {
 	const container = document.createElement("div");
 	container.className =
 		"w-[500px] h-[500px] p-1 border border-black rounded-md shadow-md \
-		gap-1 grid grid-cols-10 grid-rows-[repeat(10,minmax(0,1fr))] \
-		absolute top-[-230px] left-[-270px] \
-		transition-[top_left] duration-1000 bg-white brightness-50";
+		gap-1 grid grid-cols-10 grid-rows-[repeat(10,minmax(0,1fr))]";
 	container.dataset.player = player.name;
 
 	const cells = player.board.matrix.reduce((acc, row, y) => {
@@ -23,7 +21,7 @@ export function BoardView(player: Player) {
 
 export function BoardContainer(...boards: HTMLDivElement[]) {
 	const container = document.createElement("div");
-	container.className = "relative flex items-center justify-center";
+	container.className = "relative flex items-center justify-center gap-x-4";
 	container.append(...boards);
 	return container;
 }

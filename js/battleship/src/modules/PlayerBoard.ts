@@ -1,7 +1,9 @@
+import GameController from "./GameController";
+
 export default class PlayerBoard {
 	matrix: (Ship | "X" | null)[][];
 
-	constructor(size: number = 10) {
+	constructor(size: number = GameController.matrixSize) {
 		this.matrix = Array.from({ length: size }, () =>
 			Array.from({ length: size }, () => null)
 		);
@@ -21,23 +23,34 @@ export default class PlayerBoard {
 		return ship.hit() ? "SUNK" : "HIT";
 	}
 
-	placeShip(ship: Ship, x: number, y: number, isVertical: boolean = false) {
-		if (ship.coordinates) throw new Error("This ship has already been placed");
+	placeShip(ship: Ship, x: number, y: number, orientation: ShipOrientation = "horizontal") {
+		function handleInvalidPlacement(error: string) {
+			for (const [x, y] of ship.coordinates) {
+				this.matrix[y][x] = ship;
+			}
+			throw new Error(error);
+		}
+
+		if (ship.coordinates) {
+			for (const [x, y] of ship.coordinates) {
+				this.matrix[y][x] = null;
+			}
+		}
 
 		if (x >= this.matrix.length || y >= this.matrix.length || y < 0 || x < 0)
-			throw new Error("Ship is out of bounds");
+			handleInvalidPlacement("Ship is out of bounds");
 
 		if (this.matrix[y][x] !== null)
-			throw new Error("There is already a ship placed here");
+			handleInvalidPlacement("There is already a ship placed here");
 
 		let placeMatrix: [number, number][] = [];
-		if (isVertical) {
+		if (orientation == "vertical") {
 			if (y + ship.length > this.matrix.length)
-				throw new Error("Ship is out of bounds");
+				handleInvalidPlacement("Ship is out of bounds");
 
 			for (let i = 1; i < ship.length; i++) {
 				if (this.matrix[y + i][x] !== null)
-					throw new Error("There is already a ship placed here");
+					handleInvalidPlacement("There is already a ship placed here");
 			}
 
 			for (let i = 1; i < ship.length; i++) {
@@ -46,11 +59,11 @@ export default class PlayerBoard {
 			}
 		} else {
 			if (x + ship.length > this.matrix.length)
-				throw new Error("Ship is out of bounds");
+				handleInvalidPlacement("Ship is out of bounds");
 
 			for (let i = 1; i < ship.length; i++) {
 				if (this.matrix[y][x + i] !== null)
-					throw new Error("There is already a ship placed here");
+					handleInvalidPlacement("There is already a ship placed here");
 			}
 
 			for (let i = 1; i < ship.length; i++) {
@@ -61,6 +74,7 @@ export default class PlayerBoard {
 		this.matrix[y][x] = ship;
 		placeMatrix.push([x, y]);
 		ship.coordinates = placeMatrix;
+		return placeMatrix;
 	}
 
 	getShipAt(x: number, y: number) {

@@ -10,9 +10,11 @@ declare global {
 	interface Player extends CPlayer {}
 	interface Ship extends CShip {}
 	interface PlayerBoardController extends CPlayerBoardController {}
+	type Coordinate = [number, number]
 	type AttackResult = "HIT" | "SUNK" | "MISS" | "ALREADY ATTACKED";
 	type ShipPlacementError =
 		| "Ship is out of bounds"
 		| "Ship already placed"
 		| "There is a ship already placed here";
+	type ShipOrientation = "vertical" | "horizontal";
 }

@@ -17,7 +17,6 @@ export default class Player {
 		this.name = name;
 		this.board = new PlayerBoard();
 		this.ships = shipLengths.map((length) => new Ship(length));
-		this.placeShipsRandomly();
 	}
 
 	attack(x: number, y: number, enemyBoard: PlayerBoard) {
@@ -37,15 +36,18 @@ export default class Player {
 	}
 
 	placeShipsRandomly() {
+		this.board = new PlayerBoard();
 		this.ships.forEach((ship) => {
-			const isVertical = Math.random() > 0.5;
+			const isVertical = ["vertical", "horizontal"][
+				Math.floor(Math.random() * 2)
+			];
 			while (!ship.coordinates) {
 				const [x, y] = [
 					Math.floor(Math.random() * 10),
 					Math.floor(Math.random() * 10),
 				];
 				try {
-					this.board.placeShip(ship, x, y, isVertical);
+					this.board.placeShip(ship, x, y);
 				} catch (_) {}
 			}
 		});
@@ -74,6 +76,7 @@ export class AI extends Player {
 		color: string = "red"
 	) {
 		super(name, shipLengths);
+		this.placeShipsRandomly();
 		this.lastHit = null;
 	}
 
