@@ -7,12 +7,12 @@ import "./globals.css";
 import Project from "./classes/Project";
 
 function Modal() {
-  const container = document.createElement("div");
-  container.id = "modal";
-  container.className =
-    "h-screen w-screen min-h-[900px] fixed top-0 left-0 opacity-0 bg-gray-950/50 z-50 invisible flex justify-center items-center \
+	const container = document.createElement("div");
+	container.id = "modal";
+	container.className =
+		"h-screen w-screen min-h-[900px] fixed top-0 left-0 opacity-0 bg-gray-950/50 z-50 invisible flex justify-center items-center \
 		target:visible target:opacity-100 target:pointer-events-auto transition-opacity ease-in";
-  container.innerHTML = `
+	container.innerHTML = `
 		<div class="rounded-md w-[800px] bg-gray-700 shadow-md relative overflow-hidden">
 			<a
 				href="#"
@@ -25,19 +25,17 @@ function Modal() {
 			</div>
 		</div>
 	`;
-  return container;
+	return container;
 }
 
-
-if(window.location.hash === "#modal") {
+if (window.location.hash === "#modal") {
 	window.location.hash = "";
 	window.location.reload();
 }
 
 window.onload = () => {
 	if (!localStorage.getItem("projectList")) {
-		const project1 = new Project("Default Project");
-		project1.todos = {
+		const project1 = new Project("Default Project", {
 			0: new Todo(
 				"First Todo",
 				"This is the first todo",
@@ -60,9 +58,8 @@ window.onload = () => {
 				1,
 				TodoStatus.DONE
 			),
-		};
-		const project2 = new Project("Second Project");
-		project2.todos = {
+		});
+		const project2 = new Project("Second Project", {
 			0: new Todo(
 				"Fifth Todo",
 				"This is the first todo",
@@ -84,29 +81,37 @@ window.onload = () => {
 				1,
 				TodoStatus.IN_PROGRESS
 			),
-		};
+		});
 		ProjectLibrary.projectList = {
 			1: project1,
-			2: project2
+			2: project2,
 		};
-		localStorage.setItem("projectList", JSON.stringify(ProjectLibrary.projectList));
+		localStorage.setItem(
+			"projectList",
+			JSON.stringify(ProjectLibrary.projectList)
+		);
 	} else {
 		const retrievedProjects = JSON.parse(localStorage.getItem("projectList"));
-		const transformedProjectList = Object.entries(retrievedProjects).reduce((acc, [projectId, retrievedProject]) => {
-			const transformedProject = Object.assign(retrievedProject, Project.prototype);
-			transformedProject.todos = Object.entries(transformedProject.todos).reduce((acc, [todoId, retrievedTodo]) => {
-				const transformedTodo = Object.assign(retrievedTodo, Todo.prototype);
-				transformedTodo.dueDate = new Date(transformedTodo.dueDate);
-				return {...acc, [todoId]: transformedTodo};
-			}, {} as Record<PropertyKey, Todo>);
-			return {...acc, [projectId]: transformedProject};
-		}, {} as Record<PropertyKey, Project>);
-		ProjectLibrary.projectList = transformedProjectList;
+		ProjectLibrary.projectList = Object.entries(retrievedProjects).reduce(
+			(acc, [projectId, retrievedProject]) => {
+				const tProject = Object.assign(retrievedProject, Project.prototype);
+				tProject.todos = Object.entries(tProject.todos).reduce(
+					(acc, [todoId, retrievedTodo]) => {
+						const tTodo = Object.assign(retrievedTodo, Todo.prototype);
+						tTodo.dueDate = new Date(tTodo.dueDate);
+						return { ...acc, [todoId]: tTodo };
+					},
+					{} as Record<PropertyKey, Todo>
+				);
+				return { ...acc, [projectId]: tProject };
+			},
+			{} as Record<PropertyKey, Project>
+		);
 	}
 
-  const root = document.getElementById("root");
-  root.className =
-    "flex h-screen w-screen items-center justify-center bg-gradient-to-b from-gray-700 to-gray-800 md:min-h-[900px]";
-  root.appendChild(Modal());
-  root.appendChild(IndexLayout());
+	const root = document.getElementById("root");
+	root.className =
+		"flex h-screen w-screen items-center justify-center bg-gradient-to-b from-gray-700 to-gray-800 md:min-h-[900px]";
+	root.appendChild(Modal());
+	root.appendChild(IndexLayout());
 };
