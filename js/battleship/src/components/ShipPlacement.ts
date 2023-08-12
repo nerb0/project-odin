@@ -1,4 +1,5 @@
 import GameController from "../modules/GameController";
+import { cn } from "../util";
 
 function ShipList(ships: Ship[] = GameController.current.getShips()) {
 	const container = document.createElement("div");
@@ -72,12 +73,12 @@ export function ShipPlacement() {
 			if (GameController.current.shipToPlace) {
 				const ship = GameController.current.shipToPlace;
 				const coordinates = GameController.current
-					.getShipPlacement(x, y, ship)
+					.getShipPlacementCoordinates(x, y, ship)
 					.filter(([x, y]) => x < 10 && y < 10);
 				let background = "bg-green-500";
 				if (
 					coordinates.length != ship.length ||
-					!GameController.current.checkPlacement(coordinates)
+					!GameController.current.checkIfValidPlacement(ship, coordinates)
 				) {
 					background = "bg-red-500";
 				}

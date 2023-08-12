@@ -10,25 +10,30 @@ export default class PlayerBoardController {
 		this.player = player;
 		this.boardView = boardView;
 	}
-	showBoard() {
+
+	showBoardView() {
 		this.boardView.classList.remove("pointer-events-none", "brightness-50");
 		this.boardView.className = cn(
 			this.boardView.className,
 			"top-0 left-[-250px] z-10"
 		);
 	}
-	hideBoard() {
+
+	hideBoardView() {
 		this.boardView.className = cn(
 			this.boardView.className,
 			"top-[20px] left-[-270px] z-0 pointer-events-none brightness-50"
 		);
 	}
-	disableBoard() {
+
+	disableBoardView() {
 		this.boardView.classList.add("pointer-events-none");
 	}
-	enableBoard() {
+
+	enableBoardView() {
 		this.boardView.classList.remove("pointer-events-none");
 	}
+
 	setTurnable() {
 		this.boardView.className = cn(
 			this.boardView.className,
@@ -36,7 +41,8 @@ export default class PlayerBoardController {
 			transition-[top_left_pointer-events] duration-[2000ms] bg-white brightness-50"
 		);
 	}
-	getShipPlacement(x: number, y: number, ship: Ship): Coordinate[] {
+
+	getShipPlacementCoordinates(x: number, y: number, ship: Ship): Coordinate[] {
 		return this.placementOrientation == "horizontal"
 			? Array(ship.length)
 					.fill(0)
@@ -45,18 +51,23 @@ export default class PlayerBoardController {
 					.fill(0)
 					.map((_, i) => [x, y + i]);
 	}
+
 	setShipToPlace(ship: Ship) {
 		this.shipToPlace = ship;
 	}
-	checkPlacement(coordinates: Coordinate[]) {
+
+	checkIfValidPlacement(ship: Ship, coordinates: Coordinate[]) {
 		for (const [x, y] of coordinates) {
-			if (this.player.board.getShipAt(x, y)) return false;
+			const cellValue = this.player.board.getShipAt(x, y);
+			if (cellValue && cellValue != ship) return false;
 		}
 		return true;
 	}
+
 	getShips() {
 		return this.player.ships;
 	}
+
 	changeOrientation() {
 		this.placementOrientation =
 			this.placementOrientation == "horizontal" ? "vertical" : "horizontal";

@@ -4,107 +4,88 @@ import { cn } from "../util";
 import { winnerText } from "../components/Modal";
 
 export default class GameController {
-	static matrixSize = 10;
-	static player1: PlayerBoardController;
-	static player2: PlayerBoardController;
+	static MATRIX_SIZE = 10;
+	static controller1: PlayerBoardController;
+	static controller2: PlayerBoardController;
 	static current: PlayerBoardController;
-	static shipLengths = [5, 4, 3, 3, 2];
-	static isGameOver = false;
-	static againstAI = true;
+	static SHIP_LENGTHS = [5, 4, 3, 3, 2];
+	static isGameOver: boolean;
+	static againstAI: boolean;
 
 	static setupGame(
-		player1: PlayerBoardController,
-		player2: PlayerBoardController
+		controller1: PlayerBoardController,
+		controller2: PlayerBoardController
 	) {
-		this.player1 = player1;
-		this.player2 = player2;
-		this.current = this.player1;
-		this.player1.shipToPlace = this.player1.player.ships[0];
+		this.controller1 = controller1;
+		this.controller2 = controller2;
+		this.current = this.controller1;
+		this.controller1.shipToPlace = this.controller1.player.ships[0];
+		this.isGameOver = false;
 
-		if (!(this.player2.player instanceof AI)) {
-			this.player1.setTurnable();
-			this.player2.setTurnable();
-			this.player1.hideBoard();
-			this.player2.showBoard();
+		if (!(this.controller2.player instanceof AI)) {
+			this.controller1.setTurnable();
+			this.controller2.setTurnable();
+			this.controller1.hideBoardView();
+			this.controller2.showBoardView();
 			this.againstAI = false;
 		} else {
-			this.current.disableBoard();
+			this.current.disableBoardView();
+			this.againstAI = true;
 		}
 	}
 
 	static changeTurn() {
 		const prev = this.current;
 		const current =
-			this.current === GameController.player1 ? this.player2 : this.player1;
+			this.current === GameController.controller1
+				? this.controller2
+				: this.controller1;
 
 		if (this.againstAI) {
 			if (current.player instanceof AI) {
-				prev.disableBoard();
+				prev.disableBoardView();
 			} else {
-				prev.enableBoard();
+				prev.enableBoardView();
 			}
 		} else {
-			prev.showBoard();
-			current.hideBoard();
+			prev.showBoardView();
+			current.hideBoardView();
 		}
 
 		this.current = current;
-		current.disableBoard();
+		current.disableBoardView();
 
 		if (current.player instanceof AI) {
-			this.autoAttack();
+			this.handleAIAttack();
 		}
 	}
 
-	static autoAttack(
-		[x, y] = this.current.player.attackRandomly(
-			this.current === this.player1
-				? this.player2.player.board
-				: this.player1.player.board
-		)
-	) {
-		if (this.isGameOver) return;
+	private static handleAIAttack() {
 		const current = this.current;
-		const ai = current.player as AI;
-		const other = this.current === this.player1 ? this.player2 : this.player1;
-
-		if (ai.lastHit) {
-			const [smartX, smartY] = ai.attackSmartly(x, y, other.player.board);
-			x = smartX;
-			y = smartY;
-		}
-
-		const target = other.player.board.getShipAt(x, y);
-		const cell = other.boardView.children[y * 10 + x];
-		if (target) {
-			let nextMove = ai.attackRandomly(other.player.board);
-			setTimeout(() => {
-				this.attack(x, y, other.player);
-				if (!(target as Ship).isSunk()) {
-					nextMove = ai.attackSmartly(x, y, other.player.board);
-					ai.lastHit = [x, y];
-				} else {
-					ai.lastHit = null;
-				}
-				this.autoAttack(nextMove);
-			}, 1500);
-		} else {
-			setTimeout(() => {
-				this.attack(x, y, other.player);
-			}, 1500);
+		const target =
+			this.current === this.controller1 ? this.controller2 : this.controller1;
+		const enemyBoard = target.player.board;
+		const attackCoordinates = (current.player as AI).attackSmartly(enemyBoard);
+		const attackResult = this.attack(attackCoordinates, target.player);
+		if (attackResult == "HIT" || attackResult == "SUNK" || attackResult == "ALREADY ATTACKED") {
+			this.handleAIAttack();
 		}
 	}
 
-	static attack(x: number, y: number, owner: Player) {
+	static attack([targetX, targetY]: Coordinate, target: Player) {
 		if (this.isGameOver) return;
-		if (this.current.player === owner) return;
+		if (this.current.player === target) return;
 
-		const other = this.current === this.player1 ? this.player2 : this.player1;
+		const targetBoardView =
+			this.current === this.controller1
+				? this.controller2.boardView
+				: this.controller1.boardView;
 
-		const cell = other.boardView.children[y * 10 + x];
-		const ship = other.player.board.getShipAt(x, y);
-		const attackResult = other.player.board.receiveAttack(x, y);
-		if (attackResult == "ALREADY ATTACKED") return;
+		const cellIndex = targetY * 10 + targetX;
+		const cell = targetBoardView.children[cellIndex];
+		const ship = target.board.getShipAt(targetX, targetY);
+		const attackResult = target.board.receiveAttack(targetX, targetY);
+		if (attackResult == "ALREADY ATTACKED") return attackResult;
 
 		if (attackResult == "MISS") {
 			cell.className = cn(cell.className, "bg-gray-400 text-4xl");
@@ -115,16 +96,18 @@ export default class GameController {
 				cell.className = cn(cell.className, "bg-red-600");
 			} else {
 				const coordinates = (ship as Ship).coordinates;
-				for (const [x, y] of coordinates) {
-					const affectedCell = other.boardView.children[y * 10 + x];
+				for (const [affectedX, affectedY] of coordinates) {
+					const affectedIndex = affectedY * 10 + affectedX;
+					const affectedCell = targetBoardView.children[affectedIndex];
 					affectedCell.className = cn(affectedCell.className, "bg-red-900");
 				}
-				if (other.player.checkIfAllShipsSunk()) {
+				if (target.checkIfAllShipsSunk()) {
 					this.triggerGameOver();
 				}
 			}
 		}
-		cell.className = cn(cell.className, "pointer-events-none");
+		return attackResult;
+		cell.classList.add("pointer-events-none");
 	}
 
 	static triggerGameOver() {

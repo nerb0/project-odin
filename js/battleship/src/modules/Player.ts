@@ -10,7 +10,7 @@ export default class Player {
 
 	constructor(
 		name = "Player",
-		shipLengths: number[] = GameController.shipLengths,
+		shipLengths: number[] = GameController.SHIP_LENGTHS,
 		color = "blue"
 	) {
 		this.color = color;
@@ -53,7 +53,7 @@ export default class Player {
 		});
 	}
 
-	attackRandomly(enemyBoard: PlayerBoard) {
+	attackRandomly(enemyBoard: PlayerBoard): [number, number] {
 		const size = enemyBoard.matrix.length;
 		let x = Math.floor(Math.random() * size);
 		let y = Math.floor(Math.random() * size);
@@ -68,11 +68,11 @@ export default class Player {
 }
 
 export class AI extends Player {
-	lastHit: [number, number] | null;
+	lastHit: Coordinate | null;
 
 	constructor(
 		name = "AI",
-		shipLengths: number[] = GameController.shipLengths,
+		shipLengths: number[] = GameController.SHIP_LENGTHS,
 		color: string = "red"
 	) {
 		super(name, shipLengths);
@@ -80,31 +80,32 @@ export class AI extends Player {
 		this.lastHit = null;
 	}
 
-	attackSmartly(x: number, y: number, enemyBoard: PlayerBoard) {
-		if (this.lastHit) {
-			x = this.lastHit[0];
-			y = this.lastHit[1];
-		}
-		console.log(this.lastHit);
+	attackSmartly(enemyBoard: PlayerBoard): Coordinate {
+		if (!this.lastHit) return this.attackRandomly(enemyBoard);
 
-		const adjacentCells = this.getAdjacentCells(x, y).filter(
-			([x, y]) =>
-				x >= 0 &&
-				y >= 0 &&
-				x < enemyBoard.matrix.length &&
-				y < enemyBoard.matrix.length &&
-				enemyBoard.matrix[y][x] !== "X"
+		const x = this.lastHit[0];
+		const y = this.lastHit[1];
+
+		const validAdjacentCells: Coordinate[] = this.getAdjacentCells(x, y).filter(
+			([adjacentX, adjacentY]) =>
+				adjacentX >= 0 &&
+				adjacentY >= 0 &&
+				adjacentX < enemyBoard.matrix.length &&
+				adjacentY < enemyBoard.matrix.length &&
+				enemyBoard.matrix[adjacentY][adjacentX] !== "X"
 		);
 
-		if (adjacentCells.length === 0) {
+		if (validAdjacentCells.length === 0) {
 			this.lastHit = null;
 			return this.attackRandomly(enemyBoard);
 		} else {
-			return adjacentCells[Math.floor(Math.random() * adjacentCells.length)];
+			return validAdjacentCells[
+				Math.floor(Math.random() * validAdjacentCells.length)
+			];
 		}
 	}
 
-	getAdjacentCells(x: number, y: number) {
+	getAdjacentCells(x: number, y: number): Coordinate[] {
 		return [
 			[x, y - 1],
 			[x, y + 1],

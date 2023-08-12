@@ -3,7 +3,7 @@ import GameController from "./GameController";
 export default class PlayerBoard {
 	matrix: (Ship | "X" | null)[][];
 
-	constructor(size: number = GameController.matrixSize) {
+	constructor(size: number = GameController.MATRIX_SIZE) {
 		this.matrix = Array.from({ length: size }, () =>
 			Array.from({ length: size }, () => null)
 		);

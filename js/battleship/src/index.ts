@@ -23,14 +23,14 @@ window.onload = () => {
 
 	const root = document.getElementById("root") || createRoot();
 	const player1 = new Player();
-	const player2 = new Player();
+	const player2 = new AI();
 
 	const board1 = BoardView(player1);
 	const board2 = BoardView(player2);
 
 	GameController.setupGame(
+		new PlayerBoardController(player1, board1),
 		new PlayerBoardController(player2, board2),
-		new PlayerBoardController(player1, board1)
 	);
 
 	const boardContainer = BoardContainer(board1, board2);
@@ -41,4 +41,5 @@ window.onload = () => {
 	root.className =
 		"flex flex-col justify-center items-center h-screen w-screen min-h-[900px] gap-y-8";
 	root.append(gameHeader, boardContainer, ShipPlacement(), Modal);
+	
 };
