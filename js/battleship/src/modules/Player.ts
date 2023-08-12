@@ -37,17 +37,20 @@ export default class Player {
 
 	placeShipsRandomly() {
 		this.board = new PlayerBoard();
+		for (const ship of this.ships) {
+			ship.coordinates = null;
+		}
 		this.ships.forEach((ship) => {
-			const isVertical = ["vertical", "horizontal"][
-				Math.floor(Math.random() * 2)
-			];
+			const orientations: ShipOrientation[] = ["vertical", "horizontal"];
+			const orientation = orientations[Math.floor(Math.random() * 2)];
+
 			while (!ship.coordinates) {
 				const [x, y] = [
 					Math.floor(Math.random() * 10),
 					Math.floor(Math.random() * 10),
 				];
 				try {
-					this.board.placeShip(ship, x, y);
+					this.board.placeShip(ship, x, y, orientation);
 				} catch (_) {}
 			}
 		});

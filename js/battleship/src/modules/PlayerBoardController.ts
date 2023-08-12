@@ -34,6 +34,15 @@ export default class PlayerBoardController {
 		this.boardView.classList.remove("pointer-events-none");
 	}
 
+	showBoardShips() {
+		for (const ship of this.player.ships) {
+			for (const [x, y] of ship.coordinates) {
+				const cell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+				cell?.classList.add("bg-sky-400");
+			}
+		}
+	}
+
 	setTurnable() {
 		this.boardView.className = cn(
 			this.boardView.className,

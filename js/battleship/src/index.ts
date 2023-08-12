@@ -35,7 +35,7 @@ window.onload = () => {
 
 	const boardContainer = BoardContainer(board1, board2);
 	const gameHeader = document.createElement("h1");
-	gameHeader.textContent = "Battleship";
+	gameHeader.textContent = "BATTLESHIP";
 	gameHeader.className = "text-7xl font-bold mb-4";
 
 	root.className =

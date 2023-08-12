@@ -34,6 +34,12 @@ export default class GameController {
 		}
 	}
 
+	static startGame() {
+		if (this.againstAI) {
+			this.controller1.showBoardShips();
+		}
+	}
+
 	static changeTurn() {
 		const prev = this.current;
 		const current =
@@ -67,7 +73,11 @@ export default class GameController {
 		const enemyBoard = target.player.board;
 		const attackCoordinates = (current.player as AI).attackSmartly(enemyBoard);
 		const attackResult = this.attack(attackCoordinates, target.player);
-		if (attackResult == "HIT" || attackResult == "SUNK" || attackResult == "ALREADY ATTACKED") {
+		if (
+			attackResult == "HIT" ||
+			attackResult == "SUNK" ||
+			attackResult == "ALREADY ATTACKED"
+		) {
 			this.handleAIAttack();
 		}
 	}
