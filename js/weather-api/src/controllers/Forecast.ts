@@ -1,11 +1,27 @@
-export const WEATHER_API_URL = 'https://api.weatherapi.com/v1';
+export const WEATHER_API_URL = "http://api.weatherapi.com/v1";
 
-export async function getForecastFromCity(city: string): Promise<ForecastList>  {
-	const result = await fetch(`${WEATHER_API_URL}/forecast.json?key=${process.env.WEATHER_API_KEY}&q=${city}&days=8`);
+export async function getForecastFromCity(city: string): Promise<ForecastList> {
+	const result = await fetch(
+		`${WEATHER_API_URL}/forecast.json?key=${process.env.WEATHER_API_KEY}&q=${city}&days=8`,
+		{
+			mode: "cors",
+			headers: {
+				"Access-Control-Allow-Origin": "*",
+			},
+		}
+	);
 	return result.json();
 }
 
 export async function getForecastFromUserLocation(): Promise<ForecastList> {
-	const result = await fetch(`${WEATHER_API_URL}/forecast.json?key=${process.env.WEATHER_API_KEY}&q=auto:ip&days=8`);
+	const result = await fetch(
+		`${WEATHER_API_URL}/forecast.json?key=${process.env.WEATHER_API_KEY}&q=auto:ip&days=8`,
+		{
+			mode: "cors",
+			headers: {
+				"Access-Control-Allow-Origin": "*",
+			},
+		}
+	);
 	return result.json();
 }
