@@ -1,4 +1,4 @@
-export const WEATHER_API_URL = "http://api.weatherapi.com/v1";
+export const WEATHER_API_URL = "https://api.weatherapi.com/v1";
 
 export async function getForecastFromCity(city: string): Promise<ForecastList> {
 	const result = await fetch(
