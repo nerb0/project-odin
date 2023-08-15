@@ -8,7 +8,7 @@ export default function SkillForm() {
 		updateCVHandler: updateCV,
 	} = useSkillDataContext();
 	return (
-		<div className="flex items-center border-gray-600 border rounded-md group group-focus:outline-sky-400 px-2 py-1 gap-x-2">
+		<div className="flex items-center border-gray-600 border-2 rounded-md group group-focus:outline-sky-400 px-2 py-1 gap-x-2">
 			<input
 				className="text-gray-950 flex-1 outline-none group bg-transparent w-fit max-w-[6rem] text-center"
 				value={skill.name}
