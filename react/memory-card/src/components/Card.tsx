@@ -18,7 +18,9 @@ export default function Card({ id, image, name, clicked = false }: GameCard) {
 						alt={name}
 						className="flex-1 w-full object-cover bg-gray-800"
 					/>
-					<span className="text-lg text-white font-extrabold py-2 bg-gradient-to-r from-gray-900 to-gray-800 w-full text-center">{name}</span>
+					<span className="text-lg text-white font-extrabold py-2 bg-gradient-to-r from-gray-900 to-gray-800 w-full text-center">
+						{name}
+					</span>
 					{
 						// <span>{`${clicked}`}</span>
 					}

@@ -1,20 +1,21 @@
 import { useReducer } from "react";
 import { MemoryGameContext } from "../contexts/MemoryGameContext";
-import Card from "./Card";
 import { shuffle } from "../util";
+import Card from "./Card";
+import leagueLogo from "../assets/league-logo.png";
 
 function reducer(state: MemoryGame, action: GameCardAction): MemoryGame {
 	function resetCards() {
 		return state.cards.map((card) => ({ ...card, clicked: false }));
 	}
-
 	switch (action.type) {
 		case "set_clicked":
 			const cards = [];
+			let isOver = state.isOver;
 			for (const card of state.cards) {
 				if (card.id == action.id) {
 					if (card.clicked) {
-						return { ...state, isOver: true };
+						isOver = true;
 					} else {
 						card.clicked = true;
 					}
@@ -22,7 +23,7 @@ function reducer(state: MemoryGame, action: GameCardAction): MemoryGame {
 				cards.push(card);
 			}
 			return {
-				...state,
+				isOver,
 				score: state.score + 1,
 				cards: shuffle(cards),
 			};
@@ -55,8 +56,16 @@ export default function MemoryGame({ cards }: { cards: GameCard[] }) {
 					</div>
 				</div>
 			)}
-			<div className="text-center text-lg font-bold mb-4">
-				Score: {game.score}
+			<div className="relative">
+				<img
+					src={leagueLogo}
+					alt="League of Legends"
+					className="font-extrabold text-4xl text-center h-40 mx-auto"
+				/>
+				<div className="text-center text-3xl font-extrabold  mb-4 text-gray-50 absolute top-4 right-4 flex gap-x-4">
+					<span>Score:</span>
+					<span>{game.score}</span>
+				</div>
 			</div>
 			<div className="flex gap-4 flex-wrap">
 				<MemoryGameContext.Provider value={{ game, dispatch }}>
