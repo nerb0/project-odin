@@ -9,6 +9,7 @@ declare global {
 		isOver: boolean,
 		cards: GameCard[],
 		score: number,
+		highScore: number,
 	}
 	type GameCard = {
 		id: number;
