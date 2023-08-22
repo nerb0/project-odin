@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import CardImage from "./CardImage";
 import { format } from "date-fns";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "../../util";
+import CardImage from "./CardImage";
+import { AddToCartButton } from "../Cart";
 
 type Props = {
 	data: RawgGame;
@@ -90,6 +91,7 @@ function GameInfo({ data: game }: Props) {
 						</a>
 					))}
 				</GameSection>
+				<AddToCartButton data={game} />
 			</div>
 		</div>
 	);
@@ -103,22 +105,23 @@ export default function GameGridCard({ data: game }: Props) {
 	useEffect(() => {
 		if (ref.current) {
 			setInitialHeight(ref.current.clientHeight);
-			return () => {
-				setHover(false);
-			};
 		}
+
+		return () => {
+			setHover(false);
+		};
 	}, [ref]);
 
 	return (
 		<div
 			onMouseEnter={() => {
-				if(ref.current) {
+				if (ref.current) {
 					setHover(true);
 					ref.current.style.height = `${initialHeight}px`;
 				}
 			}}
 			onMouseLeave={() => {
-				if(ref.current) {
+				if (ref.current) {
 					setHover(false);
 					ref.current.removeAttribute("style");
 				}
@@ -129,7 +132,7 @@ export default function GameGridCard({ data: game }: Props) {
 				hover:scale-105 transition-transform duration-[200ms] ease-in-out group",
 				{
 					// css hover does not work if position is already set
-					"z-50": hover,
+					"z-40": hover,
 					"z-0": !hover,
 				}
 			)}

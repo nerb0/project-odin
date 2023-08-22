@@ -6,6 +6,7 @@ import AllGames from "./pages/AllGames.tsx";
 import Home from "./pages/Home.tsx";
 import MonthlyGames from "./pages/MonthlyGames.tsx";
 import YearlyGames from "./pages/YearlyGames.tsx";
+import { CartItemsContext } from "./contexts/CartItemsContext.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -28,6 +29,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<CartItemsContext>
+			<RouterProvider router={router} />
+		</CartItemsContext>
 	</React.StrictMode>
 );

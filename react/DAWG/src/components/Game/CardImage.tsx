@@ -60,16 +60,20 @@ export default function CardImage({ images, name }: CardImageProps) {
 			onMouseOver={() => {
 				setIsHovered(true);
 			}}
+			onMouseEnter={() => {
+				setIsHovered(true);
+			}}
+			onMouseLeave={() => {
+				setIsHovered(false);
+				setIndex(1);
+			}}
 			onMouseOut={() => {
 				setIsHovered(false);
 				setIndex(1);
 			}}
 		>
-			{isHovered ? (
-				<HoveredImage />
-			) : (
-				<GameImage image={images[0].image} />
-			)}
+			{isHovered && <HoveredImage /> }
+			{!isHovered && <GameImage image={images[0].image} /> }
 		</div>
 	);
 }

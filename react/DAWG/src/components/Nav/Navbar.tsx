@@ -4,37 +4,31 @@ import {
 	SectionOpenHandler,
 } from "../../contexts/NavSectionOpenHandler";
 import { cn } from "../../util";
+import { CartButton, CartItemList } from "../Cart";
 import NavLink from "./NavLink";
 import NavLogo from "./NavLogo";
-import NavBrowseList from "./Sections/NavBrowse";
 import NavPlatformList from "./Sections/NavPlatformList";
 import NavSection from "./Sections/NavSection";
+import NavGenreList from "./Sections/NavGenres";
+import { CartVisibilityContext } from "../../contexts/CartVisibilityContext";
 
 type NavProps = {
 	className?: string;
 };
 
-function StickyNav({ sticky }: { sticky: boolean }) {
+function SideNav({ sticky }: { sticky: boolean }) {
 	const [openHandlers, setOpenHandlers] = useState<SectionOpenHandler[]>([]);
 
 	return (
 		<nav
 			className={cn(
-				"p-4 duration-300 fixed top-0 left-0 z-50 flex flex-col h-screen min-h-full gap-y-2",
+				"p-2 py-4 duration-300 fixed top-16 left-0 z-50 flex flex-col h-full gap-y-2 overflow-scroll",
 				{
 					"opacity-100": sticky,
 					"pointer-events-none opacity-0": !sticky,
 				}
 			)}
 		>
-			<div
-				className={cn("w-fit transition-transform flex", {
-					"translate-y-0": sticky,
-					"-translate-y-1/2": !sticky,
-				})}
-			>
-				<NavLogo link="/" />
-			</div>
 			<div
 				className={cn("transition-transform flex flex-col gap-y-4", {
 					"translate-x-0": sticky,
@@ -58,8 +52,8 @@ function StickyNav({ sticky }: { sticky: boolean }) {
 						<NavLink href="/this-year">This Year</NavLink>
 						<NavLink href="/all-time">All Time</NavLink>
 					</NavSection>
-					<NavBrowseList />
 					<NavPlatformList />
+					<NavGenreList />
 				</NavSectionOpenHandlerContext.Provider>
 				<div className="flex flex-col"></div>
 			</div>
@@ -67,11 +61,27 @@ function StickyNav({ sticky }: { sticky: boolean }) {
 	);
 }
 
-function Nav() {
+function Nav({ sticky }: { sticky: boolean }) {
+	const [isOpen, setOpened] = useState(false);
+
 	return (
-		<nav className="p-4">
-			<NavLogo link="/" />
-		</nav>
+		<CartVisibilityContext.Provider value={{ isOpen, setOpened }}>
+			<nav
+				className={cn(
+					"px-4 py-2 flex justify-between items-center transition-transform",
+					{
+						"translate-y-1/2 fixed -top-4 left-0 right-0": sticky,
+						"translate-y-0": !sticky,
+					}
+				)}
+			>
+				<div className="w-36">
+					<NavLogo link="/" />
+				</div>
+				<CartButton onClick={() => setOpened(true)} />
+			</nav>
+			<CartItemList />
+		</CartVisibilityContext.Provider>
 	);
 }
 
@@ -86,8 +96,8 @@ export default function Navbar() {
 
 	return (
 		<>
-			<Nav />
-			<StickyNav sticky={isSticky} />
+			<Nav sticky={isSticky} />
+			<SideNav sticky={isSticky} />
 		</>
 	);
 }

@@ -6,8 +6,17 @@ export default {
 			animation: {
 				"slide-down": "slideDown 0.5s ease-in-out",
 				"fade-out": "fadeOut 0.5s linear",
+				"slide-left": "slideLeft 0.5s ease-in-out",
 			},
 			keyframes: {
+				slideLeft: {
+					from: {
+						transform: "translateX(100%)",
+					},
+					to: {
+						transform: "translateX(0)",
+					}
+				},
 				fadeOut: {
 					from: {
 						opacity: 1,

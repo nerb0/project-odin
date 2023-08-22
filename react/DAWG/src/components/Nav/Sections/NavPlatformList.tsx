@@ -40,7 +40,9 @@ export default function NavPlatformList() {
 				<div>Loading...</div>
 			) : platforms ? (
 				platforms.results.map((platform) => (
-					<NavLink href={`#${platform.slug}`}>{platform.name}</NavLink>
+					<NavLink key={platform.id} href={`#${platform.slug}`}>
+						{platform.name}
+					</NavLink>
 				))
 			) : (
 				<div>No Platforms Found</div>

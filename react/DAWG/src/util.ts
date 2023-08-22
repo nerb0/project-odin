@@ -6,11 +6,14 @@ const RAWG_API_URL = "https://api.rawg.io/api";
 const RAWG_API_KEY = "c4c14a52cc924205a31576e9e439ed29";
 const RAWG_DATE_FORMAT = "yyyy-MM-dd"
 
+export async function getGenres() {
+	return await fetch(`${RAWG_API_URL}/genres?key=${RAWG_API_KEY}`)
+}
+
 export async function getPlatforms() {
-	const result = await fetch(
+	return await fetch(
 		`${RAWG_API_URL}/platforms/parents?key=${RAWG_API_KEY}`
 	);
-	return result;
 }
 
 export async function getAllGameList() {
