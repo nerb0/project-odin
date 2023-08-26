@@ -22,7 +22,8 @@
 		"src"
 	],
 	"files": [
-		"src/**/*"
+		"src/index.ts",
+		"src/types.d.ts"
 	],
 	"ts-node": {
 		"files": true

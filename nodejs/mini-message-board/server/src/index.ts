@@ -1,6 +1,6 @@
 import cors from "cors";
 import express from "express";
-import router from "./routes.ts";
+import router from "./routes";
 
 const { PORT = 3000 } = process.env;
 const server = express();

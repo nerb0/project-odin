@@ -1,5 +1,5 @@
 import { InsertOneResult, WithId } from "mongodb";
-import client from "../db.ts";
+import client from "../db";
 
 export async function getAll() {
 	let response: APIResponse<WithId<BoardMessage>[]>;
@@ -7,7 +7,7 @@ export async function getAll() {
 	try {
 		const data = await client
 			.db()
-			.collection<BoardMessage>("messages")
+			.collection<WithId<BoardMessage>>("messages")
 			.find()
 			.toArray();
 		response = {
