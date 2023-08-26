@@ -11,7 +11,11 @@
 		"cors": "^2.8.5",
 		"dotenv": "^16.3.1",
 		"express": "^4.18.2",
+<<<<<<< HEAD
 		"mongodb": "5.2",
+=======
+		"mongodb": "4.0",
+>>>>>>> 275d8bb (fix: render.com uses node v14 and mongodb 5.8 does not work above v14.20)
 		"qs": "^6.11.2"
 	},
 	"devDependencies": {
