@@ -1,4 +1,4 @@
-import { create, getAll } from "../services/message.ts";
+import { create, getAll } from "../services/message";
 
 const MessageController = {
 	getAll: async function(req, res) {

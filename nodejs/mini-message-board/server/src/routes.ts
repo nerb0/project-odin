@@ -1,5 +1,5 @@
 import { Router, urlencoded } from "express";
-import MessageController from "./controllers/message.ts";
+import MessageController from "./controllers/message";
 
 const router = Router();
 
