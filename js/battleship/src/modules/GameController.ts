@@ -1,7 +1,6 @@
 import Ship from "./Ship";
 import { AI } from "./Player";
 import { cn } from "../util";
-import { winnerText } from "../components/Modal";
 
 export default class GameController {
 	static MATRIX_SIZE = 10;
@@ -73,11 +72,7 @@ export default class GameController {
 		const enemyBoard = target.player.board;
 		const attackCoordinates = (current.player as AI).attackSmartly(enemyBoard);
 		const attackResult = this.attack(attackCoordinates, target.player);
-		if (
-			attackResult == "HIT" ||
-			attackResult == "SUNK" ||
-			attackResult == "ALREADY ATTACKED"
-		) {
+		if (attackResult == "HIT" || attackResult == "SUNK") {
 			this.handleAIAttack();
 		}
 	}
@@ -123,6 +118,8 @@ export default class GameController {
 	static triggerGameOver() {
 		this.isGameOver = true;
 		window.location.assign("#modal");
-		winnerText.textContent = this.current.player.name;
+
+		const winnerDOM = document.getElementById("winnerText");
+		winnerDOM.textContent = this.current.player.name;
 	}
 }

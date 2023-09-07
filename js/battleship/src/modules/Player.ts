@@ -71,7 +71,7 @@ export default class Player {
 }
 
 export class AI extends Player {
-	lastHit: Coordinate | null;
+	lastHit: Coordinate[];
 
 	constructor(
 		name = "AI",
@@ -80,14 +80,17 @@ export class AI extends Player {
 	) {
 		super(name, shipLengths);
 		this.placeShipsRandomly();
-		this.lastHit = null;
+		this.lastHit = [];
 	}
 
 	attackSmartly(enemyBoard: PlayerBoard): Coordinate {
-		if (!this.lastHit) return this.attackRandomly(enemyBoard);
+		if (this.lastHit.length == 0) {
+			const [x, y] = this.attackRandomly(enemyBoard);
+			if (enemyBoard.matrix[y][x]) this.lastHit.push([x, y]);
+			return [x, y];
+		}
 
-		const x = this.lastHit[0];
-		const y = this.lastHit[1];
+		const [x, y] = this.lastHit[0];
 
 		const validAdjacentCells: Coordinate[] = this.getAdjacentCells(x, y).filter(
 			([adjacentX, adjacentY]) =>
@@ -99,12 +102,24 @@ export class AI extends Player {
 		);
 
 		if (validAdjacentCells.length === 0) {
-			this.lastHit = null;
-			return this.attackRandomly(enemyBoard);
+			this.lastHit.shift();
+			return this.lastHit.length > 0
+				? this.attackSmartly(enemyBoard)
+				: this.attackRandomly(enemyBoard);
 		} else {
-			return validAdjacentCells[
-				Math.floor(Math.random() * validAdjacentCells.length)
-			];
+			const [adjacentX, adjacentY] =
+				validAdjacentCells[
+					Math.floor(Math.random() * validAdjacentCells.length)
+				];
+			const cell = enemyBoard.matrix[adjacentY][adjacentX];
+			if (cell instanceof Ship) {
+				this.lastHit.shift();
+				console.log(cell);
+				if (cell.hits < cell.length - 1) {
+					this.lastHit.push([adjacentX, adjacentY]);
+				}
+			}
+			return [adjacentX, adjacentY];
 		}
 	}
 

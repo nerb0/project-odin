@@ -13,4 +13,3 @@ overlay.innerHTML = `<div class="bg-white p-4 rounded-lg shadow-lg gap-y-4 flex 
 	</div>`;
 
 export default overlay;
-export const winnerText = overlay.querySelector("#winnerText");

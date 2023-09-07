@@ -1,7 +1,8 @@
 import GameController from "./GameController";
 
+type BoardCellValue = Ship | "X" | null;
 export default class PlayerBoard {
-	matrix: (Ship | "X" | null)[][];
+	matrix: BoardCellValue[][];
 
 	constructor(size: number = GameController.MATRIX_SIZE) {
 		this.matrix = Array.from({ length: size }, () =>
@@ -23,10 +24,17 @@ export default class PlayerBoard {
 		return ship.hit() ? "SUNK" : "HIT";
 	}
 
-	placeShip(ship: Ship, x: number, y: number, orientation: ShipOrientation = "horizontal") {
+	placeShip(
+		ship: Ship,
+		x: number,
+		y: number,
+		orientation: ShipOrientation = "horizontal"
+	) {
 		function handleInvalidPlacement(error: string) {
-			for (const [x, y] of ship.coordinates) {
-				this.matrix[y][x] = ship;
+			if (ship.coordinates) {
+				for (const [x, y] of ship.coordinates) {
+					this.matrix[y][x] = ship;
+				}
 			}
 			throw new Error(error);
 		}
