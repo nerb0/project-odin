@@ -30,7 +30,7 @@ window.onload = () => {
 
 	GameController.setupGame(
 		new PlayerBoardController(player1, board1),
-		new PlayerBoardController(player2, board2),
+		new PlayerBoardController(player2, board2)
 	);
 
 	const boardContainer = BoardContainer(board1, board2);
@@ -41,5 +41,4 @@ window.onload = () => {
 	root.className =
 		"flex flex-col justify-center items-center h-screen w-screen min-h-[900px] gap-y-8";
 	root.append(gameHeader, boardContainer, ShipPlacement(), Modal);
-	
 };
