@@ -37,8 +37,7 @@ function App() {
 	return (
 		<div className="bg-gray-700">
 			<div className="px-64 py-10 text-slate-800 h-screen min-h-[900px] min-w-screen flex">
-				<div
-					className="bg-slate-600 p-2 flex flex-col flex-1 rounded-md shadow-lg relative overflow-clip">
+				<div className="bg-slate-600 p-2 flex flex-col flex-1 rounded-md shadow-lg relative overflow-clip">
 					<h1 className="font-extrabold italic text-4xl mb-4 text-white">
 						Mini Message Board
 					</h1>
@@ -82,7 +81,7 @@ function App() {
 								))}
 							</div>
 							<form
-								action="http://localhost:3000/messages/new"
+								action={`${import.meta.env.VITE_API_URL}/messages/new`}
 								method="POST"
 								className="flex text-lg text-white mt-4"
 							>
