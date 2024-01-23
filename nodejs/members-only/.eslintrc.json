@@ -1,0 +1,21 @@
+{
+	"root": true,
+	"extends": ["eslint:recommended"],
+	"plugins": ["unused-imports"],
+	"env": {
+		"node": true
+	},
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": "latest",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"rules": {
+		"no-empty": "off",
+		"no-mixed-spaces-and-tabs": "off",
+		"no-unused-vars": "off"
+	},
+	"ignorePatterns": ["types.d.ts"]
+}
