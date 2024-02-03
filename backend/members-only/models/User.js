@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const user_schema = mongoose.Schema(
+const user_schema = new Schema(
 	{
 		first_name: {
 			type: String,
@@ -10,12 +10,30 @@ const user_schema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		email: {
+		username: {
 			type: String,
 			required: true,
+		},
+		password: {
+			type: String,
+			required: true,
+		},
+		role: {
+			type: String,
+			enum: ["USER", "ADMIN"],
+			default: "USER",
 		},
 	},
 	{
 		timestamps: true,
+		virtuals: {
+			full_name: {
+				get() {
+					return `${this.first_name} ${this.last_name}`;
+				},
+			},
+		},
 	},
 );
+
+export const User = model("User", user_schema);

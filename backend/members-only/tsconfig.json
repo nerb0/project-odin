@@ -11,7 +11,7 @@
 		"allowJs": true,
 
 		"paths": {
-			"~/*": ["./*"]
+			"~/*": ["./*"],
 		},
 
 		/* Bundler mode */
@@ -26,6 +26,7 @@
 		"noFallthroughCasesInSwitch": true,
 		"forceConsistentCasingInFileNames": true,
 
-		"plugins": [{ "name": "@kitajs/ts-html-plugin" }]
-	}
+		"plugins": [{ "name": "@kitajs/ts-html-plugin" }],
+		"types": ["bun-types", "./types.d.ts"],
+	},
 }

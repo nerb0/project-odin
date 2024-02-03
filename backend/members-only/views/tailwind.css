@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind utilities;
 @tailwind components;
+
+::view-transition-old(session) {
+	animation:
+		180ms cubic-bezier(0.4, 0, 1, 1) both fade reverse,
+		600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+}
+::view-transition-new(session) {
+	animation:
+		420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade,
+		600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+}
+
+::view-transition-old(page-fade) {
+	animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade reverse;
+}
+::view-transition-new(page-fade) {
+	animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade;
+}
