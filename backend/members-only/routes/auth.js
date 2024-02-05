@@ -29,7 +29,9 @@ export default function setup_passport(server) {
 		}),
 	);
 
-	passport.serializeUser((user, next) => next(null, user.id));
+	passport.serializeUser((user, next) => {
+		next(null, user.id);
+	});
 
 	passport.deserializeUser(async function (id, next) {
 		try {

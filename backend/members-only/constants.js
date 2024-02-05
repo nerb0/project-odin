@@ -9,6 +9,7 @@ export const {
 	DATABASE_URL = "mongodb://127.0.0.1:27017/members-only",
 	NODE_ENV = "development",
 	REDIS_CLIENT_URL = "redis://localhost:6379",
+	SECRET_MEMBERSHIP_CODE,
 } = process.env;
 
 export const __filename = fileURLToPath(import.meta.url);

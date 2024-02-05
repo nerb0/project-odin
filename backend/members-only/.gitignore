@@ -177,3 +177,6 @@ dist
 public/css/style.css
 
 secret-key
+
+*.log
+dump.rdb

@@ -6,8 +6,10 @@ module.exports = {
 			animation: {
 				"fade-in": "fade 0.3s ease-in-out",
 				"fade-out": "fade 0.3s ease-in-out reverse",
-				"slide-from-right": "slide-from-right 0.5s ease-in-out",
-				"slide-from-left": "slide-from-left 0.5s ease-in-out",
+				"slide-left": "slide-from-right 0.5s ease-in-out",
+				"slide-right": "slide-from-left 0.5s ease-in-out",
+				"slide-down": "slide-from-up 0.5s ease-in-out",
+				"slide-up": "slide-from-down 0.5s ease-in-out",
 				"slide-in": "slide 0.5s ease-in-out",
 				"slide-out": "slide 0.5s ease-in-out reverse",
 			},
@@ -22,14 +24,32 @@ module.exports = {
 						opacity: 100,
 					},
 				},
+				"slide-from-left": {
+					from: {
+						transform: "translateX(-90px)",
+					},
+					to: {
+						transform: "translateX(0)",
+					},
+				},
 				"slide-from-right": {
 					from: {
 						transform: "translateX(90px)",
 					},
-				},
-				"slide-to-left": {
 					to: {
-						transform: "translateX(-90px)",
+						transform: "translateX(0)",
+					},
+				},
+				"slide-from-up": {
+					from: {
+						opacity: 0,
+						transform: "translateY(-90px)",
+					},
+				},
+				"slide-from-down": {
+					from: {
+						opacity: 0,
+						transform: "translateY(90px)",
 					},
 				},
 				fade: {

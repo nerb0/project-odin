@@ -18,6 +18,10 @@ const user_schema = new Schema(
 			type: String,
 			required: true,
 		},
+		is_a_member: {
+			type: Boolean,
+			default: false,
+		},
 		role: {
 			type: String,
 			enum: ["USER", "ADMIN"],

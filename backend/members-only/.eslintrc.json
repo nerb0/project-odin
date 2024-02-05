@@ -19,7 +19,8 @@
 		"no-unused-vars": "off",
 		"no-mixed-spaces-and-tabs": "off",
 		"react/jsx-uses-react": "error",
-		"react/jsx-uses-vars": "error"
+		"react/jsx-uses-vars": "error",
+		"react/jsx-no-undef": "error"
 	},
 	"ignorePatterns": ["types.d.ts"]
 }

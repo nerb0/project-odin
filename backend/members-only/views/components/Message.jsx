@@ -1,10 +1,22 @@
 import { cn } from "~/helpers/util";
 import { toast_container_id } from "./Layout";
 
-/** @type {import("@kitajs/html").Component}*/
-export const Toast = function ({ children, class: className, props }) {
+/** @type {import("@kitajs/html").Component<{ withSwap?: boolean }>}*/
+export const Toast = function ({
+	children,
+	class: className,
+	withSwap = true,
+	props,
+}) {
+	const ToastWrapper = function ToastWrapper({ children }) {
+		return withSwap ? (
+			<div hx-swap-oob={`afterbegin:#${toast_container_id}`}>{children}</div>
+		) : (
+			<>{children}</>
+		);
+	};
 	return (
-		<div hx-swap-oob={`afterbegin:#${toast_container_id}`}>
+		<ToastWrapper>
 			<div
 				class={cn(
 					"relative flex w-96 animate-slide-in cursor-pointer overflow-clip rounded-md border-2 border-transparent bg-white shadow-lg",
@@ -24,7 +36,7 @@ remove_toast(toast);
 					role="toast-timer"
 				></div>
 			</div>
-		</div>
+		</ToastWrapper>
 	);
 };
 
@@ -33,12 +45,18 @@ export const ErrorMessage = function ({
 	messages,
 	message,
 	class: className,
+	children,
 	...props
 }) {
 	return (
-		<Toast class="border-red-300">
-			<div class="flex flex-grow flex-col gap-4 bg-red-600 p-3 text-white">
-				<div safe>{message}</div>
+		<Toast class="border-red-300" {...props}>
+			<div
+				class={cn(
+					"flex flex-grow flex-col gap-2 bg-red-600 p-3 text-white",
+					className,
+				)}
+			>
+				{message || children}
 			</div>
 		</Toast>
 	);
@@ -53,8 +71,13 @@ export const SuccessMessage = function ({
 	...props
 }) {
 	return (
-		<Toast>
-			<div class="flex flex-grow bg-green-600 p-3 text-white">
+		<Toast {...props}>
+			<div
+				class={cn(
+					"flex flex-grow flex-col gap-1 bg-green-600 p-3 text-white",
+					className,
+				)}
+			>
 				{message || children}
 			</div>
 		</Toast>

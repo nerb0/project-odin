@@ -6,11 +6,16 @@ import { DashboardView } from "~/views/Dashboard";
 import { toast_container_id } from "~/views/components/Layout";
 import { ErrorMessage, SuccessMessage } from "~/views/components/Message";
 
-/** @type {import("express").RequestHandler[]}*/
+/** @type {import("express").RequestHandler[]} */
 export const handle_signup_post = [
 	body("username")
 		.notEmpty()
 		.withMessage("Username is required. Please enter your username.")
+		.custom(async (value) => {
+			if (await User.findOne({ username: value }))
+				throw new Error("Username is already taken.");
+			else return value;
+		})
 		.trim(),
 	body("password")
 		.notEmpty()
@@ -33,7 +38,7 @@ export const handle_signup_post = [
 				return value;
 			}
 		}),
-	async function handle_signup_post(req, res) {
+	async function handle_user_signup(req, res) {
 		const errors = validationResult(req);
 		if (!errors.isEmpty())
 			return handle_response_error(res, {
@@ -74,7 +79,7 @@ export const handle_signup_post = [
 export const handle_login_post = [
 	body("username").notEmpty().withMessage("Please provide a username."),
 	body("password").notEmpty().withMessage("Please provide a password."),
-	function (req, res) {
+	function handle_user_login(req, res) {
 		const errors = validationResult(req);
 		if (!errors.isEmpty())
 			return handle_response_error(res, {
@@ -92,10 +97,10 @@ export const handle_login_post = [
 								message:
 									"Unable to create login session. Please try again later.",
 							});
-						return res.header("HX-Push-Url", "/app").send(
+						res.header("HX-Push-Url", "/login").send(
 							<>
 								<SuccessMessage message="You have successfully logged in." />
-								<DashboardView user={user} />
+								<DashboardView class="animate-fade-in" user={user} />
 							</>,
 						);
 					});
@@ -106,21 +111,28 @@ export const handle_login_post = [
 ];
 
 /**
- * @param res {import("express").Response}
- * @param error {{ message: string; messages: string[] }}
+ * Used to handle errors on a request by sending error modal
+ * @param {import("express").Response} res An Express Response object use to send the error response
+ * @param {{children: JSX.Element} & ({ message: string; messages?: undefined } | { message?: undefined; messages: string[] })} error Message/s to display to user
  */
-export function handle_response_error(res, { message, messages }) {
+export function handle_response_error(res, error) {
 	res
 		.header("HX-Retarget", `#${toast_container_id}`)
 		.header("HX-Reswap", "beforeend");
-	if (messages) {
+	if (error.messages) {
 		return res.send(
 			<>
-				{messages.map((message) => (
+				{error.messages.map((message) => (
 					<ErrorMessage message={message} />
 				))}
+				{error.children}
 			</>,
 		);
 	}
-	return res.send(<ErrorMessage message={message} />);
+	return res.send(
+		<>
+			<ErrorMessage message={error.message} />
+			{error.children}
+		</>,
+	);
 }

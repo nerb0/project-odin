@@ -1,30 +1,25 @@
+import { TextInput } from "./components/Input";
 import {
 	Layout,
+	UserAuthLayout,
 	loading_dialog_id,
 	toast_container_id,
+	user_auth_view_id,
 } from "./components/Layout";
-import { TextInput, safe_handle_onload_text_input } from "./components/Input";
 
 /** @type {import("@kitajs/html").Component<{title: string}>}*/
 export const SignupPage = function (props) {
 	return (
-		<Layout class="min-h-[800px] bg-amber-600">
-			<SignupView />
-			{safe_handle_onload_text_input}
+		<Layout class="bg-amber-600">
+			<SignupView {...props} />
 		</Layout>
 	);
 };
 
+/** @type {import("@kitajs/html").Component}*/
 export const SignupView = function (props) {
-	const signup_view_id = "signup_view";
 	return (
-		<div
-			class="flex h-screen min-h-[800px] w-screen flex-col items-center justify-center gap-4 [view-transition-name:session]"
-			id={signup_view_id}
-		>
-			<div class="text-center">
-				<div class="text-8xl font-bold text-white">EMBERS</div>
-			</div>
+		<UserAuthLayout {...props}>
 			<form
 				class="flex flex-col gap-8 rounded-md bg-white p-4 pt-7 shadow-lg"
 				hx-indicator={`#${loading_dialog_id}`}
@@ -72,15 +67,18 @@ export const SignupView = function (props) {
 					Sign Up
 				</button>
 			</form>
-			<div class="text-sm">
+			<div class="text-center text-sm">
 				<span>Already have an account? </span>
 				<a
 					href="/login"
 					class="font-bold text-blue-500 visited:text-blue-700 hover:underline"
+					hx-target={`#${user_auth_view_id}`}
+					hx-swap="outerHTML"
+					hx-boost="true"
 				>
 					Login
 				</a>
 			</div>
-		</div>
+		</UserAuthLayout>
 	);
 };

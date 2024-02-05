@@ -1,54 +1,49 @@
-import { Layout, loading_dialog_id } from "./components/Layout";
+import { cn } from "~/helpers/util";
+import { AppContainer, Layout } from "./components/Layout";
+import { PostCreateInput, PostListFetcher } from "./components/Post";
 
 /** @type {PageComponent}*/
-export const DashboardPage = function ({ user }) {
+export const DashboardPage = function ({ messages, children, ...props }) {
 	return (
-		<Layout>
-			<DashboardView user={user} />
+		<Layout messages={messages}>
+			<DashboardView {...props} />
+			{children}
 		</Layout>
 	);
 };
 
 /** @type {PageComponent}*/
-export const DashboardView = function ({ user }) {
-	const dashboard_view_id = "dashboard_view";
+export const DashboardView = function ({ user, class: className, ...props }) {
 	return (
 		<div
-			class="h-screen min-h-[800px] w-screen bg-amber-100 [view-transition-name:page-fade]"
-			id={dashboard_view_id}
+			class={cn(
+				"flex min-h-screen w-screen flex-col items-center bg-white",
+				className,
+			)}
+			id={app_wrapper_id}
+			{...props}
 		>
-			<div class="flex items-center bg-amber-600 py-2 text-white">
-				<div class="flex-grow"></div>
-				<div class="flex flex-shrink-0 items-center gap-2" hx-boost="true">
-					{user ? (
-						<button
-							hx-indicator={`#${loading_dialog_id}`}
-							hx-post="/api/logout"
-							hx-swap="outerHTML transition:true"
-							hx-target={`#${dashboard_view_id}`}
-						>
-							Logout
-						</button>
-					) : (
-						<>
-							<a
-								href="/login"
-								hx-swap="outerHTML transition:true"
-								hx-target={`#${dashboard_view_id}`}
-							>
-								Login
-							</a>
-							<a
-								href="/signup"
-								hx-swap="outerHTML transition:true"
-								hx-target={`#${dashboard_view_id}`}
-							>
-								Signup
-							</a>
-						</>
-					)}
-				</div>
-			</div>
+			<AppContainer user={user}>
+				<DashboardContent user={user} />
+			</AppContainer>
 		</div>
 	);
 };
+
+/** @type {JSXComponent<{ user: DBUser }>}*/
+export const DashboardContent = function DashboardContent({ user, ...props }) {
+	return (
+		<div class="flex min-h-screen flex-col gap-2">
+			{user.is_a_member && (
+				<div class="flex flex-col">
+					<span class="text-sm">Create Post:</span>
+					<PostCreateInput />
+				</div>
+			)}
+			<div class="text-xl font-bold">Posts:</div>
+			<PostListFetcher />
+		</div>
+	);
+};
+
+export const app_wrapper_id = "dashboard_view";

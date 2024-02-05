@@ -2,6 +2,10 @@ import { Schema, model, Types } from "mongoose";
 
 const post_schema = new Schema(
 	{
+		title: {
+			type: String,
+			required: true,
+		},
 		content: {
 			type: String,
 			required: true,
@@ -9,6 +13,7 @@ const post_schema = new Schema(
 		author: {
 			type: Types.ObjectId,
 			reference: "User",
+			required: true,
 		},
 	},
 	{
