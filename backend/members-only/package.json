@@ -4,6 +4,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "bun run tailwind:build && bun server.js",
+		"build": "bun run tailwind:build",
+		"start": "bun server.js",
 		"tailwind:build": "tailwindcss -i ./views/tailwind.css -o ./public/css/style.css --minimum",
 		"tailwind:watch": "tailwindcss -i ./views/tailwind.css -o ./public/css/style.css --watch --minimum"
 	},
