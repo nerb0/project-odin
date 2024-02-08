@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { api_routes } from "./api";
-import { LoginPage, LoginView } from "~/views/Login";
-import { SignupPage, SignupView } from "~/views/Signup";
 import { DashboardPage, DashboardView } from "~/views/Dashboard";
 import { JoinMembershipPage, JoinMembershipView } from "~/views/Join";
-import { membership_status_id } from "~/views/components/Layout";
+import { LoginPage, LoginView } from "~/views/Login";
+import { SignupPage, SignupView } from "~/views/Signup";
+import { Layout, membership_status_id } from "~/views/components/Layout";
 import { ErrorMessage } from "~/views/components/Message";
+import { api_routes } from "./api";
 
 const app_router = Router();
 app_router.get("/", function get_home_page(req, res) {
@@ -20,11 +20,11 @@ app_router.get("/", function get_home_page(req, res) {
 	);
 });
 app_router.get("/join", function get_join_page(req, res) {
+	const props = { user: req.user };
 	if (req.user && req.user.is_a_member) {
-		const props = { user: req.user };
 		if (req.is_htmx) {
 			return res.send(
-				<ErrorMessage withSwap={false}>
+				<ErrorMessage>
 					User is already a member. Redirecting to dashboard...
 				</ErrorMessage>,
 			);
@@ -32,12 +32,12 @@ app_router.get("/join", function get_join_page(req, res) {
 
 		return res.send(
 			<DashboardPage
-				{...props}
 				messages={
 					<ErrorMessage withSwap={false}>
 						User is already a member. Redirecting to dashboard...
 					</ErrorMessage>
 				}
+				{...props}
 			>
 				<script>
 					window.history.pushState('Dashboard', 'EMBERS', '/app');
@@ -47,7 +47,6 @@ app_router.get("/join", function get_join_page(req, res) {
 	}
 
 	if (req.is_htmx) res.header("HX-Push-Url", "/app/join");
-	const props = { user: req.user };
 	return res.send(
 		req.is_htmx ? (
 			<>
@@ -60,10 +59,43 @@ app_router.get("/join", function get_join_page(req, res) {
 	);
 });
 
+const admin_router = Router();
+admin_router.get("/", function get_admin_index_page(req, res) {
+	if (req.user.is_admin) {
+		return res.send(
+			<Layout>
+				<div class="flex min-h-screen items-center justify-center">
+					<form class="rounded-md p-2 shadow-sm">
+						<input
+							type="text"
+							class="w-[200px] rounded-md"
+							placeholder="Enter passcode to access page."
+						/>
+					</form>
+				</div>
+			</Layout>,
+		);
+	}
+	return res.send(
+		<Layout>
+			<div class="flex min-h-screen items-center justify-center">
+				<form class="rounded-md p-2 shadow-sm">
+					<input
+						type="text"
+						class="w-[200px] rounded-md"
+						placeholder="Enter passcode to access page."
+					/>
+				</form>
+			</div>
+		</Layout>,
+	);
+});
+
 const router = Router();
 router.use(verify_htmx);
 router.use("/api", api_routes);
 router.use("/app", app_router);
+router.use("/admin", admin_router);
 
 router.get("/", function handle_index_route(req, res) {
 	res.redirect(req.user ? "/app" : "/login");
@@ -73,7 +105,7 @@ router.get("/login", page_require_guest, function get_login_page(req, res) {
 		res.header("HX-Push-Url", "/login");
 	}
 	return res.send(
-		req.is_htmx ? <LoginView class="animate-slide-right" /> : <LoginPage />,
+		req.is_htmx ? <LoginView class="animate-fade-in" /> : <LoginPage />,
 	);
 });
 router.get("/signup", page_require_guest, function get_signup_page(req, res) {
@@ -81,7 +113,7 @@ router.get("/signup", page_require_guest, function get_signup_page(req, res) {
 		res.header("HX-Push-Url", "/signup");
 	}
 	return res.send(
-		req.is_htmx ? <SignupView class="animate-slide-left" /> : <SignupPage />,
+		req.is_htmx ? <SignupView class="animate-fade-in" /> : <SignupPage />,
 	);
 });
 

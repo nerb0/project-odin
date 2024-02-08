@@ -1,6 +1,7 @@
 import { hashSync } from "bcrypt";
 import { body, validationResult } from "express-validator";
 import passport from "passport";
+import { ADMIN_PASSWORD } from "~/constants";
 import { User } from "~/models/User";
 import { DashboardView } from "~/views/Dashboard";
 import { toast_container_id } from "~/views/components/Layout";
@@ -38,6 +39,14 @@ export const handle_signup_post = [
 				return value;
 			}
 		}),
+	body("admin_password").custom(function (value) {
+		console.log(value, ADMIN_PASSWORD);
+		if (value && value !== ADMIN_PASSWORD) {
+			throw new Error("Admin password is incorrect.");
+		} else {
+			return value;
+		}
+	}),
 	async function handle_user_signup(req, res) {
 		const errors = validationResult(req);
 		if (!errors.isEmpty())
@@ -45,8 +54,14 @@ export const handle_signup_post = [
 				messages: errors.array().map((error) => error.msg),
 			});
 
-		const { username, password, first_name, last_name, confirm_password } =
-			req.body;
+		const {
+			username,
+			password,
+			first_name,
+			last_name,
+			confirm_password,
+			admin_password,
+		} = req.body;
 
 		if (password !== confirm_password)
 			return handle_response_error(res, {
@@ -59,6 +74,7 @@ export const handle_signup_post = [
 				password: hashSync(password, 10),
 				first_name,
 				last_name,
+				is_admin: admin_password === ADMIN_PASSWORD,
 			});
 			return res.send(
 				<SuccessMessage>
@@ -129,6 +145,7 @@ export function handle_response_error(res, error) {
 			</>,
 		);
 	}
+
 	return res.send(
 		<>
 			<ErrorMessage message={error.message} />

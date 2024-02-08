@@ -18,7 +18,7 @@ export const handle_user_join_membership = [
 				return value;
 			}
 		}),
-	async function handle_signup_post(req, res) {
+	async function handle_join_membership(req, res) {
 		const errors = validationResult(req);
 		if (!errors.isEmpty())
 			return handle_response_error(res, {
@@ -49,7 +49,7 @@ export const handle_user_join_membership = [
 						You have successfully joined the club. Redirecting to dashboard...
 					</SuccessMessage>
 					<div hx-swap-oob={`innerHTML:#${app_container_id}`}>
-						<DashboardContent user={req.user} />
+						<DashboardContent user={user} />
 					</div>
 				</>,
 			);

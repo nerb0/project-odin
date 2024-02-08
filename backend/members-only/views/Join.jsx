@@ -5,10 +5,7 @@ import { AppContainer, Layout } from "./components/Layout";
 export const JoinMembershipPage = function ({ messages, ...props }) {
 	return (
 		<Layout messages={messages}>
-			<div
-				class="flex min-h-screen w-screen flex-col items-center"
-				id={app_wrapper_id}
-			>
+			<div class="flex min-h-screen flex-col items-center" id={app_wrapper_id}>
 				<AppContainer user={props.user} withUserStatus={false}>
 					<JoinMembershipView {...props} />
 				</AppContainer>

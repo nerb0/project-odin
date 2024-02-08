@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { get_posts, handle_create_post } from "~/controllers/post.controller";
+import {
+	delete_post,
+	get_posts,
+	handle_create_post,
+} from "~/controllers/post.controller";
 import {
 	handle_login_post,
 	handle_response_error,
@@ -34,6 +38,8 @@ router.post("/logout", function (req, res) {
 router.post("/signup", ...handle_signup_post);
 router.post("/post", ...handle_create_post);
 router.post("/join", ...handle_user_join_membership);
+router.delete("/post/:id", delete_post);
+router.delete("/post", delete_post);
 router.get("/posts", get_posts);
 
 router.get("/", function get_index_route(req, res) {

@@ -16,10 +16,7 @@ export const DashboardPage = function ({ messages, children, ...props }) {
 export const DashboardView = function ({ user, class: className, ...props }) {
 	return (
 		<div
-			class={cn(
-				"flex min-h-screen w-screen flex-col items-center bg-white",
-				className,
-			)}
+			class={cn("flex min-h-screen flex-col items-center bg-white", className)}
 			id={app_wrapper_id}
 			{...props}
 		>
@@ -33,17 +30,20 @@ export const DashboardView = function ({ user, class: className, ...props }) {
 /** @type {JSXComponent<{ user: DBUser }>}*/
 export const DashboardContent = function DashboardContent({ user, ...props }) {
 	return (
-		<div class="flex min-h-screen flex-col gap-2">
-			{user.is_a_member && (
+		<div class="flex min-h-screen flex-col gap-2" {...props}>
+			{user && user.is_permitted && (
 				<div class="flex flex-col">
 					<span class="text-sm">Create Post:</span>
 					<PostCreateInput />
 				</div>
 			)}
 			<div class="text-xl font-bold">Posts:</div>
-			<PostListFetcher />
+			<div id={post_list_id} class="flex flex-col gap-4">
+				<PostListFetcher />
+			</div>
 		</div>
 	);
 };
 
 export const app_wrapper_id = "dashboard_view";
+export const post_list_id = "post_list";

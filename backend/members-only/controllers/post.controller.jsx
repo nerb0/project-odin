@@ -4,9 +4,11 @@ import { Post } from "~/models/Post";
 import {
 	PostCreateInput,
 	PostDashboardView,
-	PostListWrapper,
+	PostList,
+	PostListFetcher,
 } from "~/views/components/Post";
 import { SuccessMessage } from "~/views/components/Message";
+import { get_request_field } from "~/helpers/util";
 
 /** @type {import("express").RequestHandler[]}*/
 export const handle_create_post = [
@@ -20,6 +22,12 @@ export const handle_create_post = [
 			return handle_response_error(res, {
 				messages: errors.array().map((error) => error.msg),
 			});
+
+		if (!req.user.is_permitted)
+			return handle_response_error(res, {
+				message: "Unable to create post. User is not a member.",
+			});
+
 		const { title, message: content } = req.body;
 
 		try {
@@ -28,6 +36,7 @@ export const handle_create_post = [
 				title,
 				author: req.user._id,
 			});
+			await post.populate({ path: "author", model: "User" });
 			return res.send(
 				<>
 					<SuccessMessage message="Post have been created." />
@@ -60,7 +69,16 @@ export const get_posts = async function get_posts(req, res) {
 				path: "author",
 				model: "User",
 			});
-		return res.send(<PostListWrapper posts={posts} user={req.user} />);
+		return res.send(
+			<>
+				<PostList posts={posts} user={req.user} />
+				{posts.length > 0 ? (
+					<PostListFetcher page={parseInt(page) + 1}></PostListFetcher>
+				) : (
+					<div class="text-center text-gray-600">No more posts found.</div>
+				)}
+			</>,
+		);
 	} catch (error) {
 		// __AUTO_GENERATED_PRINT_VAR_START__
 		console.error(error); // __AUTO_GENERATED_PRINT_VAR_END__
@@ -68,6 +86,26 @@ export const get_posts = async function get_posts(req, res) {
 		return handle_response_error(res, {
 			message,
 			children: <div hx-swap-oob="delete:[hx-get='/api/posts']"></div>,
+		});
+	}
+};
+
+/** @type {import("express").RequestHandler<{ id?: string }, any, { id?: string }>}*/
+export const delete_post = async function delete_post(req, res) {
+	try {
+		const id = get_request_field(req, "id");
+		const post = await Post.findOneAndDelete({ _id: id });
+		if (!post)
+			return handle_response_error(res, {
+				message: `Unable to find post with id ${id}`,
+			});
+		return res.send(<div hx-swap-oob={`delete:#post_${post._id}`}></div>);
+	} catch (error) {
+		// __AUTO_GENERATED_PRINT_VAR_START__
+		console.error(error); // __AUTO_GENERATED_PRINT_VAR_END__
+		let message = "Unable to delete post. Please try again later.";
+		return handle_response_error(res, {
+			message,
 		});
 	}
 };

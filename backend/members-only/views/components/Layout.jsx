@@ -90,7 +90,7 @@ export const Header = function Header({ user }) {
 			<a
 				class="text flex-shrink-0 text-2xl font-bold text-amber-700 transition-transform hover:scale-105"
 				href="/app"
-				hx-swap="innerHTML"
+				hx-swap="outerHTML"
 				hx-target={`#${app_wrapper_id}`}
 				hx-boost="true"
 			>
@@ -106,6 +106,7 @@ export const Header = function Header({ user }) {
 							hx-post="/api/logout"
 							hx-swap="outerHTML"
 							hx-target={`#${app_wrapper_id}`}
+							hx-confirm="Are you sure you want to log out?"
 						>
 							Logout
 						</HeaderButton>
@@ -133,6 +134,7 @@ export const Header = function Header({ user }) {
 	);
 };
 
+/** @type {JSXComponent}*/
 export const HeaderButton = function ({
 	class: className,
 	children,
@@ -151,8 +153,6 @@ export const HeaderButton = function ({
 	);
 };
 
-export const app_container_id = "app_container";
-export const membership_status_id = "membership_status";
 /** @type {JSXComponent<{ title: string, user: DBUser, withUserStatus: boolean }>}*/
 export const AppContainer = function AppContainer({
 	children,
@@ -164,13 +164,13 @@ export const AppContainer = function AppContainer({
 			{withUserStatus && (
 				<>
 					{!user && (
-						<div class="sticky top-0 w-full bg-amber-700 py-1 text-center text-white">
+						<div class="sticky top-0 z-50 w-full bg-amber-700 py-1 text-center text-white">
 							You are currently not logged in.
 						</div>
 					)}
-					{user && !user.is_a_member && (
+					{user && !user.is_permitted && (
 						<div
-							class="sticky top-0 w-full bg-amber-700 py-1 text-center text-white"
+							class="sticky top-0 z-50 w-full bg-amber-700 py-1 text-center text-white"
 							id={membership_status_id}
 						>
 							<span>You are not a member. </span>
@@ -195,8 +195,7 @@ export const AppContainer = function AppContainer({
 	);
 };
 
-export const user_auth_view_id = "user_auth_view";
-export const user_auth_form_wrapper_id = "user_auth_form_wrapper";
+/** @type {JSXComponent}*/
 export const UserAuthLayout = function UserAuthLayout({
 	children,
 	class: className,
@@ -227,3 +226,8 @@ export const UserAuthLayout = function UserAuthLayout({
 		</div>
 	);
 };
+
+export const user_auth_view_id = "user_auth_view";
+export const user_auth_form_wrapper_id = "user_auth_form_wrapper";
+export const membership_status_id = "membership_status";
+export const app_container_id = "app_container";

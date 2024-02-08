@@ -59,6 +59,35 @@ export const SignupView = function (props) {
 					type="password"
 					name="confirm_password"
 				/>
+				<div class="flex flex-col gap-2">
+					<label class="flex w-fit items-center gap-2">
+						<input
+							type="checkbox"
+							class="peer"
+							onchange={
+								/*js*/ `
+const parent = this.closest("div");
+const admin_input = parent.querySelector("input[type='text']")
+parent.querySelector("[aria-checked]").setAttribute("aria-checked", this.checked ? "true" : "false");
+if (!this.checked) admin_input.setAttribute("disabled", "true");
+else admin_input.removeAttribute("disabled");
+`
+							}
+						/>
+						<span class="select-none">Is Admin</span>
+					</label>
+					<div
+						class="max-h-0 overflow-clip pt-5 transition-[max-height] aria-checked:max-h-16"
+						aria-checked="false"
+					>
+						<TextInput
+							type="text"
+							class="w-full [-webkit-text-security:disc] focus-within:[-webkit-text-security:none]"
+							placeholder="Admin Password"
+							name="admin_password"
+						/>
+					</div>
+				</div>
 
 				<button
 					class="self-center rounded-md bg-amber-700 px-4 py-1 text-lg font-bold text-white

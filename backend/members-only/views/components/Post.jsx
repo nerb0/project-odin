@@ -1,32 +1,23 @@
 /** @typedef {InstanceType<typeof import("~/models/Post").Post>} Post*/
 import { cn } from "~/helpers/util";
+import { app_wrapper_id, post_list_id } from "../Dashboard";
+import { SpinLoader } from "./Loader";
+import { app_container_id } from "./Layout";
 
 /** @type {JSXComponent<{ posts: Post[], user: DBUser }}>*/
-export const PostListWrapper = function PostListWrapper({
-	posts,
-	user,
-	class: className,
-	...props
-}) {
+export const PostList = function PostList({ posts, user }) {
 	const post_animation_duration = 0.3;
 	const post_animation_duration_increment = 0.1;
-	return (
-		<div
-			id={post_list_id}
-			class={cn("flex flex-col gap-4", className)}
-			{...props}
-		>
-			{posts.map((post, index) => (
-				<PostDashboardView
-					user={user}
-					style={{
-						animationDuration: `${post_animation_duration + post_animation_duration_increment * index}s`,
-					}}
-					post={post}
-				/>
-			))}
-		</div>
-	);
+
+	return posts.map((post, index) => (
+		<PostDashboardView
+			user={user}
+			style={{
+				animationDuration: `${post_animation_duration + post_animation_duration_increment * index}s`,
+			}}
+			post={post}
+		/>
+	));
 };
 
 /** @type {JSXComponent<{ post: Post, user: DBUser }>}*/
@@ -38,8 +29,10 @@ export const PostDashboardView = function PostDashboardView({
 }) {
 	return (
 		<div
+			id={`post_${post._id}`}
+			hx-get={`/app/post/${post._id}`}
 			class={cn(
-				"flex animate-slide-in flex-col gap-2 rounded-md p-2 shadow-sm",
+				"relative flex animate-slide-in flex-col gap-2 rounded-md p-2 shadow-sm transition-all hover:scale-[1.01] hover:shadow-md",
 				className,
 			)}
 			{...props}
@@ -49,9 +42,27 @@ export const PostDashboardView = function PostDashboardView({
 				{post.title}
 			</div>
 			<div safe>{post.content}</div>
+			{user && user.is_admin && (
+				<PostDeleteButton post={post}></PostDeleteButton>
+			)}
 		</div>
 	);
 };
+
+export const PostDeleteButton = function PostDeleteButton({ post }) {
+	return (
+		<button
+			hx-delete={`/api/post/${post._id}`}
+			hx-confirm="Are you sure you want to delete this post?"
+			class={`group absolute right-2 top-2 flex select-none items-center rounded-md bg-red-500 px-3 py-1 font-bold text-white transition-all
+				hover:scale-105 hover:bg-red-700 [&.htmx-request]:pointer-events-none [&.htmx-request]:bg-neutral-500`}
+		>
+			<span>Delete</span>
+			<SpinLoader class="group-[.htmx-request]:ml-2 group-[.htmx-request]:max-h-2 group-[.htmx-request]:max-w-2 group-[.htmx-request]:border" />
+		</button>
+	);
+};
+
 /** @type {JSXComponent}*/
 export const PostLegendSeparator = function PostLegendSeparator({
 	class: className,
@@ -69,20 +80,51 @@ export const PostLegendSeparator = function PostLegendSeparator({
 export const PostLegend = function PostLegend({ post, user }) {
 	return (
 		<div class="flex items-center gap-2 text-sm text-gray-600">
-			<div class="font-bold text-black">
-				{user && user.is_a_member ? post.author.full_name : "Anonymous"}
+			<div class="font-bold text-black" safe>
+				{user && user.is_permitted ? post.author.full_name : "Anonymous"}
 			</div>
 			<PostLegendSeparator />
-			<div>
-				{post.createdAt.toLocaleDateString(undefined, {
-					hour: "2-digit",
-					minute: "2-digit",
-					hourCycle: "h11",
-					month: "long",
-					day: "2-digit",
-					year: "numeric",
-				})}
-			</div>
+			{user ? (
+				user.is_permitted ? (
+					<>
+						<div safe>
+							{post.createdAt.toLocaleDateString(undefined, {
+								month: "long",
+								day: "2-digit",
+								year: "numeric",
+							})}
+						</div>
+						<div class="h-[2px] w-2 bg-gray-600"></div>
+						<div safe>
+							{post.createdAt.toLocaleTimeString(undefined, {
+								hourCycle: "h11",
+							})}
+						</div>
+					</>
+				) : (
+					<a
+						class="hover:underline"
+						href="/app/join"
+						hx-swap="outerHTML"
+						hx-target={`#${app_container_id}`}
+						hx-boost="true"
+						onclick="event.stopPropagation()"
+					>
+						Join to view more info
+					</a>
+				)
+			) : (
+				<a
+					class="hover:underline"
+					href="/login"
+					hx-swap="outerHTML"
+					hx-target={`#${app_wrapper_id}`}
+					hx-boost="true"
+					onclick="event.stopPropagation()"
+				>
+					Login to view more info.
+				</a>
+			)}
 		</div>
 	);
 };
@@ -118,24 +160,28 @@ export const PostCreateInput = function PostCreateInput({
 					{children}
 				</textarea>
 				<button
-					class="group absolute bottom-2 right-2 flex select-none items-center gap-2 rounded-md bg-gray-400 px-3 py-1 font-bold text-white
+					type="submit"
+					class="group absolute bottom-2 right-2 flex select-none items-center rounded-md bg-gray-400 px-3 py-1 font-bold text-white
 						transition-all hover:scale-105 hover:bg-amber-700 group-focus-within:bg-amber-700
 						group-[.htmx-request]:pointer-events-none group-[.htmx-request]:bg-neutral-500 group-[.htmx-request]:group-focus-within:bg-neutral-500"
 				>
 					<span>Submit</span>
-					<span class="hidden h-2 w-2 animate-spin border border-dashed border-gray-300 group-[.htmx-request]:block"></span>
+					<SpinLoader class="group-[.htmx-request]:ml-2 group-[.htmx-request]:max-h-2 group-[.htmx-request]:max-w-2 group-[.htmx-request]:border" />
 				</button>
 			</div>
 		</form>
 	);
 };
 
-/** @type {JSXComponent}*/
-export const PostListFetcher = function PostListFetcher({ ...props }) {
+/** @type {JSXComponent<{ page?: number }>}*/
+export const PostListFetcher = function PostListFetcher({
+	page = 1,
+	...props
+}) {
 	return (
 		<div
 			class="animate-pulse"
-			hx-get="/api/posts"
+			hx-get={`/api/posts?page=${page}`}
 			hx-swap="outerHTML"
 			hx-target="this"
 			hx-trigger="revealed"
@@ -145,5 +191,3 @@ export const PostListFetcher = function PostListFetcher({ ...props }) {
 		</div>
 	);
 };
-
-export const post_list_id = "post_list";

@@ -22,6 +22,10 @@ const user_schema = new Schema(
 			type: Boolean,
 			default: false,
 		},
+		is_admin: {
+			type: Boolean,
+			default: false,
+		},
 		role: {
 			type: String,
 			enum: ["USER", "ADMIN"],
@@ -34,6 +38,11 @@ const user_schema = new Schema(
 			full_name: {
 				get() {
 					return `${this.first_name} ${this.last_name}`;
+				},
+			},
+			is_permitted: {
+				get() {
+					return this.is_admin || this.is_a_member;
 				},
 			},
 		},

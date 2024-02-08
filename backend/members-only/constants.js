@@ -10,6 +10,7 @@ export const {
 	NODE_ENV = "development",
 	REDIS_CLIENT_URL = "redis://localhost:6379",
 	SECRET_MEMBERSHIP_CODE,
+	ADMIN_PASSWORD,
 } = process.env;
 
 export const __filename = fileURLToPath(import.meta.url);
