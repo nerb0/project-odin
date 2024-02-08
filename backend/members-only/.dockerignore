@@ -1,0 +1,6 @@
+.git
+node_modules
+.env
+.eslintrc.json
+.prettierrc
+dump.rdb
