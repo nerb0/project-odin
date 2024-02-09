@@ -113,7 +113,7 @@ export const handle_login_post = [
 								message:
 									"Unable to create login session. Please try again later.",
 							});
-						res.header("HX-Push-Url", "/login").send(
+						res.header("HX-Push-Url", "/app").send(
 							<>
 								<SuccessMessage message="You have successfully logged in." />
 								<DashboardView class="animate-fade-in" user={user} />

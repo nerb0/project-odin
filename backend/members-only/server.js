@@ -3,7 +3,6 @@ import express from "express";
 import { default as session } from "express-session";
 import path from "path";
 import {
-	NODE_ENV,
 	PORT,
 	SESSION_SECRET_KEY,
 	__dirname,
@@ -29,7 +28,7 @@ server.use(
 		cookie: {
 			sameSite: "strict",
 			httpOnly: true,
-			secure: NODE_ENV === "production",
+			secure: false,
 			path: "/",
 			signed: true,
 		},
