@@ -52,14 +52,8 @@ export const handle_signup_post = [
 			});
 		}
 
-		const {
-			username,
-			password,
-			first_name,
-			last_name,
-			confirm_password,
-			admin_password,
-		} = req.body;
+		const { username, password, first_name, last_name, admin_password } =
+			req.body;
 
 		if (admin_password && admin_password !== ADMIN_PASSWORD)
 			return handle_response_error(res, {

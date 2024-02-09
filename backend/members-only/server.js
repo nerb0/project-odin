@@ -28,6 +28,7 @@ server.use(
 		saveUninitialized: true,
 		cookie: {
 			sameSite: "lax",
+			httpOnly: true,
 			secure: NODE_ENV === "production",
 			path: "/",
 			signed: true,
