@@ -27,7 +27,7 @@ server.use(
 		resave: true,
 		saveUninitialized: true,
 		cookie: {
-			sameSite: "lax",
+			sameSite: "strict",
 			httpOnly: true,
 			secure: NODE_ENV === "production",
 			path: "/",

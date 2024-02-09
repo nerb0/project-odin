@@ -103,6 +103,7 @@ export const handle_login_post = [
 
 		passport.authenticate(
 			"local",
+			{ session: true },
 			async function handle_user_login(err, user, info, status) {
 				if (err) return handle_response_error(res, { message: err.message });
 				else {
