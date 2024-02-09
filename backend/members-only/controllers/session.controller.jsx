@@ -4,7 +4,10 @@ import passport from "passport";
 import { ADMIN_PASSWORD } from "~/constants";
 import { User } from "~/models/User";
 import { DashboardView } from "~/views/Dashboard";
-import { toast_container_id } from "~/views/components/Layout";
+import {
+	toast_container_id,
+	user_auth_view_id,
+} from "~/views/components/Layout";
 import { ErrorMessage, SuccessMessage } from "~/views/components/Message";
 
 /** @type {import("express").RequestHandler[]} */
@@ -39,20 +42,15 @@ export const handle_signup_post = [
 				return value;
 			}
 		}),
-	body("admin_password").custom(function (value) {
-		console.log(value, ADMIN_PASSWORD);
-		if (value && value !== ADMIN_PASSWORD) {
-			throw new Error("Admin password is incorrect.");
-		} else {
-			return value;
-		}
-	}),
 	async function handle_user_signup(req, res) {
 		const errors = validationResult(req);
-		if (!errors.isEmpty())
+		if (!errors.isEmpty()) {
+			// __AUTO_GENERATED_PRINT_VAR_START__
+			console.error(errors); // __AUTO_GENERATED_PRINT_VAR_END__
 			return handle_response_error(res, {
 				messages: errors.array().map((error) => error.msg),
 			});
+		}
 
 		const {
 			username,
@@ -63,7 +61,7 @@ export const handle_signup_post = [
 			admin_password,
 		} = req.body;
 
-		if (password !== confirm_password)
+		if (admin_password && admin_password !== ADMIN_PASSWORD)
 			return handle_response_error(res, {
 				message: "Password does not match.",
 			});
@@ -78,12 +76,19 @@ export const handle_signup_post = [
 			});
 			return res.send(
 				<SuccessMessage>
-					<a href="/login" hx-boost="true">
+					<a
+						href="/login"
+						hx-target={`#${user_auth_view_id}`}
+						hx-swap="outerHTML"
+						hx-boost="true"
+					>
 						Your account has been created. Click here to login
 					</a>
 				</SuccessMessage>,
 			);
 		} catch (error) {
+			// __AUTO_GENERATED_PRINT_VAR_START__
+			console.error(error); // __AUTO_GENERATED_PRINT_VAR_END__
 			return handle_response_error(res, {
 				message: "Unable to create user. Please try again later.",
 			});
