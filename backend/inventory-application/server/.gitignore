@@ -1,0 +1,3 @@
+templates/**/*.go
+tmp/
+public/css/style.css
