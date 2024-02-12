@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"inventory-application/server/routes"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -19,6 +21,17 @@ func main() {
 	db := setup_db()
 	server := gin.Default()
 
+	server.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{os.Getenv("ALLOWED_ORIGIN")},
+		AllowMethods:     []string{"PUT", "GET", "DELETE", "POST"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 	api_routes := server.Group("/")
 	routes.Setup(api_routes, db)
 
