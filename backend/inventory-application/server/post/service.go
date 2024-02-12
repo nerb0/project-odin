@@ -23,10 +23,10 @@ func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 		}
 
 		var post Post
-		err = db.FindOne(ctx, bson.D{{Key: "_id", Value: post_id}}).Decode(&post)
+		err = db.FindOne(ctx, bson.M{"_id": post_id}).Decode(&post)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"message": fmt.Sprintf("Unable to find post with id %s", post_id),
+				"message": fmt.Sprintf("Unable to find post with id %s", param_id),
 			})
 			return
 		}
@@ -73,7 +73,7 @@ func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 
 func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		var new_post NewPost
+		var new_post NewPostOne
 
 		if err := ctx.ShouldBindJSON(&new_post); err != nil {
 			log.Println(err.Error())
@@ -82,14 +82,10 @@ func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 			})
 			return
 		}
+		new_post.UpdatedAt = time.Now()
+		new_post.CreatedAt = time.Now()
 
-		result, err := db.InsertOne(ctx, bson.D{
-			{Key: "title", Value: new_post.Title},
-			{Key: "content", Value: new_post.Content},
-			{Key: "is_published", Value: new_post.IsPublished},
-			{Key: "created_at", Value: time.Now()},
-			{Key: "updated_at", Value: time.Now()},
-		})
+		result, err := db.InsertOne(ctx, &new_post)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": "Unable to insert post.",
@@ -98,7 +94,7 @@ func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		}
 
 		var post Post
-		err = db.FindOne(ctx, bson.D{{Key: "_id", Value: result.InsertedID}}).Decode(&post)
+		err = db.FindOne(ctx, bson.M{"_id": result.InsertedID}).Decode(&post)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": err.Error(),
@@ -113,6 +109,80 @@ func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 	}
 }
 
+func DeleteOne(db *mongo.Collection) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		param_id := ctx.Param("id")
+		post_id, err := primitive.ObjectIDFromHex(param_id)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Invalid post id.",
+			})
+		}
+
+		var post Post
+		err = db.FindOneAndDelete(ctx, bson.M{"_id": post_id}).Decode(&post)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": fmt.Sprintf("Unable to find post with id %s", param_id),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusAccepted, gin.H{
+			"data":    post,
+			"message": "Post deleted successfully.",
+		})
+	}
+}
+
+func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		param_id := ctx.Param("id")
+		post_id, err := primitive.ObjectIDFromHex(param_id)
+		if err != nil {
+			log.Println(err.Error())
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Invalid post id.",
+			})
+			return
+		}
+
+		var new_data UpdatePostOne
+		if err := ctx.ShouldBindJSON(&new_data); err != nil {
+			log.Println(err.Error())
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Invalid request from user.",
+			})
+			return
+		}
+		new_data.UpdatedAt = time.Now()
+
+		_, err = db.UpdateOne(ctx, bson.M{"_id": post_id}, bson.M{"$set": new_data})
+		if err != nil {
+			log.Println(err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": fmt.Sprintf("Unable to find post with id %s", param_id),
+			})
+			return
+		}
+
+		var post Post
+		err = db.FindOne(ctx, bson.M{"_id": post_id}).Decode(&post)
+		if err != nil {
+			log.Println(err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Unable to retrieve post update.",
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusAccepted, gin.H{
+			"data":    post,
+			"message": "Post updated successfully.",
+		})
+	}
+}
+
 func CreateMany(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -121,7 +191,7 @@ func CreateMany(db *mongo.Collection) func(ctx *gin.Context) {
 	}
 }
 
-func DeleteOne(db *mongo.Collection) func(ctx *gin.Context) {
+func UpdateMany(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"TODO": "Not implemented yet.",
@@ -130,22 +200,6 @@ func DeleteOne(db *mongo.Collection) func(ctx *gin.Context) {
 }
 
 func DeleteMany(db *mongo.Collection) func(ctx *gin.Context) {
-	return func(ctx *gin.Context) {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"TODO": "Not implemented yet.",
-		})
-	}
-}
-
-func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
-	return func(ctx *gin.Context) {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"TODO": "Not implemented yet.",
-		})
-	}
-}
-
-func UpdateMany(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"TODO": "Not implemented yet.",
