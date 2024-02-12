@@ -10,12 +10,13 @@ import (
 func Setup(router_group *gin.RouterGroup, db *mongo.Database) {
 	posts := router_group.Group("/post")
 
-	router_group.GET("/posts", post.GetAll(db))
-	router_group.POST("/posts", post.CreateMany(db))
-	router_group.DELETE("/posts", post.DeleteMany(db))
-	router_group.PUT("/posts", post.UpdateMany(db))
-	posts.GET("/:id", post.GetOne(db))
-	posts.POST("/:id", post.CreateOne(db))
-	posts.DELETE("/:id", post.DeleteOne(db))
-	posts.PUT("/:id", post.UpdateOne(db))
+	post_coll := db.Collection("posts")
+	router_group.GET("/posts", post.GetAll(post_coll))
+	router_group.POST("/posts", post.CreateMany(post_coll))
+	router_group.DELETE("/posts", post.DeleteMany(post_coll))
+	router_group.PUT("/posts", post.UpdateMany(post_coll))
+	posts.POST("/", post.CreateOne(post_coll))
+	posts.GET("/:id", post.GetOne(post_coll))
+	posts.DELETE("/:id", post.DeleteOne(post_coll))
+	posts.PUT("/:id", post.UpdateOne(post_coll))
 }
