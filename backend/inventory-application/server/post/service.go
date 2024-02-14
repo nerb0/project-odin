@@ -40,7 +40,21 @@ func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 
 func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		cursor, err := db.Find(ctx, bson.D{})
+		POST_LIST_TEXT_COUNT_LIMIT := 1000
+		cursor, err := db.Aggregate(ctx, []bson.M{
+			{
+				"$match": bson.M{
+					"is_published": true,
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"content": bson.M{
+						"$substr": []any{"$content", 0, POST_LIST_TEXT_COUNT_LIMIT},
+					},
+				},
+			},
+		})
 		if err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{
 				"message": err.Error(),
@@ -51,7 +65,7 @@ func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 		var posts []Post
 		err = cursor.All(ctx, &posts)
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{
+			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": err.Error(),
 			})
 			return

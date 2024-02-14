@@ -7,12 +7,12 @@ import (
 )
 
 type Post struct {
-	CreatedAt   time.Time          `bson:"created_at"`
-	UpdatedAt   time.Time          `bson:"updated_at"`
-	Title       string             `bson:"title"`
-	Content     string             `bson:"content"`
-	ID          primitive.ObjectID `bson:"_id"`
-	IsPublished bool               `bson:"is_published"`
+	CreatedAt   time.Time          `bson:"created_at" json:"created_at" xml:"created_at"`
+	UpdatedAt   time.Time          `bson:"updated_at" json:"updated_at" xml:"updated_at"`
+	Title       string             `bson:"title" json:"title" xml:"title"`
+	Content     string             `bson:"content" json:"content" xml:"content"`
+	ID          primitive.ObjectID `bson:"_id" json:"id" xml:"id"`
+	IsPublished bool               `bson:"is_published" json:"is_published" xml:"is_published"`
 }
 
 type NewPostOne struct {
