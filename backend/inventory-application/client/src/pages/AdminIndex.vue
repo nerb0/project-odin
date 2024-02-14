@@ -5,9 +5,12 @@ import { authenticateUser } from "@/util";
 export default {
 	data() {
 		return {
-			loading: false,
+			init_loading: false,
+			auth_loading: false,
+			post_loading: false,
 			authenticated: null as null | boolean,
 			error: null as null | string,
+			posts: null as null | BlogPost[],
 		};
 	},
 	created() {
@@ -16,6 +19,7 @@ export default {
 	methods: {
 		login(event: Event) {
 			event.preventDefault();
+			this.auth_loading = true;
 			const formData = new FormData(event.target as HTMLFormElement);
 			fetch(`${import.meta.env.VITE_SERVER_API_URL}/auth/login`, {
 				method: "POST",
@@ -44,9 +48,9 @@ export default {
 		authenticate() {
 			this.error = null;
 			this.authenticated = null;
-			this.loading = true;
+			this.init_loading = true;
 			authenticateUser((err, authentication_result) => {
-				this.loading = false;
+				this.init_loading = false;
 				if (err) {
 					this.error = err.toString();
 					this.authenticated = false;
@@ -60,7 +64,7 @@ export default {
 };
 </script>
 <template>
-	<div class="flex flex-grow items-center justify-center" v-if="loading">
+	<div class="flex flex-grow items-center justify-center" v-if="init_loading">
 		<Loader class="" />
 	</div>
 	<div
@@ -73,20 +77,26 @@ export default {
 			:onsubmit="login"
 		>
 			<input
+				:disabled="auth_loading"
 				type="text"
 				name="username"
 				placeholder="Username"
 				class="rounded-md border-2 border-gray-500 p-2 outline-none focus:border-stone-800 dark:border-stone-600 dark:bg-stone-800 dark:focus:border-stone-200"
 			/>
 			<input
+				:disabled="auth_loading"
 				type="password"
 				name="password"
 				placeholder="Password"
 				class="rounded-md border-2 border-gray-500 p-2 outline-none focus:border-stone-800 dark:border-stone-600 dark:bg-stone-800 dark:focus:border-stone-200"
 			/>
-			<button class="w-fit self-center rounded-md bg-stone-400 px-4 py-1">
+			<button
+				class="w-fit self-center rounded-md bg-stone-400 px-4 py-1"
+				:disabled="auth_loading"
+			>
 				Submit
 			</button>
 		</form>
 	</div>
+	<div></div>
 </template>

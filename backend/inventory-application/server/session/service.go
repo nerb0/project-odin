@@ -9,6 +9,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+const COOKIE_EXPIRY = 60 * 60 * 24 * 14 /* 14 days*/
+
 func HandleLogin(ctx *gin.Context) {
 	var user_credentials UserAuthentication
 
@@ -48,8 +50,7 @@ func HandleLogin(ctx *gin.Context) {
 		return
 	}
 
-	const COOKIE_EXPIRY = 60 /*sec*/ * 60 /*min*/ * 24 /*hour*/ * 7 /*day*/
-	ctx.SetCookie("let_him_cookie", token, COOKIE_EXPIRY, "/", ctx.Request.URL.Path, false, true)
+	ctx.SetCookie("let_him_cookie", token, COOKIE_EXPIRY, "/#/admin", "", false, true)
 	ctx.JSON(http.StatusOK, gin.H{
 		"data": gin.H{
 			"authenticated": true,
@@ -81,7 +82,7 @@ func VerifyUser(ctx *gin.Context) {
 		return
 	}
 
-	if user.Username != os.Getenv("BLOG_USERNAME") || user.Password != os.Getenv("BLOG_PASSWORD") {
+	if !AuthenticateUserCredentials(user) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"data": gin.H{
 				"authenticated": false,

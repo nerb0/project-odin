@@ -2,6 +2,7 @@ package post
 
 import (
 	"fmt"
+	"inventory-application/server/session"
 	"log"
 	"net/http"
 	"time"
@@ -10,6 +11,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+const (
+	POST_LIST_TEXT_COUNT_LIMIT int64 = 1000
+	POST_COUNT_PER_PAGE        int64 = 10
 )
 
 func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
@@ -18,6 +25,7 @@ func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 		post_id, err := primitive.ObjectIDFromHex(param_id)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
 				"message": "Invalid post id.",
 			})
 		}
@@ -26,6 +34,7 @@ func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 		err = db.FindOne(ctx, bson.M{"_id": post_id}).Decode(&post)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "fail",
 				"message": fmt.Sprintf("Unable to find post with id %s", param_id),
 			})
 			return
@@ -33,6 +42,7 @@ func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusAccepted, gin.H{
 			"data":    post,
+			"status":  "ok",
 			"message": "Post fetched successfully.",
 		})
 	}
@@ -40,23 +50,36 @@ func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 
 func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		POST_LIST_TEXT_COUNT_LIMIT := 1000
-		cursor, err := db.Aggregate(ctx, []bson.M{
-			{
-				"$match": bson.M{
-					"is_published": true,
-				},
-			},
-			{
-				"$addFields": bson.M{
-					"content": bson.M{
-						"$substr": []any{"$content", 0, POST_LIST_TEXT_COUNT_LIMIT},
-					},
-				},
-			},
+		var query PostGetAllQuery
+		var page int64 = 1
+		filter := bson.M{
+			"is_published": true,
+		}
+
+		ctx_user, user_exists := ctx.Get("user")
+		if user_exists {
+			user, ok := ctx_user.(*session.UserAuthenticationClaims)
+			if ok {
+				if session.AuthenticateUserCredentials(user) {
+					filter = bson.M{}
+				}
+			}
+		}
+
+		err := ctx.ShouldBindQuery(&query)
+		if err == nil {
+			if query.Page > 0 {
+				page = query.Page
+			}
+		}
+
+		cursor, err := db.Find(ctx, filter, &options.FindOptions{
+			Limit: ToInt64(POST_LIST_TEXT_COUNT_LIMIT),
+			Skip:  ToInt64((page - 1) * POST_COUNT_PER_PAGE),
 		})
 		if err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{
+				"status":  "fail",
 				"message": err.Error(),
 			})
 			return
@@ -66,6 +89,7 @@ func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 		err = cursor.All(ctx, &posts)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "fail",
 				"message": err.Error(),
 			})
 			return
@@ -73,12 +97,14 @@ func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 
 		if posts == nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
 				"message": "Unable to find any posts",
 			})
 			return
 		}
 
 		ctx.JSON(http.StatusAccepted, gin.H{
+			"status":  "ok",
 			"data":    posts,
 			"message": "Posts fetched successfully.",
 		})
@@ -92,6 +118,7 @@ func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		if err := ctx.ShouldBindJSON(&new_post); err != nil {
 			log.Println(err.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
 				"message": "Invalid request from user.",
 			})
 			return
@@ -102,6 +129,7 @@ func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		result, err := db.InsertOne(ctx, &new_post)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "fail",
 				"message": "Unable to insert post.",
 			})
 			return
@@ -111,12 +139,14 @@ func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		err = db.FindOne(ctx, bson.M{"_id": result.InsertedID}).Decode(&post)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "fail",
 				"message": err.Error(),
 			})
 			return
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{
+			"status":  "ok",
 			"data":    post,
 			"message": "Post is created successfully.",
 		})
@@ -129,6 +159,7 @@ func DeleteOne(db *mongo.Collection) func(ctx *gin.Context) {
 		post_id, err := primitive.ObjectIDFromHex(param_id)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
 				"message": "Invalid post id.",
 			})
 		}
@@ -165,6 +196,7 @@ func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		if err := ctx.ShouldBindJSON(&new_data); err != nil {
 			log.Println(err.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
 				"message": "Invalid request from user.",
 			})
 			return
@@ -185,6 +217,7 @@ func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		if err != nil {
 			log.Println(err.Error())
 			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "fail",
 				"message": "Unable to retrieve post update.",
 			})
 			return
@@ -219,4 +252,12 @@ func DeleteMany(db *mongo.Collection) func(ctx *gin.Context) {
 			"TODO": "Not implemented yet.",
 		})
 	}
+}
+
+type PostGetAllQuery struct {
+	Page int64 `json:"page,omitempty"`
+}
+
+func ToInt64(limit int64) *int64 {
+	return &limit
 }

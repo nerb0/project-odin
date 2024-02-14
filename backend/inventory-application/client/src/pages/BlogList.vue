@@ -5,7 +5,7 @@ import Loader from "@/components/Loader.vue";
 
 function getAllBlogPosts(callback: FetchCallbackHandler<BlogPost[]>) {
 	new Promise((resolve) => setTimeout(resolve, 1500)).then(() =>
-		fetch(`${import.meta.env.VITE_SERVER_API_URL}/posts`)
+		fetch(`${import.meta.env.VITE_SERVER_API_URL}/posts?slice=true`)
 			.then((res) =>
 				res
 					.json()
