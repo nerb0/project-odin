@@ -21,6 +21,7 @@ function getBlogPost(id: string, callback: FetchCallbackHandler) {
 			.catch((err) => callback(err, null));
 	});
 }
+
 export default {
 	data() {
 		return {
