@@ -1,13 +1,10 @@
 package session
 
 import (
-	"crypto/ed25519"
-	"encoding/base64"
 	"fmt"
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
-	"golang.org/x/crypto/ssh"
 )
 
 func DecodeJWT(jwtString string) (*UserAuthenticationClaims, error) {
@@ -15,11 +12,12 @@ func DecodeJWT(jwtString string) (*UserAuthenticationClaims, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodEd25519); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		public_key, err := base64.StdEncoding.DecodeString(os.Getenv("JWT_PUBLIC_KEY"))
+		public_key, err := jwt.ParseEdPublicKeyFromPEM([]byte(os.Getenv("JWT_PUBLIC_KEY")))
 		if err != nil {
 			return nil, err
 		}
-		return ed25519.PublicKey(public_key), nil
+
+		return public_key, nil
 	})
 	if err != nil {
 		return nil, err
@@ -34,7 +32,7 @@ func DecodeJWT(jwtString string) (*UserAuthenticationClaims, error) {
 
 func CreateJWT(claims *UserAuthenticationClaims) (string, error) {
 	token := jwt.NewWithClaims(&jwt.SigningMethodEd25519{}, claims)
-	privateKey, err := ssh.ParseRawPrivateKey([]byte(os.Getenv("JWT_PRIVATE_KEY")))
+	privateKey, err := jwt.ParseEdPrivateKeyFromPEM([]byte(os.Getenv("JWT_PRIVATE_KEY")))
 	if err != nil {
 		return "", err
 	}

@@ -16,7 +16,7 @@ func DecodeSession(ctx *gin.Context) {
 			return
 		}
 
-		ctx.Set("User", claims)
+		ctx.Set("user", claims)
 		ctx.Next()
 		return
 	}

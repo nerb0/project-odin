@@ -59,18 +59,19 @@ func HandleLogin(ctx *gin.Context) {
 }
 
 func VerifyUser(ctx *gin.Context) {
-	var user interface{}
-	user, user_exists := ctx.Get("User")
+	ctx_user, user_exists := ctx.Get("user")
 	if !user_exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"data": gin.H{
 				"authenticated": false,
 			},
-			"message": "You are not logged in.",
+			"message": "User is not logged in.",
 		})
+		return
 	}
 
-	if user.(UserAuthentication).Username != os.Getenv("BLOG_USERNAME") || user.(UserAuthentication).Password != os.Getenv("BLOG_PASSWORD") {
+	user, ok := ctx_user.(*UserAuthenticationClaims)
+	if !ok {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"data": gin.H{
 				"authenticated": false,
@@ -80,7 +81,17 @@ func VerifyUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusUnauthorized, gin.H{
+	if user.Username != os.Getenv("BLOG_USERNAME") || user.Password != os.Getenv("BLOG_PASSWORD") {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"data": gin.H{
+				"authenticated": false,
+			},
+			"message": "Invalid credentials.",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
 		"data": gin.H{
 			"authenticated": true,
 		},

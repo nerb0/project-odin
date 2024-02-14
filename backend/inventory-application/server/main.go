@@ -13,6 +13,7 @@ import (
 
 func main() {
 	godotenv.Load()
+	// session.GenerateKey()
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
 		PORT = "3000"
