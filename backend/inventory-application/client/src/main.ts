@@ -1,20 +1,36 @@
+import "@milkdown/theme-nord/style.css";
 import { createApp } from "vue";
-import { createRouter, createWebHashHistory } from "vue-router";
+import { RouteRecordRaw, createRouter, createWebHashHistory } from "vue-router";
 import App from "./App.vue";
 import About from "./pages/About.vue";
-import Blog from "./pages/Blog.vue";
+import AdminIndex from "./pages/AdminIndex.vue";
+import Blog from "./pages/BlogList.vue";
 import BlogPost from "./pages/BlogPost.vue";
 import Home from "./pages/Home.vue";
 import NotFound from "./pages/NotFound.vue";
 import "./style.css";
 
-const routes = [
-	{ path: "/", name: "Home", component: Home },
-	{ path: "/about", name: "About", component: About },
-	{ path: "/blog", name: "Blog", component: Blog },
-	{ path: "/blog/:id", name: "Blog Post", component: BlogPost },
+const routes: RouteRecordRaw[] = [
+	{ path: "/home", name: "home", component: Home, alias: "/" },
+	{ path: "/about", name: "about", component: About },
+	{
+		path: "/blog",
+		children: [
+			{
+				path: "",
+				name: "blog_list",
+				component: Blog,
+			},
+			{
+				name: "blog_post",
+				path: ":id",
+				component: BlogPost,
+			},
+		],
+	},
+	{ path: "/admin", name: "admin", component: AdminIndex },
 	{ path: "/:path(.*)*", name: "Not Found", component: NotFound },
-] as const;
+];
 
 const router = createRouter({
 	history: createWebHashHistory(),

@@ -1,8 +1,9 @@
 /// <reference types="vite/client" />
 interface ImportMetaEnv {
-	SERVER_API_URL: string;
+	VITE_SERVER_API_URL: string;
 }
 type BlogPost = {
+	id: string;
 	content: string;
 	title: string;
 	author: string;
