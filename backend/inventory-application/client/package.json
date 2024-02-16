@@ -9,18 +9,29 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@milkdown/core": "^7.3.4",
+		"@milkdown/core": "7.3.4",
+		"@milkdown/ctx": "7.3.5",
 		"@milkdown/plugin-emoji": "7.3.4",
-		"@milkdown/preset-commonmark": "^7.3.4",
+		"@milkdown/plugin-listener": "7.3.5",
+		"@milkdown/plugin-prism": "7.3.5",
+		"@milkdown/preset-commonmark": "7.3.4",
 		"@milkdown/preset-gfm": "7.3.3",
+		"@milkdown/prose": "7.3.5",
 		"@milkdown/theme-nord": "7.3.3",
+		"@milkdown/utils": "7.3.5",
 		"@milkdown/vue": "7.3.4",
 		"clsx": "2.1.0",
+		"lodash": "4.17.21",
+		"prism-themes": "1.9.0",
+		"refractor": "4.8.1",
 		"tailwind-merge": "2.2.1",
 		"vue": "3.4.15",
-		"vue-router": "4"
+		"vue-js-modal": "2.0.1",
+		"vue-router": "4",
+		"vue-toastification": "2.0.0-rc.5"
 	},
 	"devDependencies": {
+		"@types/lodash": "4.14.202",
 		"@vitejs/plugin-vue": "5.0.3",
 		"autoprefixer": "10.4.17",
 		"postcss": "8.4.35",
@@ -29,7 +40,7 @@
 		"tailwindcss": "3.4.1",
 		"typescript": "5.2.2",
 		"vite": "5.1.0",
-		"vite-tsconfig-paths": "^4.3.1",
+		"vite-tsconfig-paths": "4.3.1",
 		"vue-tsc": "1.8.27"
 	}
 }

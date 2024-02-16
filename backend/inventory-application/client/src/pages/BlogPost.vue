@@ -3,24 +3,7 @@ import BlogPostMarkdown from "@/components/BlogPostMarkdown.vue";
 import Container from "./Container.vue";
 import { MilkdownProvider } from "@milkdown/vue";
 import Loader from "@/components/Loader.vue";
-
-interface FetchCallbackHandler {
-	(err: Error, post: null): void;
-	(err: null, post: BlogPost): void;
-}
-
-function getBlogPost(id: string, callback: FetchCallbackHandler) {
-	new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
-		fetch(`${import.meta.env.VITE_SERVER_API_URL}/post/${id}`)
-			.then((res) =>
-				res
-					.json()
-					.then(({ data }) => callback(null, data))
-					.catch((err) => callback(err, null)),
-			)
-			.catch((err) => callback(err, null));
-	});
-}
+import { getBlogPost } from "@/util";
 
 export default {
 	data() {
@@ -35,14 +18,11 @@ export default {
 		};
 	},
 	created() {
-		// watch the params of the route to fetch the data again
 		this.$watch(
 			() => this.$route.params,
 			() => {
 				this.fetchData();
 			},
-			// fetch the data when the view is created and the data is
-			// already being observed
 			{ immediate: true },
 		);
 	},
@@ -75,7 +55,7 @@ export default {
 		</div>
 		<div v-if="error !== null">{{ error }}</div>
 		<div v-if="post !== null">
-			<h1 class="text-3xl font-bold">{{ post.title }}</h1>
+			<h1 class="text-4xl font-bold">{{ post.title }}</h1>
 			<MilkdownProvider>
 				<BlogPostMarkdown :content="post.content" />
 			</MilkdownProvider>

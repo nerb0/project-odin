@@ -10,7 +10,7 @@ import { MilkdownProvider } from "@milkdown/vue";
 import Editor from "./Editor.vue";
 
 export default defineComponent({
-	name: "MilkdownEditorWrapper",
+	name: "EditorWrapper",
 	components: {
 		MilkdownProvider,
 		Editor,

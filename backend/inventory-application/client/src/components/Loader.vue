@@ -8,7 +8,9 @@ import { cn } from "@/util";
 		viewBox="0 0 135 140"
 		xmlns="http://www.w3.org/2000/svg"
 		fill="#fff"
-		:class="cn('h-6 w-6', $props.class || '')"
+		:class="
+			cn('h-6 w-6 fill-stone-700 dark:fill-stone-300', $props.class || '')
+		"
 	>
 		<rect y="10" width="15" height="120" rx="6">
 			<animate

@@ -2,19 +2,7 @@
 import BlogDashboardList from "@/components/BlogDashboardList.vue";
 import Container from "./Container.vue";
 import Loader from "@/components/Loader.vue";
-
-function getAllBlogPosts(callback: FetchCallbackHandler<BlogPost[]>) {
-	new Promise((resolve) => setTimeout(resolve, 1500)).then(() =>
-		fetch(`${import.meta.env.VITE_SERVER_API_URL}/posts?slice=true`)
-			.then((res) =>
-				res
-					.json()
-					.then(({ data }) => callback(null, data))
-					.catch((err) => callback(err, null)),
-			)
-			.catch((err) => callback(err, null)),
-	);
-}
+import { getAllBlogPosts } from "@/util";
 
 export default {
 	data() {
