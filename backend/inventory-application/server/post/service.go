@@ -74,6 +74,7 @@ func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 		}
 
 		cursor, err := db.Find(ctx, filter, &options.FindOptions{
+			Sort:  bson.M{"created_at": -1},
 			Limit: ToInt64(POST_LIST_TEXT_COUNT_LIMIT),
 			Skip:  ToInt64((page - 1) * POST_COUNT_PER_PAGE),
 		})
@@ -113,6 +114,13 @@ func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 
 func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
+		if len(ctx.Errors.Errors()) > 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
+				"message": ctx.Errors.Errors()[0],
+			})
+			return
+		}
 		var new_post NewPostOne
 
 		if err := ctx.ShouldBindJSON(&new_post); err != nil {

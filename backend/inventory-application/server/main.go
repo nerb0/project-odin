@@ -25,10 +25,10 @@ func main() {
 	server.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{os.Getenv("ALLOWED_ORIGIN")},
 		AllowMethods:     []string{"PUT", "GET", "DELETE", "POST"},
-		AllowHeaders:     []string{"Origin", "Content-Type"},
+		AllowHeaders:     []string{"Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "accept", "origin", "Cache-Control", "X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
+		MaxAge:           24 * 7 * time.Hour,
 	}))
 	api_routes := server.Group("/")
 	routes.Setup(api_routes, db)
