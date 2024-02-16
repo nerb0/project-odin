@@ -13,6 +13,6 @@ type BlogPost = {
 };
 
 interface FetchCallbackHandler<T> {
-	(err: Error, post: null): void;
-	(err: null, post: T): void;
+	(err: Error, result: null): void;
+	(err: null, result: { data: T; message: string }): void;
 }

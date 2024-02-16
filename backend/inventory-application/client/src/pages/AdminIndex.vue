@@ -1,10 +1,19 @@
 <script lang="ts">
-import Loader from "@/components/Loader.vue";
-import { authenticateUser, getAllBlogPosts, postIsLong } from "@/util";
-import Container from "./Container.vue";
 import EditorWrapper from "@/components/EditorWrapper.vue";
+import Loader from "@/components/Loader.vue";
+import {
+	TOAST_OPTIONS,
+	authenticateUser,
+	getAllBlogPosts,
+	postIsLong,
+} from "@/util";
+import { useToast } from "vue-toastification";
+import Container from "./Container.vue";
 
 export default {
+	setup() {
+		return { toast: useToast() };
+	},
 	data() {
 		return {
 			init_loading: false,
@@ -24,12 +33,13 @@ export default {
 			this.error = null;
 			this.posts = null;
 			this.post_loading = true;
-			getAllBlogPosts((err, posts) => {
+			getAllBlogPosts((err, res) => {
 				this.post_loading = false;
 				if (err !== null) {
 					this.error = err.toString();
 				} else {
-					this.posts = posts;
+					this.toast(res?.message, TOAST_OPTIONS);
+					this.posts = res?.data.posts || [];
 				}
 			});
 		},
@@ -54,10 +64,11 @@ export default {
 						.then(({ data, message }) => {
 							this.auth_loading = false;
 							this.authenticated = data.authenticated;
-							alert(message);
+							this.toast(message, TOAST_OPTIONS);
 						})
 						.catch((err) => {
 							this.auth_loading = false;
+							this.toast("Unable to login. Please try again", TOAST_OPTIONS);
 							alert(`TODO: Login failure ${err}`);
 						});
 				})
@@ -70,13 +81,14 @@ export default {
 			this.error = null;
 			this.authenticated = null;
 			this.init_loading = true;
-			return authenticateUser((err, authentication_result) => {
+			return authenticateUser((err, result) => {
 				this.init_loading = false;
 				if (err) {
 					this.error = err.toString();
 					this.authenticated = false;
 				} else {
-					this.authenticated = authentication_result;
+					this.toast(result?.message, TOAST_OPTIONS);
+					this.authenticated = result?.data.authenticated;
 					if (this.authenticated) this.fetchData();
 				}
 			});

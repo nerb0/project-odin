@@ -1,6 +1,8 @@
 import "@milkdown/theme-nord/style.css";
 import { createApp } from "vue";
 import { RouteRecordRaw, createRouter, createWebHashHistory } from "vue-router";
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
 import App from "./App.vue";
 import About from "./pages/About.vue";
 import AdminIndex from "./pages/AdminIndex.vue";
@@ -39,4 +41,9 @@ const router = createRouter({
 
 const app = createApp(App);
 app.use(router);
+app.use(Toast, {
+	transition: "Vue-Toastification__fade",
+	maxToasts: 20,
+	newestOnTop: true,
+});
 app.mount("#app");

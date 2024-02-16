@@ -52,6 +52,8 @@ import { listener, listenerCtx } from "@milkdown/plugin-listener";
 import { selectionListenerCtx, selectionListener } from "./SelectionListener";
 import { Ctx } from "@milkdown/ctx";
 import EditorToolIcon from "./EditorToolIcon.vue";
+import { POSITION, useToast } from "vue-toastification";
+import { TOAST_OPTIONS } from "@/util";
 
 function issueEditorCommand<T>(editor: Editor | undefined, key: CmdKey<T>) {
 	if (!editor) return console.error("Unable to find markdown editor.");
@@ -86,8 +88,9 @@ export default defineComponent({
 				.then((res) =>
 					res
 						.json()
-						.then((_res) => {
+						.then(({ _, message }) => {
 							this.loading = false;
+							this.toast(message, TOAST_OPTIONS);
 							const editor = this.editorReturn.get();
 							editor?.action(replaceAll(""));
 							form.reset();
@@ -133,6 +136,7 @@ export default defineComponent({
 		loading: false,
 	}),
 	setup(props) {
+		const toast = useToast();
 		const state = reactive({
 			activeList: [] as string[],
 			headingLevel: 0,
@@ -211,7 +215,7 @@ export default defineComponent({
 					...gfm,
 				]),
 		);
-		return { editorReturn, state };
+		return { editorReturn, state, toast };
 	},
 });
 </script>
