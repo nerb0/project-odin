@@ -1,18 +1,14 @@
 <script lang="ts">
+import AdminBlogPostListItem from "@/components/AdminBlogPostListItem.vue";
 import EditorWrapper from "@/components/EditorWrapper.vue";
 import Loader from "@/components/Loader.vue";
-import {
-	TOAST_OPTIONS,
-	authenticateUser,
-	getAllBlogPosts,
-	postIsLong,
-} from "@/util";
+import { TOAST_ERROR_OPTIONS, httpRequest, postIsLong } from "@/util";
 import { useToast } from "vue-toastification";
 import Container from "./Container.vue";
 
 export default {
 	setup() {
-		return { toast: useToast() };
+		return { toast: useToast(), abortController: new AbortController() };
 	},
 	data() {
 		return {
@@ -20,7 +16,6 @@ export default {
 			auth_loading: false,
 			post_loading: false,
 			authenticated: null as null | boolean,
-			error: null as null | string,
 			posts: null as null | BlogPost[],
 		};
 	},
@@ -29,72 +24,78 @@ export default {
 	},
 	methods: {
 		postIsLong,
-		fetchData() {
-			this.error = null;
+		async fetchData() {
 			this.posts = null;
 			this.post_loading = true;
-			getAllBlogPosts((err, res) => {
-				this.post_loading = false;
-				if (err !== null) {
-					this.error = err.toString();
+			try {
+				const { data, message } = await httpRequest<{ posts: BlogPost[] }>(
+					"/posts?is_admin=true",
+					{ signal: this.abortController.signal },
+				);
+				if (data) {
+					this.posts = data.posts;
 				} else {
-					this.toast(res?.message, TOAST_OPTIONS);
-					this.posts = res?.data.posts || [];
+					this.toast(message, TOAST_ERROR_OPTIONS);
 				}
-			});
+			} catch (err) {
+				this.toast((err as Error).message, TOAST_ERROR_OPTIONS);
+			}
+			this.post_loading = false;
 		},
-		login(event: Event) {
+		async login(event: Event) {
 			event.preventDefault();
 			this.auth_loading = true;
-			const formData = new FormData(event.target as HTMLFormElement);
-			fetch(`${import.meta.env.VITE_SERVER_API_URL}/auth/login`, {
-				method: "POST",
-				body: JSON.stringify({
-					username: formData.get("username"),
-					password: formData.get("password"),
-				}),
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			})
-				.then((res) => {
-					res
-						.json()
-						.then(({ data, message }) => {
-							this.auth_loading = false;
-							this.authenticated = data.authenticated;
-							this.toast(message, TOAST_OPTIONS);
-						})
-						.catch((err) => {
-							this.auth_loading = false;
-							this.toast("Unable to login. Please try again", TOAST_OPTIONS);
-							alert(`TODO: Login failure ${err}`);
-						});
-				})
-				.catch(() => {
-					this.auth_loading = false;
-					alert("TODO: Login failure");
-				});
+			try {
+				const formData = new FormData(event.target as HTMLFormElement);
+				const { data, message } = await httpRequest<{ authenticated: boolean }>(
+					"/auth/login",
+					{
+						signal: this.abortController.signal,
+						method: "POST",
+						body: JSON.stringify({
+							username: formData.get("username"),
+							password: formData.get("password"),
+						}),
+						headers: { "Content-Type": "application/json" },
+					},
+				);
+				if (data) {
+					this.authenticated = data.authenticated;
+				} else {
+					this.toast(message, TOAST_ERROR_OPTIONS);
+				}
+			} catch (err) {
+				this.toast((err as Error).message, TOAST_ERROR_OPTIONS);
+			}
+			this.auth_loading = false;
 		},
-		authenticate() {
-			this.error = null;
+		async authenticate() {
 			this.authenticated = null;
 			this.init_loading = true;
-			return authenticateUser((err, result) => {
-				this.init_loading = false;
-				if (err) {
-					this.error = err.toString();
-					this.authenticated = false;
-				} else {
-					this.toast(result?.message, TOAST_OPTIONS);
-					this.authenticated = result?.data.authenticated;
+
+			try {
+				const { data, message } = await httpRequest<{ authenticated: boolean }>(
+					"/auth/verify",
+					{
+						signal: this.abortController.signal,
+						method: "POST",
+					},
+				);
+				if (data) {
+					this.authenticated = data.authenticated;
 					if (this.authenticated) this.fetchData();
+					else this.toast(message, TOAST_ERROR_OPTIONS);
+				} else {
+					this.toast(message, TOAST_ERROR_OPTIONS);
 				}
-			});
+			} catch (error) {
+				this.authenticated = false;
+				this.toast((error as Error).message, TOAST_ERROR_OPTIONS);
+			}
+			this.init_loading = false;
 		},
 	},
-	components: { Loader, Container, EditorWrapper },
+	components: { Loader, Container, EditorWrapper, AdminBlogPostListItem },
 };
 </script>
 <template>
@@ -153,60 +154,33 @@ export default {
 		</div>
 		<Loader />
 	</div>
-	<Container v-if="posts != null">
+	<Container v-if="authenticated === true">
 		<div class="flex flex-col gap-10">
-			<EditorWrapper />
-			<div class="flex flex-grow flex-col gap-4">
-				<div
-					class="relative rounded-md bg-stone-100 px-6 py-4 shadow-md dark:bg-stone-900"
-					v-for="post in posts"
-				>
-					<div class="absolute right-3 top-2 flex flex-col gap-2">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							xmlns:xlink="http://www.w3.org/1999/xlink"
-							viewBox="0 0 24 24"
-							class="relative h-4 w-4 cursor-pointer transition-all hover:scale-110 dark:hover:text-orange-400"
-						>
-							<g fill="none">
-								<path
-									d="M13.94 5L19 10.06L9.062 20a2.25 2.25 0 0 1-.999.58l-5.116 1.395a.75.75 0 0 1-.92-.921l1.395-5.116a2.25 2.25 0 0 1 .58-.999L13.938 5zm7.09-2.03a3.578 3.578 0 0 1 0 5.06l-.97.97L15 3.94l.97-.97a3.578 3.578 0 0 1 5.06 0z"
-									fill="currentColor"
-								></path>
-							</g>
-						</svg>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							xmlns:xlink="http://www.w3.org/1999/xlink"
-							viewBox="0 0 24 24"
-							class="h-4 w-4 cursor-pointer transition-all hover:scale-110 hover:text-red-600"
-						>
-							<g fill="none">
-								<path
-									d="M21.5 6a1 1 0 0 1-.883.993L20.5 7h-.845l-1.231 12.52A2.75 2.75 0 0 1 15.687 22H8.313a2.75 2.75 0 0 1-2.737-2.48L4.345 7H3.5a1 1 0 0 1 0-2h5a3.5 3.5 0 1 1 7 0h5a1 1 0 0 1 1 1zm-7.25 3.25a.75.75 0 0 0-.743.648L13.5 10v7l.007.102a.75.75 0 0 0 1.486 0L15 17v-7l-.007-.102a.75.75 0 0 0-.743-.648zm-4.5 0a.75.75 0 0 0-.743.648L9 10v7l.007.102a.75.75 0 0 0 1.486 0L10.5 17v-7l-.007-.102a.75.75 0 0 0-.743-.648zM12 3.5A1.5 1.5 0 0 0 10.5 5h3A1.5 1.5 0 0 0 12 3.5z"
-									fill="currentColor"
-								></path>
-							</g>
-						</svg>
-					</div>
-					<div>ID: {{ post.id }}</div>
-					<div>
-						<span>Title: </span>
-						<span class="font-bold italic" v-if="!post.title">empty</span>
-						<span>{{ post.title }}</span>
-					</div>
-					<div
-						:class="{
-							'line-clamp-[8] text-ellipsis gradient-mask-b-80': postIsLong(
-								post.content,
-							),
-						}"
-					>
-						<span>Content: </span>
-						<span class="font-bold italic" v-if="!post.title">empty</span>
-						<span>{{ post.content }}</span>
-					</div>
-				</div>
+			<EditorWrapper
+				:addPost="
+					function (post: BlogPost) {
+						if (!posts) posts = [];
+						else posts.unshift(post);
+					}
+				"
+			/>
+			<div class="flex flex-grow flex-col gap-4" v-if="posts !== null">
+				<AdminBlogPostListItem
+					v-for="(post, index) in posts"
+					:post="post"
+					:remove-post-from-list="
+						function () {
+							console.log(index);
+							posts?.splice(index, 1);
+						}
+					"
+				/>
+			</div>
+			<div
+				class="text-center text-stone-500"
+				v-if="(posts === null || posts.length === 0) && !post_loading"
+			>
+				No posts found.
 			</div>
 		</div>
 	</Container>

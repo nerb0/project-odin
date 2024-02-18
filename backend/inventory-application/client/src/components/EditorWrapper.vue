@@ -1,6 +1,6 @@
 <template>
 	<MilkdownProvider>
-		<Editor />
+		<Editor :addPost="addPost" />
 	</MilkdownProvider>
 </template>
 
@@ -14,6 +14,12 @@ export default defineComponent({
 	components: {
 		MilkdownProvider,
 		Editor,
+	},
+	props: {
+		addPost: {
+			type: Function,
+			required: true,
+		},
 	},
 	setup: () => {},
 });

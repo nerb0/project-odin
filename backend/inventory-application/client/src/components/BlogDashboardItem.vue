@@ -19,14 +19,16 @@ const { post } = defineProps<{ post: BlogPost }>();
 			}"
 		>
 			<div class="flex items-start justify-between">
-				<div class="text-3xl font-bold">{{ post.title }}</div>
+				<div class="text-3xl font-bold">
+					{{ post.title || "Untitled Post" }}
+				</div>
 				<div class="text-sm text-stone-300 dark:text-stone-500">
 					{{ new Date(post.created_at).toLocaleDateString() }}
 				</div>
 			</div>
 			<div class="pl-6">
 				<MilkdownProvider>
-					<BlogPostMarkdown :content="post.content" />
+					<BlogPostMarkdown :content="post.content || 'Empty blog post'" />
 				</MilkdownProvider>
 			</div>
 		</div>

@@ -41,7 +41,9 @@ func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 		}
 
 		ctx.JSON(http.StatusAccepted, gin.H{
-			"data":    post,
+			"data": gin.H{
+				"post": post,
+			},
 			"status":  "ok",
 			"message": "Post fetched successfully.",
 		})
@@ -55,9 +57,9 @@ func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 		filter := bson.M{
 			"is_published": true,
 		}
-
+		log.Println(ctx.Query("is_admin"))
 		ctx_user, user_exists := ctx.Get("user")
-		if user_exists {
+		if user_exists && ctx.Query("is_admin") == "true" {
 			user, ok := ctx_user.(*session.UserAuthenticationClaims)
 			if ok {
 				if session.AuthenticateUserCredentials(user) {
@@ -105,8 +107,10 @@ func GetAll(db *mongo.Collection) func(ctx *gin.Context) {
 		}
 
 		ctx.JSON(http.StatusAccepted, gin.H{
-			"status":  "ok",
-			"data":    posts,
+			"status": "ok",
+			"data": gin.H{
+				"posts": posts,
+			},
 			"message": "Posts fetched successfully.",
 		})
 	}
@@ -154,8 +158,10 @@ func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "ok",
-			"data":    post,
+			"status": "ok",
+			"data": gin.H{
+				"post": post,
+			},
 			"message": "Post is created successfully.",
 		})
 	}
@@ -181,8 +187,10 @@ func DeleteOne(db *mongo.Collection) func(ctx *gin.Context) {
 			return
 		}
 
-		ctx.JSON(http.StatusAccepted, gin.H{
-			"data":    post,
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": gin.H{
+				"post": post,
+			},
 			"message": "Post deleted successfully.",
 		})
 	}
@@ -232,7 +240,9 @@ func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		}
 
 		ctx.JSON(http.StatusAccepted, gin.H{
-			"data":    post,
+			"data": gin.H{
+				"post": post,
+			},
 			"message": "Post updated successfully.",
 		})
 	}

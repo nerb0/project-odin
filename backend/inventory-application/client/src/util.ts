@@ -1,58 +1,29 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { POSITION } from "vue-toastification";
+import { POSITION, TYPE } from "vue-toastification";
 import { ToastOptions } from "vue-toastification/dist/types/types";
 
 export function cn(...className: ClassValue[]) {
 	return twMerge(clsx(...className));
 }
 
-export function authenticateUser(
-	cb: FetchCallbackHandler<{ authenticated: boolean }>,
+export async function httpRequest<T = {}>(
+	link: string,
+	request_init?: RequestInit,
 ) {
-	fetch(`${import.meta.env.VITE_SERVER_API_URL}/auth/verify`, {
-		method: "POST",
+	return fetch(`${import.meta.env.VITE_SERVER_API_URL}${link}`, {
 		credentials: "include",
-	})
-		.then((res) =>
-			res
-				.json()
-				.then((result) => cb(null, result))
-				.catch((err) => cb(err, null)),
-		)
-		.catch((err) => cb(err, null));
-}
-
-export function getAllBlogPosts(
-	cb: FetchCallbackHandler<{ posts: BlogPost[] }>,
-) {
-	new Promise((resolve) => setTimeout(resolve, 1500)).then(() =>
-		fetch(`${import.meta.env.VITE_SERVER_API_URL}/posts`, {
-			credentials: "include",
-		})
-			.then((res) =>
-				res
-					.json()
-					.then((result) => cb(null, result))
-					.catch((err) => cb(err, null)),
-			)
-			.catch((err) => cb(err, null)),
-	);
-}
-
-export function getBlogPost(
-	id: string,
-	cb: FetchCallbackHandler<{ post: BlogPost }>,
-) {
-	new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
-		fetch(`${import.meta.env.VITE_SERVER_API_URL}/post/${id}`)
-			.then((res) =>
-				res
-					.json()
-					.then((result) => cb(null, result))
-					.catch((err) => cb(err, null)),
-			)
-			.catch((err) => cb(err, null));
+		...request_init,
+	}).then(async (res) => {
+		const status = res.status;
+		const response = (await res.json()) as {
+			data?: T;
+			message: string;
+		};
+		return {
+			status,
+			...response,
+		};
 	});
 }
 
@@ -65,12 +36,16 @@ export const TOAST_OPTIONS: ToastOptions = {
 	timeout: 5000,
 	closeOnClick: true,
 	pauseOnFocusLoss: true,
-	pauseOnHover: true,
+	pauseOnHover: false,
 	draggable: false,
-	draggablePercent: 0.6,
 	showCloseButtonOnHover: false,
-	hideProgressBar: true,
+	hideProgressBar: false,
 	closeButton: "button",
 	icon: true,
 	rtl: false,
+};
+
+export const TOAST_ERROR_OPTIONS: ToastOptions = {
+	...TOAST_OPTIONS,
+	type: TYPE.ERROR,
 };

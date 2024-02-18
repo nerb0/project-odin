@@ -1,9 +1,10 @@
 <script lang="ts">
 import BlogPostMarkdown from "@/components/BlogPostMarkdown.vue";
-import Container from "./Container.vue";
-import { MilkdownProvider } from "@milkdown/vue";
 import Loader from "@/components/Loader.vue";
-import { getBlogPost } from "@/util";
+import { TOAST_ERROR_OPTIONS, httpRequest } from "@/util";
+import { MilkdownProvider } from "@milkdown/vue";
+import { useToast } from "vue-toastification";
+import Container from "./Container.vue";
 
 export default {
 	data() {
@@ -17,6 +18,9 @@ export default {
 			error: null | string;
 		};
 	},
+	setup() {
+		return { toast: useToast(), abortController: new AbortController() };
+	},
 	created() {
 		this.$watch(
 			() => this.$route.params,
@@ -27,22 +31,28 @@ export default {
 		);
 	},
 	methods: {
-		fetchData() {
+		async fetchData() {
+			if (typeof this.$route.params.id === "object") {
+				this.toast("Invalid parameter.", TOAST_ERROR_OPTIONS);
+				return;
+			}
 			this.error = null;
 			this.post = null;
 			this.loading = true;
-			if (typeof this.$route.params.id === "object") {
-				this.error = "Invalid parameter.";
-				return;
-			}
-			getBlogPost(this.$route.params.id, (err, post) => {
-				this.loading = false;
-				if (err) {
-					this.error = err.toString();
+			try {
+				const { data, message } = await httpRequest<{ post: BlogPost }>(
+					`/post/${this.$route.params.id}`,
+					{ signal: this.abortController.signal },
+				);
+				if (data) {
+					this.post = data.post;
 				} else {
-					this.post = post;
+					this.toast(message, TOAST_ERROR_OPTIONS);
 				}
-			});
+			} catch (error) {
+				this.toast((error as Error).message, TOAST_ERROR_OPTIONS);
+			}
+			this.loading = false;
 		},
 	},
 	components: { Container, BlogPostMarkdown, MilkdownProvider, Loader },
