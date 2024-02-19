@@ -14,6 +14,9 @@ dependencies:
   '@milkdown/plugin-emoji':
     specifier: 7.3.4
     version: 7.3.4(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
+  '@milkdown/plugin-history':
+    specifier: 7.3.5
+    version: 7.3.5(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
   '@milkdown/plugin-listener':
     specifier: 7.3.5
     version: 7.3.5(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
@@ -451,6 +454,22 @@ packages:
       tslib: 2.6.2
       twemoji: 14.0.2
       unist-util-visit: 5.0.0
+    dev: false
+
+  /@milkdown/plugin-history@7.3.5(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4):
+    resolution: {integrity: sha512-lYUCBLhTFT9Y85RtKFjEkn+Xth0a5e+SzvqDG551jWTeIKYCpPqUI9BZAJpEh1TiIdHihScNSTVsGFLFmEE1Hg==}
+    peerDependencies:
+      '@milkdown/core': ^7.2.0
+      '@milkdown/ctx': ^7.2.0
+      '@milkdown/prose': ^7.2.0
+    dependencies:
+      '@milkdown/core': 7.3.4(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
+      '@milkdown/ctx': 7.3.5
+      '@milkdown/prose': 7.3.5
+      '@milkdown/utils': 7.3.5(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - '@milkdown/transformer'
     dev: false
 
   /@milkdown/plugin-listener@7.3.5(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4):

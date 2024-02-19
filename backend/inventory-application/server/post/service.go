@@ -28,6 +28,7 @@ func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 				"status":  "fail",
 				"message": "Invalid post id.",
 			})
+			return
 		}
 
 		var post Post

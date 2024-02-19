@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { cn } from "@/util";
 import {
 	Editor,
 	defaultValueCtx,
@@ -6,7 +7,7 @@ import {
 	rootCtx,
 } from "@milkdown/core";
 import { emoji } from "@milkdown/plugin-emoji";
-import { prismConfig } from "@milkdown/plugin-prism";
+import { prism, prismConfig } from "@milkdown/plugin-prism";
 import { commonmark, headingAttr } from "@milkdown/preset-commonmark";
 import { gfm } from "@milkdown/preset-gfm";
 import { nord } from "@milkdown/theme-nord";
@@ -20,7 +21,10 @@ import rust from "refractor/lang/rust";
 import tsx from "refractor/lang/tsx";
 import typescript from "refractor/lang/typescript";
 
-const { content } = defineProps<{ content: string }>();
+const { content, editable = false } = defineProps<{
+	content: string;
+	editable?: boolean;
+}>();
 
 useEditor((root) => {
 	return Editor.make()
@@ -28,10 +32,18 @@ useEditor((root) => {
 		.config((ctx) => {
 			ctx.set(rootCtx, root);
 			ctx.set(defaultValueCtx, content);
-			ctx.update(editorViewOptionsCtx, (prev) => ({
-				...prev,
-				editable: () => false,
-			}));
+			ctx.update(editorViewOptionsCtx, (prev) => {
+				return {
+					...prev,
+					editable: () => editable,
+					attributes: {
+						...prev.attributes,
+						// @ts-ignore
+						class: cn("p-2 pb-6 outline-none", prev.attributes("class").class),
+						spellcheck: "false",
+					},
+				};
+			});
 			ctx.set(prismConfig.key, {
 				configureRefractor: (refractor) => {
 					refractor.register(markdown);
@@ -58,9 +70,7 @@ useEditor((root) => {
 				}
 			});
 		})
-		.use(emoji)
-		.use(commonmark)
-		.use(gfm);
+		.use([...emoji, ...commonmark, ...gfm, ...prism]);
 });
 </script>
 

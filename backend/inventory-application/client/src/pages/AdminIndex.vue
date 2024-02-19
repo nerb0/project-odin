@@ -1,111 +1,79 @@
-<script lang="ts">
+<script setup lang="ts">
 import AdminBlogPostListItem from "@/components/AdminBlogPostListItem.vue";
 import EditorWrapper from "@/components/EditorWrapper.vue";
 import Loader from "@/components/Loader.vue";
-import { TOAST_ERROR_OPTIONS, httpRequest, postIsLong } from "@/util";
+import { TOAST_ERROR_OPTIONS, httpRequest } from "@/util";
 import { useToast } from "vue-toastification";
 import Container from "./Container.vue";
+import { ref, watch } from "vue";
 
-export default {
-	setup() {
-		return { toast: useToast(), abortController: new AbortController() };
-	},
-	data() {
-		return {
-			init_loading: false,
-			auth_loading: false,
-			post_loading: false,
-			authenticated: null as null | boolean,
-			posts: null as null | BlogPost[],
-		};
-	},
-	created() {
-		this.authenticate();
-	},
-	methods: {
-		postIsLong,
-		async fetchData() {
-			this.posts = null;
-			this.post_loading = true;
-			try {
-				const { data, message } = await httpRequest<{ posts: BlogPost[] }>(
-					"/posts?is_admin=true",
-					{ signal: this.abortController.signal },
-				);
-				if (data) {
-					this.posts = data.posts;
-				} else {
-					this.toast(message, TOAST_ERROR_OPTIONS);
-				}
-			} catch (err) {
-				this.toast((err as Error).message, TOAST_ERROR_OPTIONS);
-			}
-			this.post_loading = false;
-		},
-		async login(event: Event) {
-			event.preventDefault();
-			this.auth_loading = true;
-			try {
-				const formData = new FormData(event.target as HTMLFormElement);
-				const { data, message } = await httpRequest<{ authenticated: boolean }>(
-					"/auth/login",
-					{
-						signal: this.abortController.signal,
-						method: "POST",
-						body: JSON.stringify({
-							username: formData.get("username"),
-							password: formData.get("password"),
-						}),
-						headers: { "Content-Type": "application/json" },
-					},
-				);
-				if (data) {
-					this.authenticated = data.authenticated;
-				} else {
-					this.toast(message, TOAST_ERROR_OPTIONS);
-				}
-			} catch (err) {
-				this.toast((err as Error).message, TOAST_ERROR_OPTIONS);
-			}
-			this.auth_loading = false;
-		},
-		async authenticate() {
-			this.authenticated = null;
-			this.init_loading = true;
+const { authenticated, setAuthenticated } = defineProps<{
+	authenticated: boolean;
+	setAuthenticated: (authenticated: boolean) => void;
+}>();
+const auth_loading = ref(false);
+const post_loading = ref(false);
+const posts = ref(null as null | BlogPost[]);
+const toast = useToast();
+const abortController = new AbortController();
 
-			try {
-				const { data, message } = await httpRequest<{ authenticated: boolean }>(
-					"/auth/verify",
-					{
-						signal: this.abortController.signal,
-						method: "POST",
-					},
-				);
-				if (data) {
-					this.authenticated = data.authenticated;
-					if (this.authenticated) this.fetchData();
-					else this.toast(message, TOAST_ERROR_OPTIONS);
-				} else {
-					this.toast(message, TOAST_ERROR_OPTIONS);
-				}
-			} catch (error) {
-				this.authenticated = false;
-				this.toast((error as Error).message, TOAST_ERROR_OPTIONS);
-			}
-			this.init_loading = false;
-		},
+watch(
+	() => authenticated,
+	() => {
+		if (authenticated === true) {
+			fetchData();
+		}
 	},
-	components: { Loader, Container, EditorWrapper, AdminBlogPostListItem },
-};
+	{ immediate: true },
+);
+
+async function fetchData() {
+	posts.value = null;
+	post_loading.value = true;
+	try {
+		const { data, message } = await httpRequest<{ posts: BlogPost[] }>(
+			"/posts?is_admin=true",
+			{ signal: abortController.signal },
+		);
+		if (data) {
+			posts.value = data.posts;
+		} else {
+			toast(message, TOAST_ERROR_OPTIONS);
+		}
+	} catch (err) {
+		toast((err as Error).message, TOAST_ERROR_OPTIONS);
+	}
+	post_loading.value = false;
+}
+async function login(event: Event) {
+	event.preventDefault();
+	auth_loading.value = true;
+	try {
+		const formData = new FormData(event.target as HTMLFormElement);
+		const { data, message } = await httpRequest<{ authenticated: boolean }>(
+			"/auth/login",
+			{
+				signal: abortController.signal,
+				method: "POST",
+				body: JSON.stringify({
+					username: formData.get("username"),
+					password: formData.get("password"),
+				}),
+				headers: { "Content-Type": "application/json" },
+			},
+		);
+		if (data) {
+			setAuthenticated(data.authenticated);
+		} else {
+			toast(message, TOAST_ERROR_OPTIONS);
+		}
+	} catch (err) {
+		toast((err as Error).message, TOAST_ERROR_OPTIONS);
+	}
+	auth_loading.value = false;
+}
 </script>
 <template>
-	<div
-		class="flex flex-grow flex-col items-center justify-center gap-2"
-		v-if="init_loading"
-	>
-		<div class="animate-pulse">Authenticating User...</div>
-		<Loader class="" />
-	</div>
 	<div
 		class="flex flex-grow flex-col items-center justify-center gap-6"
 		v-if="authenticated === false"

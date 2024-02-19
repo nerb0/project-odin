@@ -4,23 +4,9 @@
 	</MilkdownProvider>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
 import { MilkdownProvider } from "@milkdown/vue";
 import Editor from "./Editor.vue";
 
-export default defineComponent({
-	name: "EditorWrapper",
-	components: {
-		MilkdownProvider,
-		Editor,
-	},
-	props: {
-		addPost: {
-			type: Function,
-			required: true,
-		},
-	},
-	setup: () => {},
-});
+const { addPost } = defineProps<{ addPost: (post: BlogPost) => void }>();
 </script>

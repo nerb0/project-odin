@@ -1,21 +1,3 @@
-<style>
-pre {
-	@apply flex;
-}
-.milkdown
-	> [role="textbox"][contenteditable="true"]
-	> p:only-child:has(br)::before {
-	@apply pointer-events-none absolute select-none dark:text-stone-500;
-	content: "Insert content here...";
-}
-.milkdown .emoji {
-	@apply h-4 w-6 px-1;
-}
-code {
-	@apply w-full rounded-md bg-stone-200 p-2 dark:bg-stone-600;
-}
-</style>
-
 <script lang="ts">
 import {
 	CmdKey,
@@ -41,7 +23,7 @@ import { callCommand, getMarkdown, replaceAll } from "@milkdown/utils";
 import { Milkdown, useEditor } from "@milkdown/vue";
 import { defineComponent, reactive } from "vue";
 
-import { TOAST_ERROR_OPTIONS, TOAST_OPTIONS } from "@/util";
+import { TOAST_ERROR_OPTIONS, TOAST_OPTIONS, cn } from "@/util";
 import { Ctx } from "@milkdown/ctx";
 import { listener, listenerCtx } from "@milkdown/plugin-listener";
 import "prism-themes/themes/prism-nord.css";
@@ -178,7 +160,11 @@ export default defineComponent({
 						...prev,
 						content: props.content || "",
 						attributes: {
-							class: "p-2 pb-6 outline-none",
+							class: cn(
+								"p-2 pb-6 outline-none",
+								// @ts-ignore
+								prev.attributes("class").class,
+							),
 							spellcheck: "false",
 						},
 					}));

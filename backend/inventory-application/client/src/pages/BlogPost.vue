@@ -1,69 +1,54 @@
-<script lang="ts">
+<script setup lang="ts">
 import BlogPostMarkdown from "@/components/BlogPostMarkdown.vue";
 import Loader from "@/components/Loader.vue";
 import { TOAST_ERROR_OPTIONS, httpRequest } from "@/util";
 import { MilkdownProvider } from "@milkdown/vue";
 import { useToast } from "vue-toastification";
 import Container from "./Container.vue";
+import { onBeforeUnmount, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
-export default {
-	data() {
-		return {
-			loading: false,
-			post: null,
-			error: null,
-		} as {
-			loading: boolean;
-			post: null | BlogPost;
-			error: null | string;
-		};
+const loading = ref(false);
+const post = ref(null as null | BlogPost);
+const toast = useToast();
+const route = useRoute();
+const abortController = new AbortController();
+watch(
+	() => route.params,
+	() => {
+		fetchData();
 	},
-	setup() {
-		return { toast: useToast(), abortController: new AbortController() };
-	},
-	created() {
-		this.$watch(
-			() => this.$route.params,
-			() => {
-				this.fetchData();
-			},
-			{ immediate: true },
+	{ immediate: true },
+);
+onBeforeUnmount(() => abortController.abort());
+async function fetchData() {
+	if (typeof route.params.id === "object") {
+		toast("Invalid parameter.", TOAST_ERROR_OPTIONS);
+		return;
+	}
+	post.value = null;
+	loading.value = true;
+	try {
+		const { data, message } = await httpRequest<{ post: BlogPost }>(
+			`/post/${route.params.id}`,
+			{ signal: abortController.signal },
 		);
-	},
-	methods: {
-		async fetchData() {
-			if (typeof this.$route.params.id === "object") {
-				this.toast("Invalid parameter.", TOAST_ERROR_OPTIONS);
-				return;
-			}
-			this.error = null;
-			this.post = null;
-			this.loading = true;
-			try {
-				const { data, message } = await httpRequest<{ post: BlogPost }>(
-					`/post/${this.$route.params.id}`,
-					{ signal: this.abortController.signal },
-				);
-				if (data) {
-					this.post = data.post;
-				} else {
-					this.toast(message, TOAST_ERROR_OPTIONS);
-				}
-			} catch (error) {
-				this.toast((error as Error).message, TOAST_ERROR_OPTIONS);
-			}
-			this.loading = false;
-		},
-	},
-	components: { Container, BlogPostMarkdown, MilkdownProvider, Loader },
-};
+		if (data) {
+			post.value = data.post;
+		} else {
+			toast(message, TOAST_ERROR_OPTIONS);
+		}
+	} catch (error) {
+		toast((error as Error).message, TOAST_ERROR_OPTIONS);
+	}
+	loading.value = false;
+}
 </script>
 <template>
 	<Container>
 		<div v-if="loading" class="flex h-full items-center justify-center">
 			<Loader class="h-8 w-8" />
 		</div>
-		<div v-if="error !== null">{{ error }}</div>
 		<div v-if="post !== null">
 			<h1 class="text-4xl font-bold">{{ post.title }}</h1>
 			<MilkdownProvider>

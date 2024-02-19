@@ -1,16 +1,57 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from "vue";
 import HeaderLink from "./components/HeaderLink.vue";
+import { TOAST_ERROR_OPTIONS, httpRequest } from "./util";
+import { useToast } from "vue-toastification";
 
 const isDarkMode = localStorage.getItem("isDarkMode");
+const authenticated = ref(null as null | Boolean);
+const loading = ref(false);
+const toast = useToast();
 const checked =
 	isDarkMode !== null
 		? isDarkMode === "true"
 		: window.matchMedia("(prefers-color-scheme: dark)").matches;
-document.documentElement.classList.toggle("dark", checked);
+const abortController = new AbortController();
+
+onUnmounted(function () {
+	abortController.abort();
+});
+onMounted(function () {
+	document.documentElement.classList.toggle("dark", checked);
+	authenticateUser();
+});
+
+async function authenticateUser() {
+	authenticated.value = null;
+	loading.value = true;
+	try {
+		const { data, message } = await httpRequest<{ authenticated: boolean }>(
+			"/auth/verify",
+			{
+				signal: abortController.signal,
+				method: "POST",
+			},
+		);
+		if (data) {
+			authenticated.value = data.authenticated;
+			if (!data.authenticated) toast(message, TOAST_ERROR_OPTIONS);
+		} else {
+			toast(message, TOAST_ERROR_OPTIONS);
+		}
+	} catch (error) {
+		authenticated.value = false;
+		toast((error as Error).message, TOAST_ERROR_OPTIONS);
+	}
+	loading.value = false;
+}
 function toggleDark(event: Event) {
 	const input = event.target as HTMLInputElement;
 	document.documentElement.classList.toggle("dark", input.checked);
 	localStorage.setItem("isDarkMode", input.checked.toString());
+}
+function setAuthenticated(is_authenticated: boolean) {
+	authenticated.value = is_authenticated;
 }
 </script>
 <template>
@@ -30,6 +71,10 @@ function toggleDark(event: Event) {
 				<HeaderLink to="/">Home</HeaderLink>
 				<HeaderLink to="/about">About</HeaderLink>
 				<HeaderLink to="/blog">Blog</HeaderLink>
+				<div class="flex gap-5 px-2" v-if="authenticated === true">
+					<HeaderLink to="/admin" className="">Admin Page</HeaderLink>
+					<div>Logout</div>
+				</div>
 				<div class="flex flex-col items-center px-4">
 					<div
 						class="text-center text-xs before:content-['Light_Mode'] dark:before:content-['Dark_Mode']"
@@ -51,10 +96,21 @@ function toggleDark(event: Event) {
 				</div>
 			</div>
 		</nav>
-		<div class="flex flex-grow">
+		<div
+			class="flex flex-grow flex-col items-center justify-center gap-2"
+			v-if="loading"
+		>
+			<div class="animate-pulse">Loading...</div>
+			<Loader class="" />
+		</div>
+		<div class="flex flex-grow" v-if="loading === false">
 			<router-view v-slot="{ Component }">
 				<transition name="fade">
-					<component :is="Component" />
+					<component
+						:is="Component"
+						:authenticated="authenticated"
+						:setAuthenticated="setAuthenticated"
+					/>
 				</transition>
 			</router-view>
 		</div>

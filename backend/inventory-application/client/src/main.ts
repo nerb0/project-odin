@@ -12,6 +12,7 @@ import BlogPost from "./pages/BlogPost.vue";
 import Home from "./pages/Home.vue";
 import NotFound from "./pages/NotFound.vue";
 import "./style.css";
+import BlogEdit from "./pages/BlogEdit.vue";
 
 const routes: RouteRecordRaw[] = [
 	{ path: "/home", name: "home", component: Home, alias: "/" },
@@ -31,7 +32,21 @@ const routes: RouteRecordRaw[] = [
 			},
 		],
 	},
-	{ path: "/admin", name: "admin", component: AdminIndex },
+	{
+		path: "/admin",
+		children: [
+			{
+				path: "",
+				name: "admin",
+				component: AdminIndex,
+			},
+			{
+				path: "post/:id",
+				name: "post_edit",
+				component: BlogEdit,
+			},
+		],
+	},
 	{ path: "/:path(.*)*", name: "Not Found", component: NotFound },
 ];
 

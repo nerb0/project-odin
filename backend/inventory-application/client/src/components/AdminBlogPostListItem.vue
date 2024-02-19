@@ -16,6 +16,7 @@ const { post, removePostFromList } = defineProps<{
 	post: BlogPost;
 	removePostFromList: () => void;
 }>();
+
 async function deletePost() {
 	loading.value = true;
 	try {
