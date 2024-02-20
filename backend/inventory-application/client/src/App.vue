@@ -28,10 +28,7 @@ async function authenticateUser() {
 	try {
 		const { data, message } = await httpRequest<{ authenticated: boolean }>(
 			"/auth/verify",
-			{
-				signal: abortController.signal,
-				method: "POST",
-			},
+			{ signal: abortController.signal, method: "POST" },
 		);
 		if (data) {
 			authenticated.value = data.authenticated;
@@ -71,7 +68,7 @@ function setAuthenticated(is_authenticated: boolean) {
 				<HeaderLink to="/">Home</HeaderLink>
 				<HeaderLink to="/about">About</HeaderLink>
 				<HeaderLink to="/blog">Blog</HeaderLink>
-				<div class="flex gap-5 px-2" v-if="authenticated === true">
+				<div class="flex items-center gap-5 px-2" v-if="authenticated === true">
 					<HeaderLink to="/admin" className="">Admin Page</HeaderLink>
 					<div>Logout</div>
 				</div>

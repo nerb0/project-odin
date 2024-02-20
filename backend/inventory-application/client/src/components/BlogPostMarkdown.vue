@@ -26,7 +26,7 @@ const { content, editable = false } = defineProps<{
 	editable?: boolean;
 }>();
 
-useEditor((root) => {
+const editorReturn = useEditor((root) => {
 	return Editor.make()
 		.config(nord)
 		.config((ctx) => {
@@ -71,6 +71,10 @@ useEditor((root) => {
 			});
 		})
 		.use([...emoji, ...commonmark, ...gfm, ...prism]);
+});
+
+defineExpose({
+	editorReturn,
 });
 </script>
 

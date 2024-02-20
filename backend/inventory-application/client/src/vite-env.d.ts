@@ -10,6 +10,7 @@ type BlogPost = {
 	author: string;
 	created_at: Date;
 	updated_at: Date;
+	is_published: boolean;
 };
 
 interface FetchCallbackHandler<T> {

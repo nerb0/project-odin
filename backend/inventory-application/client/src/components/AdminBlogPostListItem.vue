@@ -20,12 +20,12 @@ const { post, removePostFromList } = defineProps<{
 async function deletePost() {
 	loading.value = true;
 	try {
-		const { status, message } = await httpRequest(`/post/${post.id}`, {
+		const { resStatus, message } = await httpRequest(`/post/${post.id}`, {
 			method: "DELETE",
 		});
 
-		if (status === 200) removePostFromList();
-		toast(message, status === 200 ? TOAST_OPTIONS : TOAST_ERROR_OPTIONS);
+		if (resStatus === 200) removePostFromList();
+		toast(message, resStatus === 200 ? TOAST_OPTIONS : TOAST_ERROR_OPTIONS);
 	} catch (error) {
 		toast((error as Error).message, TOAST_ERROR_OPTIONS);
 	}

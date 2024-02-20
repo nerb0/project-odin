@@ -15,13 +15,14 @@ export async function httpRequest<T = {}>(
 		credentials: "include",
 		...request_init,
 	}).then(async (res) => {
-		const status = res.status;
+		const resStatus = res.status;
 		const response = (await res.json()) as {
 			data?: T;
 			message: string;
+			status: "ok" | "fail";
 		};
 		return {
-			status,
+			resStatus,
 			...response,
 		};
 	});
@@ -45,6 +46,10 @@ export const TOAST_OPTIONS: ToastOptions = {
 	rtl: false,
 };
 
+export const TOAST_SUCCESS_OPTIONS: ToastOptions = {
+	...TOAST_OPTIONS,
+	type: TYPE.SUCCESS,
+};
 export const TOAST_ERROR_OPTIONS: ToastOptions = {
 	...TOAST_OPTIONS,
 	type: TYPE.ERROR,

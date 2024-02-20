@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 import {
 	CmdKey,
 	Editor,
@@ -21,7 +21,7 @@ import { gfm, toggleStrikethroughCommand } from "@milkdown/preset-gfm";
 import { nord } from "@milkdown/theme-nord";
 import { callCommand, getMarkdown, replaceAll } from "@milkdown/utils";
 import { Milkdown, useEditor } from "@milkdown/vue";
-import { defineComponent, reactive } from "vue";
+import { reactive, ref } from "vue";
 
 import { TOAST_ERROR_OPTIONS, TOAST_OPTIONS, cn } from "@/util";
 import { Ctx } from "@milkdown/ctx";
@@ -39,6 +39,94 @@ import { useToast } from "vue-toastification";
 import EditorToolIcon from "./EditorToolIcon.vue";
 import { selectionListener, selectionListenerCtx } from "./SelectionListener";
 
+const { content, addPost } = defineProps<{
+	title?: string;
+	content?: string;
+	addPost?: (post: BlogPost) => void;
+}>();
+const loading = ref(false);
+const toast = useToast();
+const state = reactive({
+	activeList: [] as string[],
+	headingLevel: 0,
+});
+
+function updateState(ctx: Ctx) {
+	const list: string[] = [];
+	const { doc, selection } = ctx.get(editorStateCtx);
+	const schema = ctx.get(schemaCtx);
+	const { from, to } = selection;
+	const { parent } = doc.resolve(from);
+	Object.keys(schema.marks).forEach((m) => {
+		if (doc.rangeHasMark(from === to ? from - 1 : from, to, schema.marks[m]))
+			list.push(schema.marks[m].name);
+	});
+	state.headingLevel = parent.attrs?.level || 0;
+	state.activeList = list;
+}
+
+const editorReturn = useEditor((root) =>
+	Editor.make()
+		.config(nord)
+		.config((ctx) => {
+			ctx.set(rootCtx, root);
+			ctx.update(editorViewOptionsCtx, (prev) => ({
+				...prev,
+				content: content || "",
+				attributes: {
+					class: cn(
+						"p-2 pb-6 outline-none",
+						// @ts-ignore
+						prev.attributes("class").class,
+					),
+					spellcheck: "false",
+				},
+			}));
+			ctx.set(prismConfig.key, {
+				configureRefractor: (refractor) => {
+					refractor.register(markdown);
+					refractor.register(css);
+					refractor.register(javascript);
+					refractor.register(typescript);
+					refractor.register(jsx);
+					refractor.register(tsx);
+					refractor.register(go);
+					refractor.register(rust);
+				},
+			});
+			ctx.set(headingAttr.key, (node) => {
+				const level = node.attrs.level;
+				switch (level) {
+					case 1:
+						return { class: "text-3xl font-bold", "data-el-type": "h1" };
+					case 2:
+						return { class: "text-2xl font-bold", "data-el-type": "h2" };
+					case 3:
+						return { class: "text-xl font-bold", "data-el-type": "h3" };
+					default:
+						return { class: "text-lg font-bold", "data-el-type": "h4" };
+				}
+			});
+			const editorSelectionListener = ctx.get(selectionListenerCtx);
+			editorSelectionListener.selection((ctx) => {
+				updateState(ctx);
+			});
+
+			const editorListener = ctx.get(listenerCtx);
+			editorListener.focus((ctx) => {
+				updateState(ctx);
+			});
+		})
+		.use([
+			selectionListener,
+			listener,
+			...prism,
+			...emoji,
+			...commonmark,
+			...gfm,
+		]),
+);
+
 function issueEditorCommand<T>(editor: Editor | undefined, key: CmdKey<T>) {
 	if (!editor) return console.error("Unable to find markdown editor.");
 	editor.action(callCommand(key));
@@ -47,174 +135,61 @@ function issueEditorCommand<T>(editor: Editor | undefined, key: CmdKey<T>) {
 	});
 }
 
-export default defineComponent({
-	name: "Editor",
-	components: { Milkdown, EditorToolIcon },
-	methods: {
-		submitPost(event: Event) {
-			event.preventDefault();
-			const editor = this.editorReturn.get();
-			if (!editor) return console.error("Unable to find markdown editor.");
+async function submitPost(event: Event) {
+	event.preventDefault();
+	const editor = editorReturn.get();
+	if (!editor) return console.error("Unable to find markdown editor.");
 
-			const content = editor.action(getMarkdown());
-			const form = event.target as HTMLFormElement;
-			const formData = new FormData(form);
-			this.loading = true;
-			fetch(`${import.meta.env.VITE_SERVER_API_URL}/post`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					content,
-					title: formData.get("title") || "",
-				}),
-				credentials: "include",
-			})
-				.then((res) =>
-					res
-						.json()
-						.then(({ data, message }) => {
-							this.loading = false;
-							this.toast(
-								message,
-								res.status === 200 ? TOAST_OPTIONS : TOAST_ERROR_OPTIONS,
-							);
-							if (data.post) this.addPost(data.post);
+	const content = editor.action(getMarkdown());
+	const form = event.target as HTMLFormElement;
+	const formData = new FormData(form);
+	loading.value = true;
 
-							const editor = this.editorReturn.get();
-							editor?.action(replaceAll(""));
-							form.reset();
-						})
-						.catch((err) => console.error(err)),
-				)
-				.catch((err) => console.error(err));
-		},
-		toggleBold(event: Event) {
-			event.preventDefault();
-			return issueEditorCommand(
-				this.editorReturn.get(),
-				toggleStrongCommand.key,
-			);
-		},
-		toggleInlineCode(event: Event) {
-			event.preventDefault();
-			return issueEditorCommand(
-				this.editorReturn.get(),
-				toggleInlineCodeCommand.key,
-			);
-		},
-		toggleStrikethrough(event: Event) {
-			event.preventDefault();
-			return issueEditorCommand(
-				this.editorReturn.get(),
-				toggleStrikethroughCommand.key,
-			);
-		},
-		toggleItalic(event: Event) {
-			event.preventDefault();
-			return issueEditorCommand(
-				this.editorReturn.get(),
-				toggleEmphasisCommand.key,
-			);
-		},
-	},
-	props: {
-		title: String,
-		content: String,
-		addPost: {
-			type: Function,
-			required: true,
-		},
-	},
-	data: () => ({
-		loading: false,
-	}),
-	setup(props) {
-		const toast = useToast();
-		const state = reactive({
-			activeList: [] as string[],
-			headingLevel: 0,
-		});
+	fetch(`${import.meta.env.VITE_SERVER_API_URL}/post`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({
+			content,
+			title: formData.get("title") || "",
+		}),
+		credentials: "include",
+	})
+		.then((res) =>
+			res
+				.json()
+				.then(({ data, message }) => {
+					loading.value = false;
+					toast(
+						message,
+						res.status === 200 ? TOAST_OPTIONS : TOAST_ERROR_OPTIONS,
+					);
+					if (data.post) addPost!(data.post);
 
-		function updateState(ctx: Ctx) {
-			const list: string[] = [];
-			const { doc, selection } = ctx.get(editorStateCtx);
-			const schema = ctx.get(schemaCtx);
-			const { from, to } = selection;
-			const { parent } = doc.resolve(from);
-			Object.keys(schema.marks).forEach((m) => {
-				if (
-					doc.rangeHasMark(from === to ? from - 1 : from, to, schema.marks[m])
-				)
-					list.push(schema.marks[m].name);
-			});
-			state.headingLevel = parent.attrs?.level || 0;
-			state.activeList = list;
-		}
-
-		const editorReturn = useEditor((root) =>
-			Editor.make()
-				.config(nord)
-				.config((ctx) => {
-					ctx.set(rootCtx, root);
-					ctx.update(editorViewOptionsCtx, (prev) => ({
-						...prev,
-						content: props.content || "",
-						attributes: {
-							class: cn(
-								"p-2 pb-6 outline-none",
-								// @ts-ignore
-								prev.attributes("class").class,
-							),
-							spellcheck: "false",
-						},
-					}));
-					ctx.set(prismConfig.key, {
-						configureRefractor: (refractor) => {
-							refractor.register(markdown);
-							refractor.register(css);
-							refractor.register(javascript);
-							refractor.register(typescript);
-							refractor.register(jsx);
-							refractor.register(tsx);
-							refractor.register(go);
-							refractor.register(rust);
-						},
-					});
-					ctx.set(headingAttr.key, (node) => {
-						const level = node.attrs.level;
-						switch (level) {
-							case 1:
-								return { class: "text-3xl font-bold", "data-el-type": "h1" };
-							case 2:
-								return { class: "text-2xl font-bold", "data-el-type": "h2" };
-							case 3:
-								return { class: "text-xl font-bold", "data-el-type": "h3" };
-							default:
-								return { class: "text-lg font-bold", "data-el-type": "h4" };
-						}
-					});
-					const editorSelectionListener = ctx.get(selectionListenerCtx);
-					editorSelectionListener.selection((ctx) => {
-						updateState(ctx);
-					});
-
-					const editorListener = ctx.get(listenerCtx);
-					editorListener.focus((ctx) => {
-						updateState(ctx);
-					});
+					const editor = editorReturn.get();
+					editor?.action(replaceAll(""));
+					form.reset();
 				})
-				.use([
-					selectionListener,
-					listener,
-					...prism,
-					...emoji,
-					...commonmark,
-					...gfm,
-				]),
-		);
-		return { editorReturn, state, toast };
-	},
-});
+				.catch((err) => console.error(err)),
+		)
+		.catch((err) => console.error(err));
+}
+
+function toggleBold(event: Event) {
+	event.preventDefault();
+	return issueEditorCommand(editorReturn.get(), toggleStrongCommand.key);
+}
+function toggleInlineCode(event: Event) {
+	event.preventDefault();
+	return issueEditorCommand(editorReturn.get(), toggleInlineCodeCommand.key);
+}
+function toggleStrikethrough(event: Event) {
+	event.preventDefault();
+	return issueEditorCommand(editorReturn.get(), toggleStrikethroughCommand.key);
+}
+function toggleItalic(event: Event) {
+	event.preventDefault();
+	return issueEditorCommand(editorReturn.get(), toggleEmphasisCommand.key);
+}
 </script>
 
 <template>

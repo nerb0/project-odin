@@ -204,6 +204,7 @@ func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		if err != nil {
 			log.Println(err.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
 				"message": "Invalid post id.",
 			})
 			return
@@ -224,6 +225,7 @@ func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
 		if err != nil {
 			log.Println(err.Error())
 			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "fail",
 				"message": fmt.Sprintf("Unable to find post with id %s", param_id),
 			})
 			return
@@ -244,6 +246,7 @@ func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
 			"data": gin.H{
 				"post": post,
 			},
+			"status":  "ok",
 			"message": "Post updated successfully.",
 		})
 	}
