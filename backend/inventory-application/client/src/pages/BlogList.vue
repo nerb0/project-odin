@@ -46,8 +46,12 @@ async function fetchData() {
 <template>
 	<Container class-name="flex flex-col gap-4">
 		<h1 class="pb-4 text-center text-5xl font-extrabold">Le Blog</h1>
-		<div v-if="loading" class="flex h-full items-center justify-center">
-			<Loader class="h-8 w-8" />
+		<div
+			v-if="loading"
+			class="flex h-full flex-col items-center justify-center gap-2"
+		>
+			<div class="animate-pulse">Fetching posts...</div>
+			<Loader class="h-8 w-8 animate-pulse" />
 		</div>
 		<BlogDashboardList v-if="posts !== null" :posts="posts" />
 		<div

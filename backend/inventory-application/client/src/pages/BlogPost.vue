@@ -50,6 +50,9 @@ async function fetchData() {
 			<Loader class="h-8 w-8" />
 		</div>
 		<div v-if="post !== null">
+			<div class="text-right text-xs font-bold italic text-stone-500">
+				{{ new Date(post.created_at).toDateString() }}
+			</div>
 			<h1 class="text-4xl font-bold">{{ post.title }}</h1>
 			<MilkdownProvider>
 				<BlogPostMarkdown :content="post.content" />
