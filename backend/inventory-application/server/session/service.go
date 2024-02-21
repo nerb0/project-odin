@@ -11,12 +11,32 @@ import (
 
 const COOKIE_EXPIRY = 60 * 60 * 24 * 14 /* 14 days*/
 
+func HandleLogout(ctx *gin.Context) {
+	if len(ctx.Errors.Errors()) > 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": ctx.Errors.Errors()[0],
+		})
+		return
+	}
+
+	ctx.SetCookie("let_him_cookie", "", 0, "/#/admin", "", false, true)
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": "ok",
+		"data": gin.H{
+			"loggedOut": true,
+		},
+		"message": "You have successfully logged in.",
+	})
+}
+
 func HandleLogin(ctx *gin.Context) {
 	var user_credentials UserAuthentication
 
 	if err := ctx.ShouldBindJSON(&user_credentials); err != nil {
 		log.Println(err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status": "fail",
 			"data": gin.H{
 				"authenticated": false,
 			},
@@ -27,6 +47,7 @@ func HandleLogin(ctx *gin.Context) {
 
 	if user_credentials.Password != os.Getenv("BLOG_PASSWORD") || user_credentials.Username != os.Getenv("BLOG_USERNAME") {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"status": "fail",
 			"data": gin.H{
 				"authenticated": false,
 			},
@@ -42,6 +63,7 @@ func HandleLogin(ctx *gin.Context) {
 	if err != nil {
 		log.Println(err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"status": "fail",
 			"data": gin.H{
 				"authenticated": false,
 			},
@@ -52,6 +74,7 @@ func HandleLogin(ctx *gin.Context) {
 
 	ctx.SetCookie("let_him_cookie", token, COOKIE_EXPIRY, "/#/admin", "", false, true)
 	ctx.JSON(http.StatusOK, gin.H{
+		"status": "ok",
 		"data": gin.H{
 			"authenticated": true,
 		},
@@ -63,6 +86,7 @@ func VerifyUser(ctx *gin.Context) {
 	ctx_user, user_exists := ctx.Get("user")
 	if !user_exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"status": "fail",
 			"data": gin.H{
 				"authenticated": false,
 			},
@@ -74,6 +98,7 @@ func VerifyUser(ctx *gin.Context) {
 	user, ok := ctx_user.(*UserAuthenticationClaims)
 	if !ok {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"status": "fail",
 			"data": gin.H{
 				"authenticated": false,
 			},
@@ -84,6 +109,7 @@ func VerifyUser(ctx *gin.Context) {
 
 	if !AuthenticateUserCredentials(user) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"status": "fail",
 			"data": gin.H{
 				"authenticated": false,
 			},
@@ -93,6 +119,7 @@ func VerifyUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
+		"status": "ok",
 		"data": gin.H{
 			"authenticated": true,
 		},

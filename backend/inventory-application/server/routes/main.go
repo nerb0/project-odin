@@ -25,4 +25,5 @@ func Setup(router_group *gin.RouterGroup, db *mongo.Database) {
 
 	auth.POST("/verify", session.VerifyUser)
 	auth.POST("/login", session.HandleLogin)
+	auth.POST("/logout", session.HandleLogout)
 }

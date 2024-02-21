@@ -1,20 +1,30 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
-import HeaderLink from "./components/HeaderLink.vue";
-import { TOAST_ERROR_OPTIONS, httpRequest } from "./util";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
+import Footer from "./components/Footer.vue";
+import HeaderLink from "./components/HeaderLink.vue";
+import ModalConfirmLogout from "./components/ModalConfirmLogout.vue";
+import {
+	TOAST_ERROR_OPTIONS,
+	TOAST_SUCCESS_OPTIONS,
+	httpRequest,
+} from "./util";
+import { useRouter } from "vue-router";
 
 const isDarkMode = localStorage.getItem("isDarkMode");
 const authenticated = ref(null as null | Boolean);
 const loading = ref(false);
+const showLogout = ref(false);
+const logoutLoading = ref(false);
 const toast = useToast();
 const checked =
 	isDarkMode !== null
 		? isDarkMode === "true"
 		: window.matchMedia("(prefers-color-scheme: dark)").matches;
 const abortController = new AbortController();
+const router = useRouter();
 
-onUnmounted(function () {
+onBeforeUnmount(function () {
 	abortController.abort();
 });
 onMounted(function () {
@@ -22,19 +32,39 @@ onMounted(function () {
 	authenticateUser();
 });
 
+async function logout() {
+	logoutLoading.value = true;
+	try {
+		const { data, message } = await httpRequest<{ loggedOut: boolean }>(
+			"/auth/logout",
+			{ signal: abortController.signal, method: "POST" },
+		);
+		if (data?.loggedOut) {
+			authenticated.value = !data.loggedOut;
+			showLogout.value = false;
+			toast(message, TOAST_SUCCESS_OPTIONS);
+			router.push("/admin");
+		} else {
+			toast(message, TOAST_ERROR_OPTIONS);
+		}
+	} catch (error) {
+		toast((error as Error).message, TOAST_ERROR_OPTIONS);
+	}
+	logoutLoading.value = false;
+}
+
 async function authenticateUser() {
 	authenticated.value = null;
 	loading.value = true;
 	try {
-		const { data, message } = await httpRequest<{ authenticated: boolean }>(
+		const { data } = await httpRequest<{ authenticated: boolean }>(
 			"/auth/verify",
 			{ signal: abortController.signal, method: "POST" },
 		);
 		if (data) {
 			authenticated.value = data.authenticated;
-			if (!data.authenticated) toast(message, TOAST_ERROR_OPTIONS);
 		} else {
-			toast(message, TOAST_ERROR_OPTIONS);
+			authenticated.value = false;
 		}
 	} catch (error) {
 		authenticated.value = false;
@@ -70,7 +100,6 @@ function setAuthenticated(is_authenticated: boolean) {
 				<HeaderLink to="/blog">Blog</HeaderLink>
 				<div class="flex items-center gap-5 px-2" v-if="authenticated === true">
 					<HeaderLink to="/admin" className="">Admin Page</HeaderLink>
-					<div>Logout</div>
 				</div>
 				<div class="flex flex-col items-center px-4">
 					<div
@@ -91,6 +120,20 @@ function setAuthenticated(is_authenticated: boolean) {
 						/>
 					</label>
 				</div>
+				<svg
+					v-if="authenticated === true"
+					title="Logout"
+					xmlns="http://www.w3.org/2000/svg"
+					xmlns:xlink="http://www.w3.org/1999/xlink"
+					viewBox="0 0 512 512"
+					class="h-5 w-5 origin-center cursor-pointer text-red-500 transition-all hover:scale-110 hover:text-red-700"
+					@click="showLogout = true"
+				>
+					<path
+						d="M400 54.1c63 45 104 118.6 104 201.9c0 136.8-110.8 247.7-247.5 248C120 504.3 8.2 393 8 256.4C7.9 173.1 48.9 99.3 111.8 54.2c11.7-8.3 28-4.8 35 7.7L162.6 90c5.9 10.5 3.1 23.8-6.6 31c-41.5 30.8-68 79.6-68 134.9c-.1 92.3 74.5 168.1 168 168.1c91.6 0 168.6-74.2 168-169.1c-.3-51.8-24.7-101.8-68.1-134c-9.7-7.2-12.4-20.5-6.5-30.9l15.8-28.1c7-12.4 23.2-16.1 34.8-7.8zM296 264V24c0-13.3-10.7-24-24-24h-32c-13.3 0-24 10.7-24 24v240c0 13.3 10.7 24 24 24h32c13.3 0 24-10.7 24-24z"
+						fill="currentColor"
+					></path>
+				</svg>
 			</div>
 		</nav>
 		<div
@@ -111,8 +154,20 @@ function setAuthenticated(is_authenticated: boolean) {
 				</transition>
 			</router-view>
 		</div>
-		<footer class="pt-12">
-			<div class="flex bg-stone-900 px-2 py-2 text-stone-100">Footer</div>
-		</footer>
+		<Footer />
+		<ModalConfirmLogout
+			v-model="showLogout"
+			@confirm="logout"
+			@cancel="showLogout = false"
+		>
+			<p>Do you really want to delete this post?</p>
+		</ModalConfirmLogout>
+		<div
+			class="fixed left-0 top-0 flex h-screen w-screen flex-grow flex-col items-center justify-center gap-2"
+			v-if="logoutLoading"
+		>
+			<div class="animate-pulse">Logging out...</div>
+			<Loader class="" />
+		</div>
 	</main>
 </template>

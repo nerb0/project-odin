@@ -2,7 +2,11 @@
 import AdminBlogPostListItem from "@/components/AdminBlogPostListItem.vue";
 import EditorWrapper from "@/components/EditorWrapper.vue";
 import Loader from "@/components/Loader.vue";
-import { TOAST_ERROR_OPTIONS, httpRequest } from "@/util";
+import {
+	TOAST_ERROR_OPTIONS,
+	TOAST_SUCCESS_OPTIONS,
+	httpRequest,
+} from "@/util";
 import { useToast } from "vue-toastification";
 import Container from "./Container.vue";
 import { ref, watch } from "vue";
@@ -24,7 +28,7 @@ watch(
 			fetchData();
 		}
 	},
-	{ immediate: true },
+	{ immediate: true, once: false },
 );
 
 async function fetchData() {
@@ -50,20 +54,28 @@ async function login(event: Event) {
 	auth_loading.value = true;
 	try {
 		const formData = new FormData(event.target as HTMLFormElement);
-		const { data, message } = await httpRequest<{ authenticated: boolean }>(
-			"/auth/login",
-			{
-				signal: abortController.signal,
-				method: "POST",
-				body: JSON.stringify({
-					username: formData.get("username"),
-					password: formData.get("password"),
-				}),
-				headers: { "Content-Type": "application/json" },
-			},
-		);
+		const { status, data, message } = await httpRequest<{
+			authenticated: boolean;
+		}>("/auth/login", {
+			signal: abortController.signal,
+			method: "POST",
+			body: JSON.stringify({
+				username: formData.get("username"),
+				password: formData.get("password"),
+			}),
+			headers: { "Content-Type": "application/json" },
+		});
 		if (data) {
 			setAuthenticated(data.authenticated);
+			toast(
+				message,
+				status === "ok" ? TOAST_SUCCESS_OPTIONS : TOAST_ERROR_OPTIONS,
+			);
+			if (status === "ok") {
+				auth_loading.value = false;
+				fetchData();
+				return;
+			}
 		} else {
 			toast(message, TOAST_ERROR_OPTIONS);
 		}
