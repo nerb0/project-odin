@@ -36,3 +36,7 @@ type UpdatePostMany struct {
 	IsPublished bool               `form:"is_published" json:"is_published" xml:"is_published" bson:"is_published,omitempty" binding:"-"`
 	ID          primitive.ObjectID `form:"id" json:"id" xml:"id" bson:"id" binding:"required"`
 }
+
+type PostGetAllQuery struct {
+	Page int64 `json:"page,omitempty"`
+}

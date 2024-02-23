@@ -21,7 +21,7 @@ const (
 
 func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		param_id := ctx.Param("id")
+		param_id := ctx.Param("post_id")
 		post_id, err := primitive.ObjectIDFromHex(param_id)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -170,13 +170,15 @@ func CreateOne(db *mongo.Collection) func(ctx *gin.Context) {
 
 func DeleteOne(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		param_id := ctx.Param("id")
+		param_id := ctx.Param("post_id")
 		post_id, err := primitive.ObjectIDFromHex(param_id)
 		if err != nil {
+			log.Println(err.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"status":  "fail",
 				"message": "Invalid post id.",
 			})
+			return
 		}
 
 		var post Post
@@ -199,7 +201,7 @@ func DeleteOne(db *mongo.Collection) func(ctx *gin.Context) {
 
 func UpdateOne(db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		param_id := ctx.Param("id")
+		param_id := ctx.Param("post_id")
 		post_id, err := primitive.ObjectIDFromHex(param_id)
 		if err != nil {
 			log.Println(err.Error())
@@ -274,10 +276,6 @@ func DeleteMany(db *mongo.Collection) func(ctx *gin.Context) {
 			"TODO": "Not implemented yet.",
 		})
 	}
-}
-
-type PostGetAllQuery struct {
-	Page int64 `json:"page,omitempty"`
 }
 
 func ToInt64(limit int64) *int64 {
