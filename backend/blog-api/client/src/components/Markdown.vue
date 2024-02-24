@@ -107,19 +107,23 @@ const editorReturn = useEditor((root) => {
 		.config(nord)
 		.config((ctx) => {
 			ctx.update(defaultValueCtx, (prev) => content || prev);
-			setupMarkdown(ctx, root, (prev) => ({
-				...prev,
-				editable: () => editable,
-				attributes: {
-					class: cn(
-						"p-2 pb-6 outline-none",
-						// @ts-ignore
-						prev.attributes("class").class,
-					),
-					spellcheck: "false",
-				},
+			setupMarkdown(
+				ctx,
+				root,
+				(prev) => ({
+					...prev,
+					editable: () => editable,
+					attributes: {
+						class: cn(
+							"p-2 pb-6 outline-none",
+							// @ts-ignore
+							prev.attributes("class").class,
+						),
+						spellcheck: "false",
+					},
+				}),
 				setupHeading,
-			}));
+			);
 			if (editable) {
 				const editorSelectionListener = ctx.get(selectionListenerCtx);
 				const editorListener = ctx.get(listenerCtx);
