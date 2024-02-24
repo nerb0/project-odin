@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	COMMENT_COUNT_PER_FETCH int64 = 50
+	COMMENT_COUNT_PER_FETCH int64 = 10
 )
 
 func GetOne(db *mongo.Collection) func(ctx *gin.Context) {
@@ -78,11 +78,7 @@ func GetAll(post_db *mongo.Collection, comment_db *mongo.Collection) func(ctx *g
 		}
 
 		if comments == nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"status":  "fail",
-				"message": "Unable to find any comments.",
-			})
-			return
+			comments = []Comment{}
 		}
 
 		ctx.JSON(http.StatusAccepted, gin.H{
@@ -97,7 +93,6 @@ func GetAll(post_db *mongo.Collection, comment_db *mongo.Collection) func(ctx *g
 
 func CreateOne(post_db *mongo.Collection, comment_db *mongo.Collection) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		var new_comment NewComment
 		param_id := ctx.Param("post_id")
 		post_id, err := primitive.ObjectIDFromHex(param_id)
 		if err != nil {
@@ -119,6 +114,8 @@ func CreateOne(post_db *mongo.Collection, comment_db *mongo.Collection) func(ctx
 			return
 		}
 
+		var new_comment NewComment
+		log.Println(ctx.Request.Body)
 		if err = ctx.ShouldBindJSON(&new_comment); err != nil {
 			log.Println(err.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{

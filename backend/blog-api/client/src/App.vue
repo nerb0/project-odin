@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import Footer from "./components/Footer.vue";
 import HeaderLink from "./components/HeaderLink.vue";
+import Loader from "./components/Loader.vue";
 import ModalConfirmLogout from "./components/ModalConfirmLogout.vue";
-import {
-	TOAST_ERROR_OPTIONS,
-	TOAST_SUCCESS_OPTIONS,
-	httpRequest,
-} from "./util";
-import { useRouter } from "vue-router";
+import { TOAST_ERROR_OPTIONS, TOAST_SUCCESS_OPTIONS } from "./constants";
+import { httpRequest } from "./util";
 
 const isDarkMode = localStorage.getItem("isDarkMode");
 const authenticated = ref(null as null | Boolean);
@@ -140,18 +138,16 @@ function setAuthenticated(is_authenticated: boolean) {
 			class="flex flex-grow flex-col items-center justify-center gap-2"
 			v-if="loading"
 		>
-			<div class="animate-pulse">Loading...</div>
+			<div class="animate-pulse">Loading</div>
 			<Loader class="" />
 		</div>
 		<div class="flex flex-grow" v-if="loading === false">
 			<router-view v-slot="{ Component }">
-				<transition name="fade">
-					<component
-						:is="Component"
-						:authenticated="authenticated"
-						:setAuthenticated="setAuthenticated"
-					/>
-				</transition>
+				<component
+					:is="Component"
+					:authenticated="authenticated"
+					:setAuthenticated="setAuthenticated"
+				/>
 			</router-view>
 		</div>
 		<Footer />

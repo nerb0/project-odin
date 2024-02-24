@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import BlogDashboardList from "@/components/BlogDashboardList.vue";
 import Loader from "@/components/Loader.vue";
-import { TOAST_ERROR_OPTIONS, httpRequest } from "@/util";
+import { httpRequest } from "@/util";
 import { useToast } from "vue-toastification";
 import Container from "./Container.vue";
 import { onBeforeUnmount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import { TOAST_ERROR_OPTIONS } from "@/constants";
 
 const loading = ref(false);
 const posts = ref(null as null | BlogPost[]);

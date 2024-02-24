@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import {
-	TOAST_ERROR_OPTIONS,
-	TOAST_OPTIONS,
-	httpRequest,
-	postIsLong,
-} from "@/util";
+import { TOAST_ERROR_OPTIONS, TOAST_OPTIONS } from "@/constants";
+import { httpRequest, postIsLong } from "@/util";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import ModalConfirmDelete from "./ModalConfirmDelete.vue";
@@ -20,7 +16,7 @@ const { post, removePostFromList } = defineProps<{
 async function deletePost() {
 	loading.value = true;
 	try {
-		const { resStatus, message } = await httpRequest(`/post/${post.id}`, {
+		const { resStatus, message } = await httpRequest(`/post/${post._id}`, {
 			method: "DELETE",
 		});
 
@@ -38,7 +34,7 @@ async function deletePost() {
 		class="relative rounded-md bg-stone-100 px-6 py-4 shadow-md dark:bg-stone-900"
 	>
 		<div class="absolute right-3 top-2 flex flex-col gap-2">
-			<RouterLink :to="`/admin/post/${post.id}`">
+			<RouterLink :to="`/admin/post/${post._id}`">
 				<svg
 					viewBox="0 0 24 24"
 					xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +64,7 @@ async function deletePost() {
 				</g>
 			</svg>
 		</div>
-		<div>ID: {{ post.id }}</div>
+		<div>ID: {{ post._id }}</div>
 		<div>
 			<span>Title: </span>
 			<span class="font-bold italic" v-if="!post.title">empty</span>

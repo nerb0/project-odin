@@ -1,6 +1,15 @@
+<script setup lang="ts">
+const { onClick } = defineProps<{ onClick: () => void }>();
+</script>
 <template>
 	<div
-		class="group cursor-pointer hover:bg-stone-500/40 [&.is-active]:bg-stone-500/20"
+		class="group cursor-pointer hover:bg-stone-500/70 [&.is-active]:bg-stone-500/40"
+		@click="
+			(event) => {
+				event.preventDefault();
+				onClick();
+			}
+		"
 	>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

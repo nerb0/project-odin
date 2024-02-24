@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { MilkdownProvider } from "@milkdown/vue";
-import BlogPostMarkdown from "./BlogPostMarkdown.vue";
 import { postIsLong } from "@/util";
+import Markdown from "./Markdown.vue";
+import MarkdownProvider from "./MarkdownProvider.vue";
 
 const { post } = defineProps<{ post: BlogPost }>();
 </script>
@@ -9,7 +9,7 @@ const { post } = defineProps<{ post: BlogPost }>();
 <template>
 	<router-link
 		class="animate-slide-in cursor-pointer rounded-md bg-stone-50 px-6 py-4 shadow-sm transition-all hover:scale-[1.01] hover:shadow-lg dark:bg-stone-900 dark:shadow-stone-900"
-		:to="{ name: 'blog_post', params: { id: post.id } }"
+		:to="{ name: 'blog_post', params: { id: post._id } }"
 	>
 		<div
 			:class="{
@@ -27,9 +27,9 @@ const { post } = defineProps<{ post: BlogPost }>();
 				</div>
 			</div>
 			<div class="pl-6">
-				<MilkdownProvider>
-					<BlogPostMarkdown :content="post.content || 'Empty blog post'" />
-				</MilkdownProvider>
+				<MarkdownProvider>
+					<Markdown :content="post.content" :editable="false" />
+				</MarkdownProvider>
 			</div>
 		</div>
 	</router-link>

@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import AdminBlogPostListItem from "@/components/AdminBlogPostListItem.vue";
-import EditorWrapper from "@/components/EditorWrapper.vue";
+import BlogPostCreateForm from "@/components/BlogPostCreateForm.vue";
 import Loader from "@/components/Loader.vue";
-import {
-	TOAST_ERROR_OPTIONS,
-	TOAST_SUCCESS_OPTIONS,
-	httpRequest,
-} from "@/util";
+import { TOAST_ERROR_OPTIONS, TOAST_SUCCESS_OPTIONS } from "@/constants";
+import { httpRequest } from "@/util";
+import { ref, watch } from "vue";
 import { useToast } from "vue-toastification";
 import Container from "./Container.vue";
-import { ref, watch } from "vue";
 
 const { authenticated, setAuthenticated } = defineProps<{
 	authenticated: boolean;
@@ -24,9 +21,7 @@ const abortController = new AbortController();
 watch(
 	() => authenticated,
 	() => {
-		if (authenticated === true) {
-			fetchData();
-		}
+		authenticated === true && fetchData();
 	},
 	{ immediate: true, once: false },
 );
@@ -121,36 +116,34 @@ async function login(event: Event) {
 		class="fixed left-0 top-0 z-50 flex h-screen w-screen items-center justify-center bg-neutral-800/40"
 		v-if="auth_loading"
 	>
-		<div class="animate-pulse">Logging in...</div>
-		<Loader />
+		<div class="flex animate-pulse items-center gap-2">
+			<span>Logging</span>
+			<Loader />
+			<span>in</span>
+		</div>
 	</div>
 
 	<div
 		class="fixed left-0 top-0 z-50 flex h-screen w-screen flex-col items-center justify-center gap-2 bg-stone-400/60 dark:bg-neutral-800/40"
 		v-if="post_loading"
 	>
-		<div class="animate-pulse text-black dark:text-white">
-			Fetching posts...
+		<div
+			class="flex animate-pulse items-center gap-2 text-black dark:text-white"
+		>
+			<span>Fetching</span>
+			<Loader />
+			<span>posts</span>
 		</div>
-		<Loader />
 	</div>
 	<Container v-if="authenticated === true">
 		<div class="flex flex-col gap-10">
-			<EditorWrapper
-				:addPost="
-					function (post: BlogPost) {
-						if (!posts) posts = [];
-						else posts.unshift(post);
-					}
-				"
-			/>
+			<BlogPostCreateForm :add-post="(post) => posts?.unshift(post)" />
 			<div class="flex flex-grow flex-col gap-4" v-if="posts !== null">
 				<AdminBlogPostListItem
 					v-for="(post, index) in posts"
 					:post="post"
 					:remove-post-from-list="
 						function () {
-							console.log(index);
 							posts?.splice(index, 1);
 						}
 					"

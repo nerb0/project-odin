@@ -4,13 +4,22 @@ interface ImportMetaEnv {
 }
 
 type BlogPost = {
-	id: string;
+	_id: string;
 	content: string;
 	title: string;
 	author: string;
 	created_at: Date;
 	updated_at: Date;
 	is_published: boolean;
+};
+
+type BlogComment = {
+	_id: string;
+	post_id: string;
+	message: string;
+	author?: string;
+	created_at: Date;
+	updated_at: Date;
 };
 
 interface FetchCallbackHandler<T> {

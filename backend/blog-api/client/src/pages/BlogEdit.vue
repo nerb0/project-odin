@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import BlogPostMarkdown from "@/components/BlogPostMarkdown.vue";
 import Loader from "@/components/Loader.vue";
-import {
-	TOAST_ERROR_OPTIONS,
-	TOAST_SUCCESS_OPTIONS,
-	httpRequest,
-} from "@/util";
-import { MilkdownProvider } from "@milkdown/vue";
+import Markdown from "@/components/Markdown.vue";
+import MarkdownProvider from "@/components/MarkdownProvider.vue";
+import { TOAST_ERROR_OPTIONS, TOAST_SUCCESS_OPTIONS } from "@/constants";
+import { httpRequest } from "@/util";
+import { getMarkdown } from "@milkdown/utils";
+import { onUnmounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import Container from "./Container.vue";
-import { useRoute, useRouter } from "vue-router";
-import { onUnmounted, ref, watch } from "vue";
-import { getMarkdown } from "@milkdown/utils";
 
 const { authenticated } = defineProps<{
 	authenticated: boolean;
@@ -22,7 +19,7 @@ const post = ref(null as null | BlogPost);
 const toast = useToast();
 const abortController = new AbortController();
 const route = useRoute();
-const editorRef = ref<InstanceType<typeof BlogPostMarkdown> | null>(null);
+const editorRef = ref<InstanceType<typeof Markdown> | null>(null);
 
 onUnmounted(() => abortController.abort());
 
@@ -155,17 +152,18 @@ async function submitPost(event: Event) {
 						v-model="post.title"
 						placeholder="Title"
 					/>
-					<MilkdownProvider>
-						<div
-							class="flex flex-grow flex-col overflow-clip rounded-md border-2 dark:border-stone-400 dark:bg-stone-700 dark:focus-within:border-stone-100"
-						>
-							<BlogPostMarkdown
+
+					<div
+						class="flex flex-grow flex-col overflow-clip rounded-md border-2 dark:border-stone-400 dark:bg-stone-700 dark:focus-within:border-stone-100"
+					>
+						<MarkdownProvider>
+							<Markdown
 								:content="post.content"
 								:editable="true"
 								ref="editorRef"
 							/>
-						</div>
-					</MilkdownProvider>
+						</MarkdownProvider>
+					</div>
 				</div>
 			</div>
 			<div class="flex h-12 items-end justify-end">

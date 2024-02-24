@@ -11,7 +11,7 @@ type Post struct {
 	UpdatedAt   time.Time          `bson:"updated_at" json:"updated_at" xml:"updated_at"`
 	Title       string             `bson:"title" json:"title" xml:"title"`
 	Content     string             `bson:"content" json:"content" xml:"content"`
-	ID          primitive.ObjectID `bson:"_id" json:"id" xml:"id"`
+	ID          primitive.ObjectID `bson:"_id" json:"_id" xml:"_id"`
 	IsPublished bool               `bson:"is_published" json:"is_published" xml:"is_published"`
 }
 

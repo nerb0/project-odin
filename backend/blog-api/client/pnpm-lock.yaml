@@ -11,6 +11,9 @@ dependencies:
   '@milkdown/ctx':
     specifier: 7.3.5
     version: 7.3.5
+  '@milkdown/plugin-clipboard':
+    specifier: 7.3.5
+    version: 7.3.5(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
   '@milkdown/plugin-emoji':
     specifier: 7.3.4
     version: 7.3.4(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
@@ -41,6 +44,9 @@ dependencies:
   '@milkdown/vue':
     specifier: 7.3.4
     version: 7.3.4(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)(vue@3.4.15)
+  '@prosemirror-adapter/vue':
+    specifier: 0.2.6
+    version: 0.2.6(vue@3.4.15)
   clsx:
     specifier: 2.1.0
     version: 2.1.0
@@ -433,6 +439,21 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@milkdown/plugin-clipboard@7.3.5(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4):
+    resolution: {integrity: sha512-vmnMNc8Yz3yu298PH0JWlRO38/wtarTV5M8enuOFrfYw28XOtbD42KKMbphm2AXWB+wgzNGsHsTWnZh1igpttw==}
+    peerDependencies:
+      '@milkdown/core': ^7.2.0
+      '@milkdown/prose': ^7.2.0
+    dependencies:
+      '@milkdown/core': 7.3.4(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
+      '@milkdown/prose': 7.3.5
+      '@milkdown/utils': 7.3.5(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4)
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - '@milkdown/ctx'
+      - '@milkdown/transformer'
+    dev: false
+
   /@milkdown/plugin-emoji@7.3.4(@milkdown/core@7.3.4)(@milkdown/ctx@7.3.5)(@milkdown/prose@7.3.5)(@milkdown/transformer@7.3.4):
     resolution: {integrity: sha512-1g71xEHZh9FRGsSblFMRvisFygwDiuwqLJE9tglN8c6VAPHyjme1xd57wSqltsfod3f76XO+R66kmB9aYmIWtw==}
     peerDependencies:
@@ -694,6 +715,23 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@prosemirror-adapter/core@0.2.6:
+    resolution: {integrity: sha512-7GXWQBR/bd6ngvek8SgtlEVC0x3KL7LKZ5cxyZl4IBAlRDbITQWsuKLChEXNan9A6+9Ry4a46crbDGTQlzooOg==}
+    dependencies:
+      tslib: 2.6.2
+    dev: false
+
+  /@prosemirror-adapter/vue@0.2.6(vue@3.4.15):
+    resolution: {integrity: sha512-NYjgHfjfmeS3QtMvGpL885BNdE8OnsdlNfzqO78fT2QIsKITR6hiiqsghlVBzrn41UxBILwVH3rf1gfXi7f7kg==}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      '@prosemirror-adapter/core': 0.2.6
+      nanoid: 4.0.2
+      tslib: 2.6.2
+      vue: 3.4.15(typescript@5.2.2)
+    dev: false
 
   /@rollup/rollup-android-arm-eabi@4.10.0:
     resolution: {integrity: sha512-/MeDQmcD96nVoRumKUljsYOLqfv1YFJps+0pTrb2Z9Nl/w5qNUysMaWQsrd1mvAlNT4yza1iVyIu4Q4AgF6V3A==}
@@ -2077,6 +2115,12 @@ packages:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
+
+  /nanoid@4.0.2:
+    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
+    engines: {node: ^14 || ^16 || >=18}
+    hasBin: true
+    dev: false
 
   /nanoid@5.0.5:
     resolution: {integrity: sha512-/Veqm+QKsyMY3kqi4faWplnY1u+VuKO3dD2binyPIybP31DRO29bPF+1mszgLnrR2KqSLceFLBNw0zmvDzN1QQ==}
