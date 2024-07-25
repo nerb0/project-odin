@@ -18,9 +18,9 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<head>
-				<title>{"Where's Waldo"}</title>
+				<title>Where&apos;s Waldo</title>
 			</head>
-			<body className="bg-slate-700 text-slate-100 flex flex-col">
+			<body className="flex min-h-screen flex-col bg-slate-700 text-slate-100">
 				{children}
 				<ToastContainer
 					position="top-center"

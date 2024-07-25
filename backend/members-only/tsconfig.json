@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+
+		"jsx": "react",
+		"jsxFactory": "Html.createElement",
+		"jsxFragmentFactory": "Html.Fragment",
+		"allowJs": true,
+
+		"paths": {
+			"~/*": ["./*"],
+		},
+
+		"plugins": [
+			{
+				"name": "@kitajs/ts-html-plugin",
+			},
+		],
+
+		"strict": true,
+		"moduleResolution": "Bundler",
+		"verbatimModuleSyntax": true,
+		"types": ["bun-types", "./types.d.ts"],
+	},
+	"exclude": ["./node_modules/**/*"],
+}

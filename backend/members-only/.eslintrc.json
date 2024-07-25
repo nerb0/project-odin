@@ -1,0 +1,25 @@
+{
+	"root": true,
+	"extends": ["eslint:recommended"],
+	"plugins": ["unused-imports", "react"],
+	"env": {
+		"es6": true,
+		"node": true
+	},
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": "latest",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"rules": {
+		"unused-imports/no-unused-imports": "error",
+		"no-empty": "off",
+		"no-unused-vars": "off",
+		"no-mixed-spaces-and-tabs": "off",
+		"react/jsx-uses-react": "error",
+		"react/jsx-uses-vars": "error",
+		"react/jsx-no-undef": "error"
+	}
+}

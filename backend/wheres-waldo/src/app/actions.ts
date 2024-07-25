@@ -1,13 +1,14 @@
 "use server";
 
-import { BOARD_SELECT_SIZE } from "@/lib/constants";
 import dbConnect from "@/lib/db";
-import Board, { Coordinates } from "@/lib/models/Board";
-import GameSession from "@/lib/models/GameSession";
-import { calculateDistance } from "@/utils/helper";
-import { PipelineStage, mongo } from "mongoose";
+import Board, { BoardItemSchema, Coordinates } from "@/lib/models/Board";
+import GameSession, {
+	GameSessionModel,
+	GameSessionSchema,
+} from "@/lib/models/GameSession";
+import { calculateDistance, getTotalTime } from "@/utils/helper";
+import { InferSchemaType } from "mongoose";
 import { revalidatePath } from "next/cache";
-import { pages } from "next/dist/build/templates/app-page";
 
 export type ResponseStatus = "success" | "fail" | "error";
 export type Response<T> = T & {
@@ -43,9 +44,8 @@ export async function pinpointCoordinates(
 		return { message: "Game Session already finished.", status: "error" };
 	}
 
-	session.board.items[session.board.items.indexOf(item)].pinpoint = pinpoint;
-	session.board.items[session.board.items.indexOf(item)].found =
-		calculateDistance(pinpoint, item.coordinates) <= BOARD_SELECT_SIZE;
+	item.pinpoint = pinpoint;
+	item.found = calculateDistance(pinpoint, item.coordinates) <= item.distance;
 
 	await session.save();
 
@@ -57,13 +57,9 @@ export async function pinpointCoordinates(
 		};
 	}
 
-	const is_finished = session.board.items.every(
-		(item) =>
-			calculateDistance(pinpoint, item.coordinates) <= BOARD_SELECT_SIZE,
-	);
-
+	const is_finished = session.board.items.every(({ found }) => found);
 	if (is_finished) {
-		session.time_finished = new Date();
+		session.time_finished = getTotalTime(session.timestamps);
 		await session.save();
 		revalidatePath("");
 		return {
@@ -92,6 +88,15 @@ export async function createGameSession(
 	if (!board) {
 		return { message: "", status: "error" };
 	}
+	let items: InferSchemaType<typeof BoardItemSchema>[] = [];
+	for (let i = 0; i < 3; i++) {
+		if (board.items.length === 0) break;
+
+		const j = Math.floor(Math.random() * board.items.length);
+		items.push(board.items[j]);
+		board.items.splice(j, 1);
+	}
+	board.items = items as typeof board.items;
 
 	const session = await GameSession.create({
 		board,
@@ -104,59 +109,83 @@ export async function createGameSession(
 	};
 }
 
-export async function getAllLeaderboards({
-	lastId,
-	boardId,
-}: {
-	boardId?: string;
-	lastId?: string;
-}) {
+export async function startGameSession(session_id: string) {
 	await dbConnect();
-	try {
-		let filter: any = {
-			time_finished: { $ne: null },
-		};
-		if (boardId) {
-			const board = await Board.findById(boardId);
-			if (!board) {
-				return { message: "Unable to find board", status: "error" };
-			}
-			filter.board = { _id: board.id };
-		}
+	const session = await GameSession.findById(session_id);
+	if (!session) return { message: "Session cannot be found.", status: "error" };
 
-		let page_filter: PipelineStage[] = [{ $limit: 10 }];
-		if (lastId) {
-			const parsed_id = new mongo.ObjectId(lastId);
-			page_filter.unshift({ $match: { _id: { $lt: parsed_id } } });
-		}
-
-		const sessions = await GameSession.aggregate([
-			{ $match: filter },
-			{
-				$lookup: {
-					from: "users",
-					localField: "user._id",
-					foreignField: "_id",
-					as: "user_info",
-				},
-			},
-			{
-				$project: {
-					user_info: 1,
-					total_time: {
-						$dateDiff: {
-							startDate: "$createdAt",
-							endDate: "$time_finished",
-							unit: "millisecond",
-						},
-					},
-				},
-			},
-			{ $sort: { total_time: -1 } },
-			...page_filter,
-		]);
+	const last_timestamp = session.timestamps[session.timestamps.length - 1];
+	if (last_timestamp && !last_timestamp.time_paused)
 		return {
-			sessions,
+			message:
+				"Session has not been paused last session. Continuing last session.",
+			status: "error",
+		};
+
+	try {
+		session.timestamps.push({ time_start: new Date() });
+		session.save();
+		return {
+			total_time: getTotalTime(session.timestamps),
+			message: "Game Session started.",
+			status: "success",
+		};
+	} catch (error) {
+		return {
+			message: "Unable to start session.",
+			status: "error",
+		};
+	}
+}
+
+export async function pauseGameSession(session_id: string) {
+	await dbConnect();
+	const session = await GameSession.findById(session_id);
+	if (!session) return { message: "Session cannot be found.", status: "error" };
+
+	const last_timestamp = session.timestamps[session.timestamps.length - 1];
+	if (!last_timestamp)
+		return { message: "Session has no timestamps yet.", status: "error" };
+	try {
+		last_timestamp.time_paused = new Date();
+		session.save();
+		return {
+			total_time: getTotalTime(session.timestamps),
+			message: "Game Session paused.",
+			status: "success",
+		};
+	} catch (error) {
+		return {
+			message: "Unable to pause session.",
+			status: "error",
+		};
+	}
+}
+
+export type LeaderboardItem = {
+	name?: string | null;
+	time_finished: number;
+};
+export async function getAllLeaderboards(
+	boardId: string,
+	page: number,
+): Promise<Response<{ scores?: LeaderboardItem[] }>> {
+	try {
+		await dbConnect();
+
+		const board = await Board.findById(boardId);
+		if (!board) {
+			return { message: "Unable to find board", status: "error" };
+		}
+
+		const scores = await GameSession.find({ time_finished: { $ne: null } })
+			.select({ time_finished: 1, name: 1 })
+			.sort({ time_finished: 1 })
+			.skip((page - 1) * 30)
+			.limit(30);
+
+		return {
+			scores: scores as LeaderboardItem[],
 			status: "success",
 			message: "Scores fetched successfully.",
 		};

@@ -1,11 +1,9 @@
-import {
-	BoardModel,
-	GameBoard,
-	GameSessionModel,
-} from "@/components/GameBoard";
+import { startGameSession } from "@/app/actions";
+import { GameBoard } from "@/components/GameBoard";
 import { Header } from "@/components/Header";
 import dbConnect from "@/lib/db";
-import GameSession from "@/lib/models/GameSession";
+import { BoardModel } from "@/lib/models/Board";
+import GameSession, { GameSessionModel } from "@/lib/models/GameSession";
 
 export default async function BoardGame({
 	params: { gameId },
@@ -18,6 +16,8 @@ export default async function BoardGame({
 		"board.items.coordinates": 0,
 	});
 	if (!session) return <div>Unable to find game session.</div>;
+	await startGameSession(session.id);
+
 	const serverSession = session.toJSON({
 		flattenMaps: true,
 		flattenObjectIds: true,
@@ -25,7 +25,7 @@ export default async function BoardGame({
 
 	return (
 		<>
-			<Header boardId={(serverSession.board as BoardModel)._id.toString()} />
+			<Header board={serverSession.board as BoardModel} />
 			<main className="flex items-center justify-center">
 				<GameBoard
 					board={serverSession.board as BoardModel}

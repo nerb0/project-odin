@@ -1,5 +1,8 @@
 import { Coordinates } from "@/lib/models/Board";
+import { GameSessionTimestampSchema } from "@/lib/models/GameSession";
 import clsx, { ClassValue } from "clsx";
+import { differenceInMilliseconds } from "date-fns";
+import { InferSchemaType } from "mongoose";
 import { Context, useContext } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -27,7 +30,6 @@ export function getContext<T>(context: Context<T>) {
 }
 
 export function formatTimer(timer: number) {
-	console.log(timer);
 	let milliseconds = timer % 1000;
 	let seconds = Math.floor(timer / 1000);
 	let minutes = Math.floor(seconds / 60);
@@ -37,11 +39,11 @@ export function formatTimer(timer: number) {
 	minutes = minutes % 60;
 
 	let result = "";
-	result += hours > 0 ? (hours > 9 ? `${hours}:` : `0${hours}:`) : "00:";
-	result +=
-		minutes > 0 ? (minutes > 9 ? `${minutes}:` : `0${minutes}:`) : "00:";
-	result +=
-		seconds > 0 ? (seconds > 9 ? `${seconds}.` : `0${seconds}.`) : "00.";
+	if (hours != 0) result += `${hours} hours and `;
+
+	if (minutes != 0) result += `${minutes} minutes and `;
+
+	result += `${seconds}.`;
 	result +=
 		milliseconds > 0
 			? milliseconds > 9
@@ -51,5 +53,22 @@ export function formatTimer(timer: number) {
 				: `00${milliseconds}`.slice(0, 3)
 			: "000";
 
-	return result;
+	return `${result} seconds`;
+}
+
+export function getTotalTime(
+	timestamps: InferSchemaType<typeof GameSessionTimestampSchema>[],
+) {
+	let total_time = timestamps.reduce((total, { time_start, time_paused }) => {
+		if (!time_paused || !time_start) return total;
+		return total + differenceInMilliseconds(time_paused, time_start);
+	}, 0);
+	const last_timestamp = timestamps[timestamps.length - 1];
+
+	if (last_timestamp && !last_timestamp.time_paused)
+		total_time += differenceInMilliseconds(
+			Date.now(),
+			last_timestamp.time_start!,
+		);
+	return total_time;
 }

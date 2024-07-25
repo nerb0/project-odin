@@ -1,37 +1,36 @@
 "use client";
-import { pinpointCoordinates } from "@/app/actions";
+
+import { pauseGameSession, pinpointCoordinates } from "@/app/actions";
 import { BOARD_SELECT_SIZE } from "@/lib/constants";
-import { DocType } from "@/lib/db";
-import { BoardSchema, Coordinates } from "@/lib/models/Board";
-import { GameSessionSchema } from "@/lib/models/GameSession";
-import { cn, formatTimer, getContext } from "@/utils/helper";
-import { differenceInMilliseconds } from "date-fns";
-import { Require_id } from "mongoose";
+import { BoardItemModel, BoardModel, Coordinates } from "@/lib/models/Board";
+import {
+	GameSessionModel,
+	GameSessionTimestampsModel,
+} from "@/lib/models/GameSession";
+import { cn, formatTimer, getContext, getTotalTime } from "@/utils/helper";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import {
 	Dispatch,
 	MouseEventHandler,
 	SetStateAction,
 	createContext,
 	useEffect,
+	useRef,
 	useState,
 } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export type BoardModel = Omit<
-	DocType<typeof BoardSchema> & { _id: string },
-	"coordinates"
->;
-export type GameSessionModel = DocType<typeof GameSessionSchema> & {
-	_id: string;
-};
+type ClientBoardItem = Omit<BoardItemModel, "coordinates">;
 
 const BoardContext = createContext<{
 	coordinates?: Coordinates | null;
 	setCoordinates: Dispatch<SetStateAction<Coordinates | null>>;
-	items: BoardModel["items"];
+	items: ClientBoardItem[];
 	session: GameSessionModel;
+	loading: boolean;
+	setLoading: Dispatch<SetStateAction<boolean>>;
 } | null>(null);
 
 const TIMER_INTERVAL = 25;
@@ -44,11 +43,8 @@ export function GameBoard({
 	session: GameSessionModel;
 }) {
 	const [clickCoordinates, setCoordinates] = useState<Coordinates | null>(null);
-	const [timer, setTimer] = useState<number>(
-		session.time_finished
-			? differenceInMilliseconds(session.time_finished, session.createdAt)
-			: differenceInMilliseconds(new Date(), session.createdAt),
-	);
+	const [loading, setLoading] = useState(false);
+	const boardRef = useRef<HTMLDivElement | null>(null);
 
 	const getCoordinates: MouseEventHandler<HTMLImageElement> =
 		function getCoordinates(event) {
@@ -56,74 +52,151 @@ export function GameBoard({
 			const { clientX, clientY } = event;
 			setCoordinates({ x: clientX - left, y: clientY - top });
 		};
+
 	useEffect(() => {
-		const interval = setInterval(() => {
-			if (!session.time_finished) {
-				setTimer((prev) => prev + TIMER_INTERVAL);
-			} else {
-				setTimer(
-					differenceInMilliseconds(session.time_finished, session.createdAt),
-				);
-				clearInterval(interval);
+		function outsideBoardClickHandler(e: globalThis.MouseEvent) {
+			if ((e.target as HTMLDivElement).closest("#boardContainer") === null) {
+				setCoordinates(null);
 			}
-		}, TIMER_INTERVAL);
+		}
+		function pauseGame() {
+			pauseGameSession(session._id);
+		}
+		window.addEventListener("click", outsideBoardClickHandler);
+
+		if (!session.time_finished)
+			window.addEventListener("beforeunload", pauseGame);
 
 		return () => {
-			clearInterval(interval);
+			window.removeEventListener("click", outsideBoardClickHandler);
+			window.removeEventListener("beforeunload", pauseGame);
 		};
-	});
+	}, [session.time_finished, session]);
 
 	return (
-		<div className="flex flex-col gap-2">
-			<div>{formatTimer(timer)}</div>
+		<div className="flex w-screen flex-col gap-2 overflow-hidden pb-2 pt-4">
+			<div className="px-4">
+				<GameBoardTimer
+					timeFinished={session.time_finished}
+					timestamps={session.timestamps}
+				/>
+			</div>
 			<div
-				className={cn("relative text-slate-100", {
-					"cursor-pointer": !session.time_finished,
-				})}
-				onClick={getCoordinates}
+				className={cn(
+					"max-w-screen flex items-center justify-center overflow-scroll text-slate-100",
+					{ "cursor-pointer": !session.time_finished },
+				)}
 			>
 				<BoardContext.Provider
 					value={{
 						coordinates: clickCoordinates,
-						setCoordinates,
 						items: board.items,
 						session,
+						loading,
+						setLoading,
+						setCoordinates,
 					}}
 				>
-					{board.items.map(
-						(item, index) =>
-							item.pinpoint &&
-							item.found && <BoardDropdown item={item} key={index} />,
-					)}
-					{!session.time_finished && <BoardDropdown />}
-					<Image
-						draggable={false}
-						src={board.image}
-						alt={board.desc}
-						className="w-auto h-auto rounded-sm shadow-lg shadow-slate-900/50"
-						width={board.height}
-						height={board.width}
-						quality={100}
-					/>
+					<div
+						ref={boardRef}
+						id="boardContainer"
+						className="relative"
+						onClick={getCoordinates}
+					>
+						{board.items.map(
+							(item, index) =>
+								item.pinpoint &&
+								item.found && <BoardItemFoundPin item={item} key={index} />,
+						)}
+						{!session.time_finished && <BoardDropdown />}
+						<Image
+							draggable={false}
+							src={board.image}
+							alt={board.desc}
+							className="max-w-none rounded-sm shadow-lg shadow-slate-900/50"
+							style={{
+								height: `${board.height}px`,
+								width: `${board.width}px`,
+							}}
+							width={board.height}
+							height={board.width}
+							quality={100}
+						/>
+					</div>
 				</BoardContext.Provider>
 			</div>
 		</div>
 	);
 }
+export function GameBoardTimer({
+	timeFinished,
+	timestamps,
+}: {
+	timeFinished?: number | null;
+	timestamps: GameSessionTimestampsModel[];
+}) {
+	const [timer, setTimer] = useState<number | null>(null);
 
-export function BoardDropdown({ item }: { item?: BoardItem }) {
-	const [dropdownVisible, setDropdownVisible] = useState(!item);
+	useEffect(() => {
+		let interval: NodeJS.Timeout;
+		console.log(timestamps);
+		const total_time = getTotalTime(timestamps);
+		setTimer(total_time);
+		interval = setInterval(() => {
+			if (!timeFinished) {
+				const total_time = getTotalTime(timestamps);
+				setTimer((prev) => (prev || total_time) + TIMER_INTERVAL);
+			} else {
+				setTimer(timeFinished);
+				clearInterval(interval);
+			}
+		}, TIMER_INTERVAL);
 
+		return () => {
+			if (interval) clearInterval(interval);
+		};
+	}, [timeFinished, timestamps]);
+
+	return (
+		<div className="w-fit rounded-md bg-slate-200 px-4 py-2 text-slate-700">
+			{timer ? formatTimer(timer) : "..."}
+		</div>
+	);
+}
+
+export function BoardItemFoundPin({ item }: { item: ClientBoardItem }) {
+	return (
+		<div
+			className="absolute flex items-center justify-center rounded-full bg-green-400/70"
+			style={{
+				top: `${item.pinpoint!.y - 12}px`,
+				left: `${item.pinpoint!.x - 12}px`,
+			}}
+		>
+			<svg
+				className="h-6 w-6 text-white"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlnsXlink="http://www.w3.org/1999/xlink"
+				viewBox="0 0 24 24"
+			>
+				<path
+					d="M9 16.17L4.83 12l-1.42 1.41L9 19L21 7l-1.41-1.41z"
+					fill="currentColor"
+				></path>
+			</svg>
+		</div>
+	);
+}
+
+export function BoardDropdown() {
 	let { coordinates: boardCoordinates, setCoordinates } =
 		getContext(BoardContext);
-
-	if (item) boardCoordinates = item.pinpoint;
 
 	const is_valid = boardCoordinates !== null;
 
 	return (
 		<div
-			className="absolute flex gap-2 items-start"
+			className="absolute flex items-start gap-2"
 			style={{
 				pointerEvents: "auto",
 				opacity: `${is_valid ? "1" : "0"}`,
@@ -134,41 +207,29 @@ export function BoardDropdown({ item }: { item?: BoardItem }) {
 			}}
 		>
 			<div
-				className={cn(
-					"border-4 rounded-full cursor-default ring ring-offset-2",
-					{
-						"cursor-pointer": !!item,
-						"ring-offset-emerald-400 border-green-500": item?.found,
-						"ring-offset-slate-600 border-slate-50": !item?.found,
-					},
-				)}
+				className="cursor-pointer rounded-full border-4 border-slate-50 ring ring-offset-2 ring-offset-slate-600"
 				onClick={function (event) {
 					event.stopPropagation();
-					if (item) {
-						setDropdownVisible(!dropdownVisible);
-					} else {
-						setCoordinates(null);
-					}
+					setCoordinates(null);
 				}}
 				style={{
 					width: `${BOARD_SELECT_SIZE}px`,
 					height: `${BOARD_SELECT_SIZE}px`,
 				}}
 			></div>
-			<DropdownSelectList visible={dropdownVisible} />
+			<DropdownSelectList />
 		</div>
 	);
 }
 
-export function DropdownSelectList({ visible = true }: { visible?: boolean }) {
+export function DropdownSelectList() {
 	const { items } = getContext(BoardContext);
-	if (!visible) return <></>;
 	return (
 		<div
 			onClick={(e) => e.stopPropagation()}
-			className="bg-slate-600 rounded-md shadow-lg text-slate-50 font-bold flex flex-col text-center cursor-default overflow-clip select-none"
+			className="flex cursor-default select-none flex-col overflow-clip rounded-md bg-slate-600 text-center font-bold text-slate-50 shadow-lg"
 		>
-			<div className="text-xs italic text-left px-2 py-1">Select:</div>
+			<div className="px-2 py-1 text-left text-xs italic">Select:</div>
 			{items.map((item, index) => (
 				<DropdownSelectItem item={item} key={index} />
 			))}
@@ -176,21 +237,15 @@ export function DropdownSelectList({ visible = true }: { visible?: boolean }) {
 	);
 }
 
-type BoardItem = BoardModel["items"][0];
-
-export function DropdownSelectItem({
-	item,
-	selectedItem,
-}: {
-	item: BoardItem;
-	selectedItem?: BoardItem;
-}) {
-	const { coordinates, setCoordinates, session } = getContext(BoardContext);
+export function DropdownSelectItem({ item }: { item: ClientBoardItem }) {
+	const { coordinates, setCoordinates, session, loading, setLoading } =
+		getContext(BoardContext);
 	const selectItem: MouseEventHandler<HTMLDivElement> =
 		async function selectItem(event) {
 			event.stopPropagation();
-			if (selectedItem) return;
 			if (!coordinates) return;
+			setLoading(true);
+			setCoordinates(null);
 
 			const toast_options = { autoClose: 2000 };
 
@@ -202,18 +257,25 @@ export function DropdownSelectItem({
 			if (!found) toast.error(message, toast_options);
 			if (found) toast.success(message, toast_options);
 
-			setCoordinates(null);
+			setLoading(false);
 		};
 	return (
 		<div
 			onClick={selectItem}
-			className={cn("px-4 py-1 min-w-40 flex items-center", {
-				"bg-green-600 pointer-events-none": item.found,
-				"pointer-events-none": item.found || session.time_finished,
-				"hover:bg-slate-500/50 cursor-pointer": !item.found,
+			className={cn("flex min-w-40 items-center px-4 py-1 ", {
+				"pointer-events-none bg-green-600": item.found,
+				"pointer-events-none": item.found || session.time_finished || loading,
+				"cursor-pointer hover:bg-slate-500/50": !item.found,
 			})}
 		>
-			<div>{item.name}</div>
+			<Image
+				src={item.image}
+				width={50}
+				height={50}
+				alt={item.name}
+				className="h-10 w-10 rounded-full border-2 border-white text-xs"
+			/>
+			<div className="flex-grow">{item.name}</div>
 		</div>
 	);
 }

@@ -1,5 +1,14 @@
-import { InferSchemaType, Model, Schema, Types, model, models } from "mongoose";
+import { InferSchemaType, Model, Schema, model, models } from "mongoose";
 import { BoardSchema } from "./Board";
+import { DocType } from "../db";
+
+export const GameSessionTimestampSchema = new Schema(
+	{
+		time_start: Date,
+		time_paused: Date,
+	},
+	{ _id: false },
+);
 
 export const GameSessionSchema = new Schema(
 	{
@@ -8,7 +17,8 @@ export const GameSessionSchema = new Schema(
 			type: BoardSchema,
 			required: true,
 		},
-		time_finished: Date,
+		timestamps: [GameSessionTimestampSchema],
+		time_finished: Number,
 	},
 	{ timestamps: true },
 );
@@ -16,3 +26,10 @@ export const GameSessionSchema = new Schema(
 export default (models?.GameSessions as Model<
 	InferSchemaType<typeof GameSessionSchema>
 >) || model("GameSessions", GameSessionSchema);
+
+export type GameSessionModel = DocType<typeof GameSessionSchema> & {
+	_id: string;
+};
+export type GameSessionTimestampsModel = DocType<
+	typeof GameSessionTimestampSchema
+>;

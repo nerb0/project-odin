@@ -1,4 +1,5 @@
 import { InferSchemaType, Model, Schema, model, models } from "mongoose";
+import { DocType } from "../db";
 
 export const CoordinatesSchema = new Schema(
 	{
@@ -23,6 +24,14 @@ export const BoardItemSchema = new Schema({
 	},
 	coordinates: {
 		type: CoordinatesSchema,
+		required: true,
+	},
+	distance: {
+		type: Number,
+		default: 0,
+	},
+	image: {
+		type: String,
 		required: true,
 	},
 	pinpoint: CoordinatesSchema,
@@ -61,3 +70,6 @@ export const BoardSchema = new Schema(
 
 export default (models?.Boards as Model<InferSchemaType<typeof BoardSchema>>) ||
 	model("Boards", BoardSchema);
+
+export type BoardModel = DocType<typeof BoardSchema> & { _id: string };
+export type BoardItemModel = BoardModel["items"][0];
