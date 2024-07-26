@@ -1,0 +1,21 @@
+{
+  "name": "mini-message-board",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run bun.dev.tsx",
+    "tailwind:watch": "tailwindcss -i ./src/base.css -o ./public/css/style.css --watch -m"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.1.0",
+    "@elysiajs/html": "1.0.0",
+    "@elysiajs/static": "^1.1.0",
+    "@kitajs/ts-html-plugin": "^4.0.2",
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "tailwindcss": "^3.4.7"
+  },
+  "module": "src/index.js"
+}

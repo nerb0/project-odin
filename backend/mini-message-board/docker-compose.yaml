@@ -1,0 +1,7 @@
+services:
+  app:
+    image: "oven/bun"
+    entrypoint: []
+    command: "/bin/sh -c 'bun install && bun run dev'"
+    ports: ["3000:3000"]
+    volumes: ["./:/home/bun/app"]
