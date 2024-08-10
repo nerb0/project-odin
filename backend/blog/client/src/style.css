@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+
+pre {
+	@apply flex;
+}
+
+.milkdown
+	> [role="textbox"][contenteditable="true"]
+	> p:only-child:has(br)::before {
+	@apply pointer-events-none absolute select-none dark:text-stone-500;
+	content: "Insert content here...";
+}
+
+.milkdown .emoji {
+	@apply h-4 w-6 px-1;
+}
+
+code {
+	@apply w-full rounded-md bg-stone-200 p-2 dark:bg-stone-600;
+}
