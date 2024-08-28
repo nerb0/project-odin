@@ -1,0 +1,65 @@
+name: Build and deploy static content to Pages
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: [unit-tests]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Copy Static HTML Project Files
+        run: |
+          cp -r html\&css/* ./dist/
+          cp -r js/tic-tac-new ./dist/
+          cp -r js/calculator ./dist/
+          cp -r js/etch-a-sketch ./dist/
+          cp -r js/library-new ./dist/
+          cp -r js/rock-paper-scissors ./dist/
+          cp -r js/google-home ./dist/
+      - name: Build Battleship
+        run: |
+          npm install && npm run build
+          cp -r dist/* ../../dist/
+        with:
+          path: "js/battleship/"
+      - name: Build Todo List
+        run: |
+          npm install && npm run build
+          cp -r dist/* ../../dist/
+        with:
+          path: "js/to-do-remake/"
+      - name: Build Weather API
+        run: |
+          npm install && npm run build
+          cp -r dist/* ../../dist/
+        with:
+          path: "js/weather-api/"
+      - name: Build Restaurant
+        run: |
+          npm install && npm run build
+          cp -r dist/* ../../dist/
+        with:
+          path: "js/restaurant/"
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "dist/"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
