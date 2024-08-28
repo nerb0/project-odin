@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Copy Static HTML Project Files
         run: |
+          mkdir -p dist
           cp -r html\&css/* ./dist/
           cp -r js/tic-tac-new ./dist/
           cp -r js/calculator ./dist/
