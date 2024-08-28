@@ -29,7 +29,7 @@ jobs:
           cp -r js/tic-tac-new ./dist/
           cp -r js/calculator ./dist/
           cp -r js/etch-a-sketch ./dist/
-          cp -r js/library-new ./dist/
+          cp -r js/library-new ./dist/library
           cp -r js/rock-paper-scissors ./dist/
           cp -r js/google-home ./dist/
       - name: Build Battleship
