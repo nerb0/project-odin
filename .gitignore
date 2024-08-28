@@ -6,6 +6,7 @@
 **/*/.env*
 **/*/.env
 **/*/dist
+dist/
 dist
 
 
