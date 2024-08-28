@@ -35,19 +35,19 @@ jobs:
       - name: Build Battleship
         run: |
           cd js/battleship && npm install && npm run build
-          cp -r dist/* ../../dist/battleship
+          cp -r dist ../../dist/battleship
       - name: Build Todo List
         run: |
           cd js/to-do-remake && npm install && npm run build
-          cp -r dist/* ../../dist/to-do-list
+          cp -r dist ../../dist/to-do-list
       - name: Build Weather API
         run: |
           cd js/weather-api && npm install && npm run build
-          cp -r dist/* ../../dist/weather-api
+          cp -r dist ../../dist/weather-api
       - name: Build Restaurant
         run: |
           cd js/restaurant && npm install && npm run build 
-          cp -r dist/* ../../dist/restaurant
+          cp -r dist ../../dist/restaurant
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
