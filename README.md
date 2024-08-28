@@ -13,5 +13,5 @@
 - [Calculator](https://nerboostsystem.github.io/project-odin/calculator)
 - [Tic-Tac-Toe](https://nerboostsystem.github.io/project-odin/tic-tac)
 - [Restaurant](https://nerboostsystem.github.io/project-odin/restaurant)
-- [To-do-Webpage](https://nerboostsystem.github.io/project-odin/to-do-remake)
+- [To-do-Webpage](https://nerboostsystem.github.io/project-odin/to-do-list)
 - [Weather App](https://nerboostsystem.github.io/project-odin/weather-api)
