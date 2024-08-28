@@ -40,10 +40,6 @@ jobs:
         run: |
           cd js/to-do-remake && npm install && npm run build
           cp -r dist ../../dist/to-do-list
-      - name: Build Weather API
-        run: |
-          cd js/weather-api && npm install && npm run build
-          cp -r dist ../../dist/weather-api
       - name: Build Restaurant
         run: |
           cd js/restaurant && npm install && npm run build 
