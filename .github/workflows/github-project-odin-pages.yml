@@ -22,6 +22,7 @@ jobs:
       - name: Copy Static HTML Project Files
         run: |
           rm -rf dist && mkdir -p dist
+          cp README.md ./dist/
           cp -r html\&css/* ./dist/
           cp -r js/tic-tac-new ./dist/
           cp -r js/calculator ./dist/
