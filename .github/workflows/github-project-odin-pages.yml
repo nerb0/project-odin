@@ -48,10 +48,14 @@ jobs:
         run: |
           cd js/restaurant && npm install && npm run build 
           cp -r dist ../../dist/restaurant
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        with:
+          path: "dist/"
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v2
         with:
           path: "dist/"
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v2
