@@ -34,28 +34,20 @@ jobs:
           cp -r js/google-home ./dist/
       - name: Build Battleship
         run: |
-          npm install && npm run build
+          cd js/battleship && npm install && npm run build
           cp -r dist/* ../../dist/
-        with:
-          path: "js/battleship/"
       - name: Build Todo List
         run: |
-          npm install && npm run build
+          cd js/to-do-remake && npm install && npm run build
           cp -r dist/* ../../dist/
-        with:
-          path: "js/to-do-remake/"
       - name: Build Weather API
         run: |
-          npm install && npm run build
+          cd js/weather-api && npm install && npm run build
           cp -r dist/* ../../dist/
-        with:
-          path: "js/weather-api/"
       - name: Build Restaurant
         run: |
-          npm install && npm run build
+          cd js/restaurant && npm install && npm run build 
           cp -r dist/* ../../dist/
-        with:
-          path: "js/restaurant/"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
