@@ -42,6 +42,18 @@ jobs:
         run: |
           cd js/restaurant && npm install && npm run build 
           cp -r dist ../../dist/restaurant
+      - name: Build CV-Builder
+        run: |
+          cd react/cv-builder && npm install && npm run build 
+          cp -r dist ../../dist/cv-builder
+      - name: Build Memory Game
+        run: |
+          cd react/memory-card && npm install && npm run build 
+          cp -r dist ../../dist/memory-card
+      - name: Build Shopping Cart
+        run: |
+          cd react/dawg && npm install && npm run build 
+          cp -r dist ../../dist/dawg
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3

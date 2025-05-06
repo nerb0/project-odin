@@ -12,7 +12,7 @@ declare global {
 		highScore: number,
 	}
 	type GameCard = {
-		id: number;
+		id: string;
 		image: string;
 		name: string;
 		clicked?: boolean;

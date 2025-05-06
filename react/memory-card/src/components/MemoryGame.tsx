@@ -85,7 +85,7 @@ export default function MemoryGame({ cards }: { cards: GameCard[] }) {
 					</div>
 				</div>
 			</div>
-			<div className="flex gap-4 flex-wrap">
+			<div className="flex gap-4 flex-wrap justify-center">
 				<MemoryGameContext.Provider value={{ game, dispatch }}>
 					{game.cards.map((card) => (
 						<Card key={card.id} {...card} />

@@ -21,9 +21,6 @@ export default function Card({ id, image, name, clicked = false }: GameCard) {
 					<span className="text-lg text-white font-extrabold py-2 bg-gradient-to-r from-gray-900 to-gray-800 w-full text-center">
 						{name}
 					</span>
-					{
-						// <span>{`${clicked}`}</span>
-					}
 				</div>
 			</div>
 		</Tilt>
