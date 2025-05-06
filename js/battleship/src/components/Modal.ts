@@ -7,7 +7,7 @@ overlay.innerHTML = `<div class="bg-white p-4 rounded-lg shadow-lg gap-y-4 flex 
 		<h1 class="text-4xl font-bold">Game Over</h1>
 		<p class="text-xl">The winner is <span class="font-bold text-red-600" id="winnerText"></span></p>
 		<div class="flex gap-x-6 mt-2">
-			<a href="/" class="text-center text-blue-600 hover:underline">Play Again?</a>
+			<a href="." class="text-center text-blue-600 hover:underline">Play Again?</a>
 			<a href="#" class="text-center text-red-600 hover:underline">Close</a>
 		</div>
 	</div>`;
