@@ -52,7 +52,7 @@ jobs:
           cp -r dist ../../dist/memory-card
       - name: Build Shopping Cart
         run: |
-          cd react/dawg && npm install && npm run build 
+          cd react/DAWG && npm install && npm run build 
           cp -r dist ../../dist/dawg
       - name: Setup Pages
         id: pages
