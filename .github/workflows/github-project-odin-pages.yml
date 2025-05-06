@@ -40,19 +40,19 @@ jobs:
           cp -r dist ../../dist/to-do-list
       - name: Build Restaurant
         run: |
-          cd js/restaurant && npm install && npm run build 
+          cd js/restaurant && npm install && npm run build
           cp -r dist ../../dist/restaurant
       - name: Build CV Application
         run: |
-          cd react/cv-builder && npm install && npm run build --base=/cv-builder
+          cd react/cv-builder && npm install && npm run build
           cp -r dist ../../dist/cv-builder
       - name: Build Memory Game
         run: |
-          cd react/memory-card && npm install && npm run build --base=/memory-card
+          cd react/memory-card && npm install && npm run build
           cp -r dist ../../dist/memory-card
       - name: Build Shopping Cart
         run: |
-          cd react/DAWG && npm install && npm run build --base=/dawg
+          cd react/DAWG && npm install && npm run build
           cp -r dist ../../dist/dawg
       - name: Setup Pages
         id: pages
