@@ -42,6 +42,7 @@ The goal is to create a modular, well-structured codebase that can be expanded w
 - [Restaurant](https://nerb0.github.io/project-odin/restaurant)
 - [To-do-Webpage](https://nerb0.github.io/project-odin/to-do-list)
 - [Weather App](https://nerb0.github.io/project-odin/weather-api)
+- [Battleship](https://nerb0.github.io/project-odin/battleship)
 
 ## License
 
